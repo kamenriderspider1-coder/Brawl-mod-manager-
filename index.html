@@ -26,9 +26,9 @@ footer{color:var(--muted);font-size:.85rem;line-height:1.5;margin-top:28px}
 </style>
 </head>
 <body>
-<header><h1>⚡ Brawl Mod Manager</h1><p>Find individual Super Smash Bros. Brawl mods, browse community sources, and keep a clean catalog of what works with your setup.</p></header>
+<header><h1>⚡ Brawl Mod Manager</h1><p>Browse Brawl mods and organize cloud-hosted profiles for your Wii.</p></header>
 <main>
-<div class="notice"><strong>How the cloud part works:</strong> this website can search and organize online sources without filling your iPhone. But Brawl normally loads mod files from the Wii's SD card or USB, not directly from cloud storage. The long-term goal is for a Wii companion to fetch selected files over Wi-Fi when technically supported.</div>
+<div class="notice"><strong>How the cloud part works:</strong> The cloud-storage path is based on Riivolution's RiiFS network filesystem. A compatible RiiFS server can supply patch files over Wi-Fi. The Wii still needs a small local launch/configuration setup, and the exact loader path must be tested.</div>
 <div class="tools"><input id="q" type="search" placeholder="Search mods, characters, stages, music…"><select id="type"><option value="all">All types</option><option value="character">Characters & skins</option><option value="stage">Stages</option><option value="music">Music</option><option value="ui">Menus & UI</option><option value="mod-pack">Mod packs</option><option value="directory">Directories & tools</option></select></div>
 <nav class="quick" aria-label="Community searches">
 <a href="https://www.google.com/search?q=Super+Smash+Bros+Brawl+mods+download" target="_blank" rel="noopener">Search Brawl mods ↗</a>
@@ -36,8 +36,8 @@ footer{color:var(--muted);font-size:.85rem;line-height:1.5;margin-top:28px}
 <a href="https://gamebanana.com/games" target="_blank" rel="noopener">GameBanana ↗</a>
 </nav>
 <section id="results" class="grid" aria-live="polite"></section>
-<h3>How mods get onto the Wii</h3>
-<p style="color:var(--muted);line-height:1.55">Browse here from your phone or computer. When you choose a mod, its creator's page provides the download. To play it, the file still needs to reach the Wii's SD card or USB drive using the mod's required folder structure and loader. Automatic Wii-side downloading is a separate feature we can build and test next.</p>
+<h3>Cloud loading: what is possible</h3>
+<p style="color:var(--muted);line-height:1.55">Riivolution's RiiFS network mode can read replacement files from a compatible server. It is not a direct connection to iCloud Drive or Google Drive. The Wii needs a local XML/launcher configuration to tell the loader where the RiiFS server is. Standard Riivolution is for retail discs, while USB-loader workflows need separate testing; a newer project called RiftWii documents network packs with a local launch cache.</p>
 <footer>Only creator-authorized files should be mirrored. This catalog links to original sources and does not claim that every listed mod is tested or compatible. Always check region, game version, loader, and installation notes.</footer>
 </main>
 <script>
