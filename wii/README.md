@@ -1,33 +1,36 @@
-# Wii SD-card Mod Manager
+# Brawl Mod Manager: Wii launcher + online catalog
 
-## Intended experience
-The user launches this manager from the Homebrew Channel on a modded Wii. The manager reads its catalog from the internet, displays individual Brawl mods, and downloads a selected, author-authorized file to the SD card or USB device. It should not require a phone or computer for routine browsing and downloads once installed.
+## Correct intended experience
+This is **not a separate game** and not a standalone game-like interface. The manager should appear as an app tile in the Homebrew Channel. When launched, it manages Brawl mod profiles and then starts the user's existing Super Smash Bros. Brawl game with the selected supported mod setup, similar in overall experience to a Brawl mod launcher.
 
-## Known target
-- Console: Wii, 4.3U
-- Storage: SD card and/or USB
-- Launch environment: Homebrew Channel
-- Game: Super Smash Bros. Brawl (USA)
-- Catalog source: this repository's catalog.json
+The user should be able to:
+- Open the manager from the Homebrew Channel.
+- Connect to the internet and refresh a catalog hosted by this GitHub repository.
+- Browse individual mods and compatible mod builds.
+- Select a profile/build and download or update its authorized files to SD/USB.
+- See installed items, storage use, update status, and compatibility notes.
+- Launch Brawl with the selected mod configuration, rather than launching a separate custom game.
 
-## Required screens
-1. Connection status and storage selection.
-2. Online catalog with category and text filtering.
-3. Mod details: author/source, region, game version, loader, install path, dependencies, and conflict notes.
-4. Download confirmation showing destination and required free space.
-5. Download progress, integrity check, and completion/error status.
-6. Installed-mod list with safe remove/replace actions.
+## Important distinction
+The manager itself is a Wii homebrew launcher/manager. The actual gameplay remains Super Smash Bros. Brawl, using its normal game executable plus the selected mod's supported patching/loading method. The exact launch mechanism depends on the mod format: some Brawl builds use Gecko code loading and SD-card content folders, while others use Riivolution-style file replacement. These are not interchangeable; each catalog entry must declare its loader and required folder layout.
 
-## Download and installation rules
-- Never overwrite a file without an explicit confirmation and backup/restore plan.
-- Verify downloaded size and SHA-256 when the manifest provides it.
-- Keep each mod's archive separate until its install layout is understood.
-- Only automate extraction/install for formats and layouts explicitly supported by the app.
-- Link to creator pages and do not mirror files unless redistribution is permitted.
-- Preserve the original download URL and author attribution in the local install record.
+## Network and storage
+- GitHub hosts the app source and catalog metadata.
+- The Wii downloads selected mod files to SD/USB for gameplay.
+- Brawl does not generally stream its mod assets directly from GitHub during a match.
+- Prefer creator-provided download endpoints. Do not mirror archives unless redistribution is allowed.
+- Verify archive integrity where checksums are published. Do not overwrite an installed profile without confirmation and a rollback plan.
 
-## Network engineering constraint
-The Wii homebrew app needs a Wii-compatible networking and HTTPS strategy. Modern GitHub endpoints may require TLS/certificate features not available in a basic Wii homebrew networking setup. Do not assume that a direct GitHub API connection will work. Prototype connectivity first, then choose either a compatible HTTPS implementation or a small relay service that fetches the catalog/files and exposes a Wii-compatible endpoint. Do not ship a relay that weakens transport security or silently proxies arbitrary URLs.
+## Implementation plan
+1. Build the Homebrew Channel app shell and Wiimote navigation.
+2. Add an online catalog client and connection/error handling.
+3. Add per-entry loader metadata, source URLs, install paths, dependencies, and conflicts.
+4. Implement safe download, integrity verification, profile management, and uninstall/rollback.
+5. Implement the correct Brawl launch path for each supported loader.
+6. Produce a compiled `.dol` and test in Dolphin and on the user's Wii.
+
+## Technical constraint
+Modern GitHub HTTPS endpoints may not be directly compatible with the Wii's networking/TLS stack. Prototype Wii networking first. If a relay is needed, restrict it to this project's catalog and explicitly approved download sources; do not build an arbitrary URL proxy.
 
 ## Build status
-This document specifies the target experience. It is not a compiled Wii executable. A working Homebrew Channel app still needs C/C++ source, devkitPPC/libogc build configuration, a compiled `.dol`, and testing on Dolphin and real Wii hardware.
+This document describes the intended product. It is not a compiled or tested Wii executable. A working Homebrew Channel app still requires C/C++ source, devkitPPC/libogc configuration, a compiled `.dol`, and testing on real hardware.
