@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "lastReviewed": null,
+  "entries": [
+    {
+      "id": "project-plus",
+      "name": "Project+",
+      "type": "mod-pack",
+      "summary": "A Brawl-based gameplay overhaul. Check the official project site for current downloads and setup instructions.",
+      "region": "Check release notes",
+      "loader": "Check official instructions",
+      "source": "https://projectplusgame.com/",
+      "download": "https://projectplusgame.com/",
+      "redistribution": "link-only",
+      "verified": false
+    },
+    {
+      "id": "brawlvault",
+      "name": "BrawlVault",
+      "type": "directory",
+      "summary": "Community directory for individual Brawl resources. Check each entry's author notes and requirements.",
+      "region": "Varies by mod",
+      "loader": "Varies by mod",
+      "source": "https://forums.kc-mm.com/Gallery/",
+      "download": "https://forums.kc-mm.com/Gallery/",
+      "redistribution": "link-only",
+      "verified": false
+    }
+  ]
+}
