@@ -1,0 +1,39 @@
+name: Build Wii Homebrew App
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "wii/**"
+      - ".github/workflows/build-wii.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: devkitpro/devkitppc:20261102
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Build Homebrew Channel app
+        run: |
+          cd wii
+          make clean || true
+          make
+          test -s boot.dol
+          test -s meta.xml
+
+      - name: Package Wii app
+        uses: actions/upload-artifact@v4
+        with:
+          name: brawl-mod-manager-wii-prototype
+          path: |
+            wii/boot.dol
+            wii/meta.xml
+          if-no-files-found: error
+          retention-days: 14
