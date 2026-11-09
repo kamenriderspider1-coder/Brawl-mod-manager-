@@ -1,46 +1,44 @@
-# Brawl Mod Manager: network-storage launcher + catalog
+# Brawl Mod Manager: cloud-hosted RiiFS catalog and launcher
 
 ## Intended experience
-This is **not a separate game**. The manager appears in the Homebrew Channel, lets the user browse Brawl mods, and launches the user's existing Super Smash Bros. Brawl with the selected supported mod setup.
+This is **not a separate game**. The manager appears in the Homebrew Channel, lets the user browse Brawl mods, and launches the user's existing Super Smash Bros. Brawl with a compatible mod setup.
 
-The user's storage goal is a **network drive**: mod archives and extracted mod files stay on a network-accessible storage device or server, rather than being copied permanently onto the Wii SD card, Wii USB drive, iPhone, or Google Drive. The Wii accesses the shared files over Wi-Fi, much like a network-attached hard drive.
+The user's goal is iCloud-style storage: mod files stay on an internet-accessible server, and the Wii reads them over Wi-Fi rather than storing the full collection on its SD card or USB drive.
 
-## Target workflow
-1. Launch the manager from the Homebrew Channel.
-2. Connect to the home network and the configured network share.
-3. Browse the online catalog hosted by this repository.
-4. Select a mod profile stored on the network share.
-5. Start Brawl through the compatible mod-loading method.
-6. Where technically supported, the loader reads mod files from the network share as Brawl requests them.
+## Important discovery: Riivolution already has network filesystem support
+Riivolution supports a network filesystem protocol called **RiiFS**. Its network patch XML can point the Wii to a server address and port, and Riivolution can stream patch files from that server during gameplay. This is much closer to the requested cloud-storage experience than building an SMB-only solution from scratch.
 
-## Network storage: important distinction
-- A NAS or computer shared folder on the **same home network** can expose files over SMB. Wii homebrew has existing SMB client support through libogc/tinysmb, and other Wii homebrew apps have browsed or read SMB shares.
-- A cloud service over the public internet is not automatically the same as a local SMB network drive. Internet access, authentication, TLS, and latency require separate engineering.
-- SMB support inside the manager does **not** automatically mean Brawl or an existing mod loader can read every asset over SMB.
-- Riivolution's documented workflow uses replacement files on SD/USB. To achieve true network-backed gameplay, the project must integrate a network filesystem into the actual file-replacement/loading path, or implement a compatible loader/redirector.
-- Some loaders or mods may require local files, may load assets too early for network access, or may not tolerate network latency. Those combinations must be marked unsupported rather than promised.
+References:
+- Riivolution network documentation: https://riivolution.github.io/wiki/Network/
+- Riivolution overview and compatibility notes: https://www.wiibrew.org/wiki/Riivolution
 
-## Storage design
-- GitHub stores app source and catalog metadata, not the large mod archive collection.
-- A network share/NAS stores the user's mod files. The manager reads them over SMB when supported.
-- The manager should cache only small catalog/index metadata in local app settings. Do not silently copy full mod archives onto SD/USB.
-- If a specific loader requires local staging, explain that limitation before the user selects that mod. Do not claim zero local storage for unsupported formats.
-- Prefer creator-provided download endpoints. Do not mirror archives unless redistribution is allowed.
-- Verify published checksums and preserve a safe rollback path when changing profiles.
+This does **not** mean the Wii can connect to Apple's iCloud Drive directly. The files need to be hosted by a server that speaks the RiiFS protocol. A custom cloud-hosted RiiFS server or relay would be needed, and it must be reachable by the Wii over the internet. Hosting, authentication, server uptime, bandwidth, and secure access still need to be designed and tested.
+
+## Proposed workflow
+1. The Homebrew Channel launches the manager from the small app files on SD.
+2. The manager retrieves the mod catalog and connection profile.
+3. The selected profile identifies a RiiFS-compatible server and the mod's Riivolution patch XML.
+4. Riivolution connects to the configured RiiFS server over the Wii's internet connection.
+5. Mod assets are read from the server as the game requests them, instead of copying the complete mod collection onto SD/USB.
+
+A small local bootstrap/configuration file may still be needed to start the manager or supply the network endpoint. The target is **no permanent local copy of the mod collection**, not a promise that absolutely no bytes or configuration are ever stored locally.
+
+## Critical compatibility limits
+- Riivolution's documented network feature uses RiiFS, not generic iCloud, Google Drive, Dropbox, SMB, or arbitrary HTTPS file URLs.
+- Riivolution's overview states that it does not work with backups or USB loaders. The user's current USB Loader GX setup therefore needs a compatibility decision and real testing. A disc-based Brawl launch may be required for standard Riivolution.
+- The network documentation describes a server address and port. Public-internet hosting needs router/server configuration and secure design; do not expose an unprotected file server.
+- Internet latency, Wii Wi-Fi reliability, server uptime, file sizes, and Brawl's loading behavior can affect performance.
+- Each mod still needs a valid Riivolution patch definition and compatible Brawl region/version.
+- Do not claim every mod or every launch method works until tested on the user's hardware.
 
 ## Implementation plan
-1. Build the Homebrew Channel app shell and Wiimote navigation.
-2. Prototype SMB connection and directory browsing using Wii-compatible networking.
-3. Define a catalog manifest with loader type, source, network path, game region/version, dependencies, and conflicts.
-4. Test whether the selected Brawl loader can read replacement assets through the SMB filesystem during gameplay.
-5. If the loader cannot, investigate a compatible file-access redirector or clearly document the local-staging requirement.
-6. Add profile selection, connection/error handling, and safe file management.
-7. Produce a compiled `.dol` and test in Dolphin and on real Wii hardware.
-
-## Technical references
-- WiiBrew documents tinysmb/SMB support in libogc: https://wiibrew.org/wiki/Tinysmb
-- WiiBrew documents Riivolution's SD/USB replacement-file workflow: https://www.wiibrew.org/wiki/Riivolution
-- WiiBrew documents WiiXplorer browsing SMB shares: https://www.wiibrew.org/wiki/WiiXplorer
+1. Build the Homebrew Channel manager UI and catalog reader.
+2. Define a mod manifest: title, creator/source, Brawl region/version, Riivolution XML, RiiFS server profile, dependencies, and license/redistribution terms.
+3. Prototype a RiiFS-compatible server and test a small, permitted Brawl replacement asset.
+4. Confirm whether the user's game launch path can use Riivolution. Test disc launch separately from USB Loader GX.
+5. Add account/profile handling without embedding passwords in public catalog files.
+6. Test loading time, disconnect recovery, and server availability on real Wii hardware.
+7. Produce a compiled `.dol` and document exactly which mod formats and launch paths are supported.
 
 ## Build status
-This document describes the intended product. It is not a compiled or tested Wii executable. A working Homebrew Channel app still requires C/C++ source, devkitPPC/libogc configuration, a compiled `.dol`, and real-hardware testing. Network-backed Brawl asset loading remains a research/prototype milestone, not a confirmed capability.
+This is a design specification, not a compiled or tested Wii executable or deployed cloud service. No RiiFS server has been deployed, and no end-to-end cloud Brawl mod has been verified yet.
