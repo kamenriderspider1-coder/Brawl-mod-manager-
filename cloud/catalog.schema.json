@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/brawl-mod-manager/cloud-catalog.schema.json",
+  "title": "Brawl Mod Manager Cloud Catalog",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "profiles"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "profiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "gameId",
+          "region",
+          "loader",
+          "riifsHost",
+          "riifsPort",
+          "patchXml",
+          "source",
+          "redistribution"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "name": {
+            "type": "string"
+          },
+          "gameId": {
+            "type": "string",
+            "description": "Expected Brawl disc ID, such as RSBE01; verify against the user's game."
+          },
+          "region": {
+            "type": "string"
+          },
+          "loader": {
+            "type": "string",
+            "enum": [
+              "Riivolution",
+              "RiftWii",
+              "Other / unverified"
+            ]
+          },
+          "riifsHost": {
+            "type": "string",
+            "description": "Hostname or IP address of a RiiFS server. Do not put credentials here."
+          },
+          "riifsPort": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535
+          },
+          "patchXml": {
+            "type": "string",
+            "description": "Path to a valid Riivolution patch XML on the server or local bootstrap media, as required by the loader."
+          },
+          "source": {
+            "type": "string",
+            "format": "uri"
+          },
+          "redistribution": {
+            "type": "string",
+            "enum": [
+              "link-only",
+              "permission-granted",
+              "public-domain",
+              "unknown"
+            ]
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
