@@ -1,18 +1,38 @@
 # Brawl Mod Manager
 
-A browser-first catalog for finding and organizing individual Super Smash Bros. Brawl mods.
+A Wii-focused manager for organizing Super Smash Bros. Brawl mod profiles, with the long-term goal of keeping the mod collection on network storage rather than copying the entire collection onto the Wii.
 
-## Current scope
-- Search and filter a catalog by mod type.
-- Keep source/download links attached to each entry.
-- Record game region, required loader, and compatibility notes.
-- Keep the catalog separate from large mod archives.
+## Project direction
+- Homebrew Channel app for browsing and selecting Brawl mod profiles.
+- Online catalog metadata stored separately from mod archives.
+- Cloud/network delivery built around the Wii-compatible **RiiFS** protocol where supported.
+- Links to creators' official releases unless redistribution permission is explicit.
+- Compatibility labels for Brawl region/revision and the loader used.
 
-## Important Wii limitation
-The catalog can be browsed online, but the Wii version of Brawl does not normally stream mod assets from cloud storage. For gameplay, selected files still need to be placed on the Wii's SD card or USB storage in the layout required by the mod and loader (for example, Riivolution). A future Wii companion can download supported files over the Wii's network connection, but it must be tested against Wii networking, file sizes, and each mod's install layout.
+## Cloud loading: the important distinction
+This project is **not** trying to make the Wii connect directly to iCloud Drive or Google Drive. Riivolution supports a network filesystem called RiiFS. Its patch XML can identify a RiiFS server, allowing compatible game replacement files to be served over the Wii network.
 
-## Storage and permissions
-This repository stores the app and catalog metadata, not a mirror of every community mod. Entries should link to the creator's official release or download page. Only host files when the author permits redistribution. Large files belong in an appropriate release or object-storage service, not in the catalog JSON.
+Riivolution's documented workflow is for retail discs and its FAQ says USB loaders are not supported. A separate project, RiftWii, documents network packs and a local launch cache. That may provide a more relevant test path for USB game libraries, but it still may cache selected files locally and is not a promise of zero SD/USB usage.
 
-## Run locally
-Open `index.html` in a modern browser, or publish the repository with GitHub Pages.
+## Repository layout
+- `index.html`: browser catalog prototype.
+- `catalog.json`: starter catalog metadata.
+- `cloud/catalog.schema.json`: schema for cloud-hosted mod profile metadata.
+- `cloud/catalog.example.json`: non-working example profile.
+- `cloud/README.md`: cloud profile format, hosting safety, and compatibility notes.
+- `wii/README.md`: Wii-side architecture and implementation plan.
+
+## Current build status
+The browser catalog and cloud-profile data format are committed. This is an early project scaffold, not a finished Wii app: there is no compiled `.dol`, deployed RiiFS server, account system, or end-to-end Brawl cloud profile tested on hardware yet.
+
+## Next milestones
+1. Build the Homebrew Channel interface and Wiimote navigation.
+2. Read and validate the cloud profile catalog.
+3. Prototype a RiiFS endpoint with a small, authorized test asset.
+4. Test the actual Brawl launch path on the user's Wii, including the USB-loader compatibility question.
+5. Add profile selection, connection diagnostics, and recovery behavior.
+
+## References
+- [Riivolution network documentation](https://riivolution.github.io/wiki/Network/)
+- [Riivolution overview and FAQ](https://riivolution.github.io/wiki/Riivolution/)
+- [RiftWii guide: network packs](https://github.com/KakarottoCake/Riftwii/blob/main/docs/GUIDE.md)
