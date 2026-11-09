@@ -4,48 +4,121 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0b1220">
-<title>Brawl Mod Manager</title>
+<title>Brawl Mod Cloud Library</title>
 <style>
-:root{color-scheme:dark;--bg:#0b1220;--panel:#121e30;--line:#293b55;--text:#eef5ff;--muted:#a7b7cc;--mint:#65e0b6}
+:root{color-scheme:dark;--bg:#0b1220;--panel:#121e30;--line:#293b55;--text:#eef5ff;--muted:#a7b7cc;--mint:#65e0b6;--gold:#f0cc78}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -15%,#1c3655,var(--bg) 65%);color:var(--text);font:16px system-ui,-apple-system,Segoe UI,sans-serif}
-header{padding:32px max(20px,calc((100vw - 1080px)/2));border-bottom:1px solid var(--line);background:#0b1220cc}
-h1{font-size:clamp(2rem,6vw,3.2rem);margin:0;letter-spacing:-.04em}header p{max-width:720px;color:var(--muted);line-height:1.55;margin-bottom:0}
-main{max-width:1080px;margin:auto;padding:24px 18px 56px}
-.notice{border:1px solid #66572c;background:#2c2719;color:#f5e7b8;border-radius:13px;padding:15px 17px;line-height:1.5;margin-bottom:20px}
-.tools{display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:10px;margin-bottom:16px}
-input,select{min-width:0;width:100%;border:1px solid var(--line);border-radius:11px;padding:13px;background:var(--panel);color:var(--text);font:inherit}
-.quick{display:flex;flex-wrap:wrap;gap:9px;margin:0 0 22px}.quick a{color:var(--mint);border:1px solid var(--line);border-radius:999px;padding:8px 12px;text-decoration:none;font-size:.9rem}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:14px}
-.card{display:flex;flex-direction:column;gap:10px;min-height:220px;padding:17px;border:1px solid var(--line);border-radius:15px;background:linear-gradient(145deg,#17263b,#111b2b)}
-.eyebrow{color:var(--mint);font-size:.75rem;text-transform:uppercase;letter-spacing:.08em}.card h2{font-size:1.15rem;margin:0}.card p{color:var(--muted);font-size:.93rem;line-height:1.45;margin:0}
-.meta{font-size:.8rem;color:var(--muted)}.actions{display:flex;gap:12px;margin-top:auto}.actions a{color:var(--mint);font-weight:650;text-decoration:none}
-.empty{grid-column:1/-1;text-align:center;padding:35px;color:var(--muted)}
-h3{margin:28px 0 10px}.searchlinks{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}.searchlinks a{display:block;padding:14px;border:1px solid var(--line);border-radius:12px;color:var(--text);text-decoration:none;background:var(--panel)}.searchlinks small{display:block;color:var(--muted);margin-top:5px}
-footer{color:var(--muted);font-size:.85rem;line-height:1.5;margin-top:28px}
-@media(max-width:600px){.tools{grid-template-columns:1fr}}
+header{padding:30px max(20px,calc((100vw - 1100px)/2));border-bottom:1px solid var(--line);background:#0b1220cc}
+h1{font-size:clamp(2rem,6vw,3rem);margin:0;letter-spacing:-.04em}header p{max-width:780px;color:var(--muted);line-height:1.55;margin-bottom:0}
+main{max-width:1100px;margin:auto;padding:24px 18px 56px}.panel{border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,#17263b,#111b2b);padding:18px;margin:16px 0}
+.notice{border:1px solid #66572c;background:#2c2719;color:#f5e7b8;border-radius:13px;padding:15px 17px;line-height:1.5}
+h2{font-size:1.25rem;margin:0 0 12px}h3{margin:24px 0 10px}
+p{line-height:1.55}.muted{color:var(--muted)}.tools{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px}
+input,select,textarea{min-width:0;width:100%;border:1px solid var(--line);border-radius:11px;padding:12px;background:#0d1726;color:var(--text);font:inherit}
+textarea{min-height:76px;resize:vertical}.btn,button{display:inline-block;border:1px solid #42627d;border-radius:11px;padding:11px 14px;background:#18334a;color:var(--text);font:inherit;font-weight:650;text-decoration:none;cursor:pointer}
+.btn.primary,button.primary{background:#164d43;border-color:#2a806e}.btn:disabled,button:disabled{opacity:.45;cursor:not-allowed}
+.sources{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.source{padding:15px;border:1px solid var(--line);border-radius:13px;background:#0e1a2a}.source p{font-size:.9rem;color:var(--muted);min-height:46px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:13px}.card{border:1px solid var(--line);border-radius:13px;background:#0e1a2a;padding:15px;display:flex;flex-direction:column;gap:8px}.card h3{margin:0;font-size:1.05rem}.tag{font-size:.75rem;color:var(--mint);text-transform:uppercase;letter-spacing:.07em}.meta{font-size:.82rem;color:var(--muted);overflow-wrap:anywhere}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{grid-column:1/-1}.row{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.empty{padding:22px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}
+footer{color:var(--muted);font-size:.85rem;line-height:1.5;margin-top:26px}
+@media(max-width:620px){.tools,.formgrid{grid-template-columns:1fr}.full{grid-column:auto}}
 </style>
 </head>
 <body>
-<header><h1>⚡ Brawl Mod Manager</h1><p>Browse Brawl mods and organize cloud-hosted profiles for your Wii.</p></header>
+<header><h1>☁️ Brawl Mod Cloud Library</h1><p>Discover Super Smash Bros. Brawl mods, collect their source details, and prepare a cloud library for your Wii setup.</p></header>
 <main>
-<div class="notice"><strong>How the cloud part works:</strong> The cloud-storage path is based on Riivolution's RiiFS network filesystem. A compatible RiiFS server can supply patch files over Wi-Fi. The Wii still needs a small local launch/configuration setup, and the exact loader path must be tested.</div>
-<div class="tools"><input id="q" type="search" placeholder="Search mods, characters, stages, music…"><select id="type"><option value="all">All types</option><option value="character">Characters & skins</option><option value="stage">Stages</option><option value="music">Music</option><option value="ui">Menus & UI</option><option value="mod-pack">Mod packs</option><option value="directory">Directories & tools</option></select></div>
-<nav class="quick" aria-label="Community searches">
-<a href="https://www.google.com/search?q=Super+Smash+Bros+Brawl+mods+download" target="_blank" rel="noopener">Search Brawl mods ↗</a>
-<a href="https://forums.kc-mm.com/Gallery/" target="_blank" rel="noopener">BrawlVault ↗</a>
-<a href="https://gamebanana.com/games" target="_blank" rel="noopener">GameBanana ↗</a>
-</nav>
-<section id="results" class="grid" aria-live="polite"></section>
-<h3>Cloud loading: what is possible</h3>
-<p style="color:var(--muted);line-height:1.55">Riivolution's RiiFS network mode can read replacement files from a compatible server. It is not a direct connection to iCloud Drive or Google Drive. The Wii needs a local XML/launcher configuration to tell the loader where the RiiFS server is. Standard Riivolution is for retail discs, while USB-loader workflows need separate testing; a newer project called RiftWii documents network packs with a local launch cache.</p>
-<footer>Only creator-authorized files should be mirrored. This catalog links to original sources and does not claim that every listed mod is tested or compatible. Always check region, game version, loader, and installation notes.</footer>
+<div class="notice"><strong>Important:</strong> This first version discovers and organizes mods. It does not silently copy every file from the internet. Downloads must respect each creator's permissions and the source site's rules. The cloud upload button stays disabled until a storage provider is connected.</div>
+
+<section class="panel">
+<h2>Search the web for Brawl mods</h2>
+<p class="muted">Enter a character, stage, music title, creator, or mod type. These searches open the source site in a new tab so you can inspect the creator, requirements, and download terms.</p>
+<div class="tools"><input id="search" type="search" placeholder="Example: ROB skin, custom stages, menu music"><button class="primary" id="searchAll">Search sources</button></div>
+<div class="sources" style="margin-top:14px">
+<div class="source"><strong>BrawlVault</strong><p>Community uploads and individual Brawl resources. Search results depend on the site's current availability.</p><button data-source="vault">Search BrawlVault</button></div>
+<div class="source"><strong>GameBanana</strong><p>Public mod catalog with a documented API. Brawl coverage must be checked rather than assumed.</p><button data-source="banana">Search GameBanana</button></div>
+<div class="source"><strong>General web search</strong><p>Find creator pages, release threads, and other public mod collections.</p><button data-source="web">Search the web</button></div>
+</div>
+</section>
+
+<section class="panel">
+<h2>Add a mod to your cloud import queue</h2>
+<p class="muted">Paste the creator's page and, if clearly provided, its direct download URL. This saves a record in this browser for now. It does not download or upload the file yet.</p>
+<form id="addForm" class="formgrid">
+<input id="modName" required placeholder="Mod name">
+<select id="modType"><option value="character">Character / skin</option><option value="stage">Stage</option><option value="music">Music / sound</option><option value="ui">Menu / UI</option><option value="mod-pack">Mod pack</option><option value="other">Other</option></select>
+<input id="creator" placeholder="Creator name (if known)">
+<input id="region" placeholder="Brawl region / version (if known)">
+<input id="sourceUrl" class="full" type="url" required placeholder="Creator's source page URL">
+<input id="downloadUrl" class="full" type="url" placeholder="Direct download URL (optional)">
+<textarea id="notes" class="full" placeholder="Requirements, loader notes, permission notes"></textarea>
+<label class="full"><input id="permission" type="checkbox" style="width:auto"> I checked that the creator/source permits this file to be stored in my private cloud library.</label>
+<div class="full row"><button class="primary" type="submit">Add to import queue</button><span class="muted" id="formStatus" aria-live="polite"></span></div>
+</form>
+</section>
+
+<section class="panel">
+<div class="row" style="justify-content:space-between"><h2 style="margin:0">My import queue</h2><button id="clearQueue">Clear queue</button></div>
+<p class="muted">Queue records are currently saved in this browser only. No mod files are uploaded to cloud storage yet.</p>
+<div id="queue" class="grid"></div>
+<div class="row" style="margin-top:14px"><button disabled title="Connect a cloud storage provider first">Upload selected to cloud (not connected)</button><span class="muted">Provider connection is the next required step.</span></div>
+</section>
+
+<section class="panel">
+<h2>Cloud connection needed</h2>
+<p>GitHub hosts this app's code and catalog, but it is not the right place for a large personal mod archive. To finish automatic file transfers, the project needs a separate storage provider with a secure account connection.</p>
+<p class="muted">The app must not ask you to paste private passwords or secret access tokens into a public GitHub file. We will use the provider's proper sign-in or secure server-side credentials.</p>
+</section>
+
+<h3>How automatic importing will work</h3>
+<ol class="muted">
+<li>Search supported mod sources and show creator, file details, and compatibility notes.</li>
+<li>You select the files you want and confirm they may be stored.</li>
+<li>The importer downloads only supported files from their original source.</li>
+<li>The cloud connector uploads them to your private storage and records their source and checksum.</li>
+<li>The Wii manager reads compatible files through the selected network-loading method. This is a separate compatibility step.</li>
+</ol>
+<footer>Source references: <a href="https://api.gamebanana.com/" target="_blank" rel="noopener">GameBanana API</a> · <a href="https://forums.kc-mm.com/Gallery/" target="_blank" rel="noopener">BrawlVault</a>. Some sources may not expose a stable API or may restrict automated downloads. No files are mirrored by this prototype.</footer>
 </main>
 <script>
-let entries=[];
-const q=document.querySelector('#q'),type=document.querySelector('#type'),results=document.querySelector('#results');
-function safe(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function render(){const term=q.value.trim().toLowerCase();const kind=type.value;const found=entries.filter(m=>(kind==='all'||m.type===kind)&&[m.name,m.summary,m.type,m.region,m.loader].join(' ').toLowerCase().includes(term));results.innerHTML=found.length?found.map(m=>'<article class="card"><span class="eyebrow">'+safe(m.type.replaceAll('-',' '))+'</span><h2>'+safe(m.name)+'</h2><p>'+safe(m.summary)+'</p><div class="meta">Region: '+safe(m.region)+' · Loader: '+safe(m.loader)+'</div><div class="actions"><a href="'+safe(m.source)+'" target="_blank" rel="noopener">Source ↗</a><a href="'+safe(m.download)+'" target="_blank" rel="noopener">Download page ↗</a></div></article>').join(''):'<div class="empty">No catalog matches yet. Try a broader search or use the community search links above.</div>'}
-async function init(){try{const r=await fetch('./catalog.json');if(!r.ok)throw Error('catalog unavailable');const data=await r.json();entries=Array.isArray(data.entries)?data.entries:[]}catch(e){entries=[]}render()}
-q.addEventListener('input',render);type.addEventListener('change',render);init();
+const searchBox=document.getElementById('search');
+const queueEl=document.getElementById('queue');
+const queueKey='brawlModCloudQueueV1';
+function readQueue(){try{return JSON.parse(localStorage.getItem(queueKey)||'[]')}catch(e){return []}}
+function writeQueue(items){localStorage.setItem(queueKey,JSON.stringify(items));renderQueue()}
+function makeSearchUrl(source){
+ const term=searchBox.value.trim()||'Super Smash Bros Brawl mods';
+ const q=encodeURIComponent(term+' Super Smash Bros Brawl');
+ if(source==='vault')return 'https://www.google.com/search?q='+encodeURIComponent('site:forums.kc-mm.com/Gallery/BrawlView.php '+term);
+ if(source==='banana')return 'https://gamebanana.com/search?query='+q;
+ return 'https://www.google.com/search?q='+q;
+}
+function openSearch(source){window.open(makeSearchUrl(source),'_blank','noopener')}
+document.querySelectorAll('[data-source]').forEach(b=>b.addEventListener('click',()=>openSearch(b.dataset.source)));
+document.getElementById('searchAll').addEventListener('click',()=>{openSearch('vault');openSearch('banana');openSearch('web')});
+searchBox.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();openSearch('vault')}});
+function esc(v){return String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function renderQueue(){
+ const items=readQueue();
+ if(!items.length){queueEl.innerHTML='<div class="empty">Your queue is empty. Search for a mod and add its creator page.</div>';return}
+ queueEl.innerHTML=items.map((m,i)=>'<article class="card"><span class="tag">'+esc(m.type)+'</span><h3>'+esc(m.name)+'</h3><div class="meta">Creator: '+esc(m.creator||'Not listed')+' · Region: '+esc(m.region||'Not checked')+'</div><div class="meta">Permission check: '+(m.permission?'Confirmed by you':'Not confirmed')+'</div><div class="row"><a class="btn" href="'+esc(m.sourceUrl)+'" target="_blank" rel="noopener">Open source</a>'+(m.downloadUrl?'<a class="btn" href="'+esc(m.downloadUrl)+'" target="_blank" rel="noopener">Open download</a>':'')+'<button data-remove="'+i+'">Remove</button></div><div class="meta">'+esc(m.notes)+'</div></article>').join('');
+ queueEl.querySelectorAll('[data-remove]').forEach(b=>b.addEventListener('click',()=>{const list=readQueue();list.splice(Number(b.dataset.remove),1);writeQueue(list)}));
+}
+document.getElementById('addForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ const permission=document.getElementById('permission').checked;
+ const status=document.getElementById('formStatus');
+ if(!permission){status.textContent='Please confirm the source permits private storage before queuing this file.';return}
+ const sourceUrl=document.getElementById('sourceUrl').value.trim();
+ const downloadUrl=document.getElementById('downloadUrl').value.trim();
+ const safeUrl=u=>{try{const x=new URL(u);return x.protocol==='https:'||x.protocol==='http:'}catch(e){return false}};
+ if(!safeUrl(sourceUrl)||(downloadUrl&&!safeUrl(downloadUrl))){status.textContent='Please use valid http or https links.';return}
+ const items=readQueue();
+ items.push({name:document.getElementById('modName').value.trim(),type:document.getElementById('modType').value,creator:document.getElementById('creator').value.trim(),region:document.getElementById('region').value.trim(),sourceUrl,downloadUrl,notes:document.getElementById('notes').value.trim(),permission,addedAt:new Date().toISOString()});
+ writeQueue(items);e.target.reset();status.textContent='Added to this browser’s queue. Cloud upload is not connected yet.';
+});
+document.getElementById('clearQueue').addEventListener('click',()=>{if(confirm('Clear all queued mod records from this browser?')){localStorage.removeItem(queueKey);renderQueue()}});
+renderQueue();
 </script>
-</body></html>
+</body>
+</html>
