@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1220">
+<title>Brawl Mod Manager</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--panel:#121e30;--line:#293b55;--text:#eef5ff;--muted:#a7b7cc;--mint:#65e0b6}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -15%,#1c3655,var(--bg) 65%);color:var(--text);font:16px system-ui,-apple-system,Segoe UI,sans-serif}
+header{padding:32px max(20px,calc((100vw - 1080px)/2));border-bottom:1px solid var(--line);background:#0b1220cc}
+h1{font-size:clamp(2rem,6vw,3.2rem);margin:0;letter-spacing:-.04em}header p{max-width:720px;color:var(--muted);line-height:1.55;margin-bottom:0}
+main{max-width:1080px;margin:auto;padding:24px 18px 56px}
+.notice{border:1px solid #66572c;background:#2c2719;color:#f5e7b8;border-radius:13px;padding:15px 17px;line-height:1.5;margin-bottom:20px}
+.tools{display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:10px;margin-bottom:16px}
+input,select{min-width:0;width:100%;border:1px solid var(--line);border-radius:11px;padding:13px;background:var(--panel);color:var(--text);font:inherit}
+.quick{display:flex;flex-wrap:wrap;gap:9px;margin:0 0 22px}.quick a{color:var(--mint);border:1px solid var(--line);border-radius:999px;padding:8px 12px;text-decoration:none;font-size:.9rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:14px}
+.card{display:flex;flex-direction:column;gap:10px;min-height:220px;padding:17px;border:1px solid var(--line);border-radius:15px;background:linear-gradient(145deg,#17263b,#111b2b)}
+.eyebrow{color:var(--mint);font-size:.75rem;text-transform:uppercase;letter-spacing:.08em}.card h2{font-size:1.15rem;margin:0}.card p{color:var(--muted);font-size:.93rem;line-height:1.45;margin:0}
+.meta{font-size:.8rem;color:var(--muted)}.actions{display:flex;gap:12px;margin-top:auto}.actions a{color:var(--mint);font-weight:650;text-decoration:none}
+.empty{grid-column:1/-1;text-align:center;padding:35px;color:var(--muted)}
+h3{margin:28px 0 10px}.searchlinks{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}.searchlinks a{display:block;padding:14px;border:1px solid var(--line);border-radius:12px;color:var(--text);text-decoration:none;background:var(--panel)}.searchlinks small{display:block;color:var(--muted);margin-top:5px}
+footer{color:var(--muted);font-size:.85rem;line-height:1.5;margin-top:28px}
+@media(max-width:600px){.tools{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><h1>⚡ Brawl Mod Manager</h1><p>Find individual Super Smash Bros. Brawl mods, browse community sources, and keep a clean catalog of what works with your setup.</p></header>
+<main>
+<div class="notice"><strong>How the cloud part works:</strong> this website can search and organize online sources without filling your iPhone. But Brawl normally loads mod files from the Wii's SD card or USB, not directly from cloud storage. The long-term goal is for a Wii companion to fetch selected files over Wi-Fi when technically supported.</div>
+<div class="tools"><input id="q" type="search" placeholder="Search mods, characters, stages, music…"><select id="type"><option value="all">All types</option><option value="character">Characters & skins</option><option value="stage">Stages</option><option value="music">Music</option><option value="ui">Menus & UI</option><option value="mod-pack">Mod packs</option><option value="directory">Directories & tools</option></select></div>
+<nav class="quick" aria-label="Community searches">
+<a href="https://www.google.com/search?q=Super+Smash+Bros+Brawl+mods+download" target="_blank" rel="noopener">Search Brawl mods ↗</a>
+<a href="https://forums.kc-mm.com/Gallery/" target="_blank" rel="noopener">BrawlVault ↗</a>
+<a href="https://gamebanana.com/games" target="_blank" rel="noopener">GameBanana ↗</a>
+</nav>
+<section id="results" class="grid" aria-live="polite"></section>
+<h3>How mods get onto the Wii</h3>
+<p style="color:var(--muted);line-height:1.55">Browse here from your phone or computer. When you choose a mod, its creator's page provides the download. To play it, the file still needs to reach the Wii's SD card or USB drive using the mod's required folder structure and loader. Automatic Wii-side downloading is a separate feature we can build and test next.</p>
+<footer>Only creator-authorized files should be mirrored. This catalog links to original sources and does not claim that every listed mod is tested or compatible. Always check region, game version, loader, and installation notes.</footer>
+</main>
+<script>
+let entries=[];
+const q=document.querySelector('#q'),type=document.querySelector('#type'),results=document.querySelector('#results');
+function safe(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function render(){const term=q.value.trim().toLowerCase();const kind=type.value;const found=entries.filter(m=>(kind==='all'||m.type===kind)&&[m.name,m.summary,m.type,m.region,m.loader].join(' ').toLowerCase().includes(term));results.innerHTML=found.length?found.map(m=>'<article class="card"><span class="eyebrow">'+safe(m.type.replaceAll('-',' '))+'</span><h2>'+safe(m.name)+'</h2><p>'+safe(m.summary)+'</p><div class="meta">Region: '+safe(m.region)+' · Loader: '+safe(m.loader)+'</div><div class="actions"><a href="'+safe(m.source)+'" target="_blank" rel="noopener">Source ↗</a><a href="'+safe(m.download)+'" target="_blank" rel="noopener">Download page ↗</a></div></article>').join(''):'<div class="empty">No catalog matches yet. Try a broader search or use the community search links above.</div>'}
+async function init(){try{const r=await fetch('./catalog.json');if(!r.ok)throw Error('catalog unavailable');const data=await r.json();entries=Array.isArray(data.entries)?data.entries:[]}catch(e){entries=[]}render()}
+q.addEventListener('input',render);type.addEventListener('change',render);init();
+</script>
+</body></html>
