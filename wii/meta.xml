@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<app version="1">
+  <name>Brawl Mod Manager</name>
+  <coder>Community project</coder>
+  <version>0.1-prototype</version>
+  <release_date>20261109000000</release_date>
+  <short_description>Browse Brawl mod profiles</short_description>
+  <long_description>Prototype manager for future Riivolution and RiiFS profile support. Cloud browsing and launching are not implemented yet.</long_description>
+  <no_ios_reload/>
+</app>
