@@ -15,7 +15,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: devkitpro/devkitppc:20261102
+      image: devkitpro/devkitppc:latest
     steps:
       - name: Check out source
         uses: actions/checkout@v4
