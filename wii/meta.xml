@@ -4,7 +4,7 @@
   <coder>Community project</coder>
   <version>0.1-prototype</version>
   <release_date>20261109000000</release_date>
-  <short_description>Browse Brawl mod profiles</short_description>
-  <long_description>Prototype manager for future Riivolution and RiiFS profile support. Cloud browsing and launching are not implemented yet.</long_description>
+  <short_description>Wii mod library manager</short_description>
+  <long_description>Standalone Wii Homebrew Channel companion to the Brawl Cloud web library. Cloud browsing, downloads, and game launching are not implemented in this prototype.</long_description>
   <no_ios_reload/>
 </app>
