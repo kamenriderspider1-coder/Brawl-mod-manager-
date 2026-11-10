@@ -20,10 +20,10 @@ The intended output is boot.dol plus meta.xml. Copy those two files into apps/br
 - Returns to the Homebrew Channel menu with HOME.
 
 ## Not implemented yet
-- Internet/Wi-Fi catalog retrieval.
-- RiiFS server or cloud-storage account integration.
+- Internet/Wi-Fi connection to the user's Google Drive library.
+- Secure Google authorization and Drive catalog retrieval.
 - Reading real mod manifests.
 - Generating or installing Riivolution patch XML.
 - Launching Riivolution or Brawl.
 
-Do not treat the placeholder profiles as playable. The next engineering step is a tested RiiFS-compatible endpoint and a real, creator-authorized sample profile. Standard Riivolution and USB Loader GX compatibility must be tested separately.
+Do not treat the placeholder profiles as playable. The next engineering step is a Wii-compatible, secure Google Drive authorization/download design and a real, creator-authorized sample profile. Standard Riivolution and USB Loader GX compatibility must be tested separately.
