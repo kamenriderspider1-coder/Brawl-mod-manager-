@@ -20,22 +20,18 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
 
-      - name: Add ELF-to-DOL converter
-        run: |
-          command -v cc
-          curl -fsSL https://raw.githubusercontent.com/devkitPro/gamecube-tools/master/elftool/elf2dol.c -o /tmp/elf2dol.c
-          cc -O2 -o /usr/local/bin/elf2dol /tmp/elf2dol.c
-          elf2dol -h
-
       - name: Verify Wii toolchain
         run: |
           test -n "$DEVKITPPC"
           test -f "$DEVKITPPC/wii_rules"
           command -v powerpc-eabi-gcc
-          command -v elf2dol
 
       - name: Build Homebrew Channel manager
         run: |
+          curl -fsSL https://raw.githubusercontent.com/devkitPro/gamecube-tools/master/elftool/elf2dol.c -o /tmp/elf2dol.c
+          cc -O2 -o /tmp/elf2dol /tmp/elf2dol.c
+          export PATH="/tmp:$PATH"
+          command -v elf2dol
           cd wii
           make -j2
           test -s boot.dol
