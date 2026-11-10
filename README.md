@@ -1,40 +1,62 @@
-# Brawl Mod Manager + Brawl Cloud
+# ☁️ Brawl Cloud Storage
 
-This repository contains two separate pieces:
+> **[☁️ Open Brawl Cloud and connect your Google Drive](https://kamenriderspider1-coder.github.io/Brawl-mod-manager-/)**
+>
+> When the app opens, choose **Sign in to Google Drive**. The first visit requires a one-time Google OAuth Web Client ID setup. Follow the on-screen setup instructions. Google sign-in happens on Google's own authorization page.
 
-1. **Brawl Cloud**: a public, repository-backed mod catalog and file library.
+Brawl Cloud is the cloud-storage companion for the Brawl Mod Manager. **GitHub is used to build and publish the application; your own Google Drive stores your mod files.** The app is designed around a 13 GB library target within your Google account's existing storage quota.
+
+---
+
+# Brawl Mod Manager
+
+This repository contains two connected project components:
+
+1. **Brawl Cloud**: a browser-based mod library that stores your files in your own Google Drive after you authorize it.
 2. **Wii Mod Manager**: a separate Homebrew Channel manager prototype. Its downloadable package belongs in GitHub Releases.
 
 ## Brawl Cloud
 
 - Website entry point: `index.html`
-- Public mod catalog: `cloud-library/catalog.json`
-- Mod files you are allowed to redistribute: `cloud-library/files/`
-- The website reads the catalog and provides links to the permitted files or creators' official pages.
-- Mod archives are **not** published as GitHub Release assets.
+- Google Drive folder: `Brawl Cloud` (created after you authorize the app)
+- Catalog: `brawl-cloud-catalog.json` inside that Drive folder
+- Google permission requested: `drive.file`, which limits access to files created or explicitly opened with this app.
+- The Google OAuth access token is kept in page memory and is not committed to this repository.
+- A 13 GB app-level target is enforced for catalogued files. This is not reserved space and does not increase your Google account quota.
+- Current browser uploader limit: 20 MB per file.
 
-This is a public static library, not private or unlimited storage. GitHub repository file hosting has practical file and repository-size limits. A secure upload form cannot safely store a GitHub access token in public browser code, so this version is read-only for visitors. To add a file, add it to `cloud-library/files/` and add its metadata to `cloud-library/catalog.json` in the repository.
+### One-time Google setup
 
-Only add files you created or that their authors explicitly permit you to redistribute. For other mods, list the creator's official page instead of mirroring the file.
+1. Open [Google Cloud Console Credentials](https://console.cloud.google.com/apis/credentials).
+2. Select or create a Google Cloud project and enable the **Google Drive API**.
+3. Configure the Google Auth Platform consent screen.
+4. Create an OAuth 2.0 Client ID with application type **Web application**.
+5. Add the exact deployed website origin to **Authorized JavaScript origins**. For this repository's standard GitHub Pages URL, use `https://kamenriderspider1-coder.github.io` (origin only, no path).
+6. Open Brawl Cloud, paste the public OAuth Client ID, and select **Connect Google Drive**.
+7. Complete Google's authorization flow.
 
-## Publishing the Brawl Cloud website
+Never put a Google OAuth client secret, password, or access token in this public repository or into the browser app. The Client ID is a public identifier; the access token is session-only.
 
-The `.github/workflows/deploy-pages.yml` workflow publishes the static site with GitHub Pages. In repository Settings → Pages, choose **GitHub Actions** as the source if it is not already selected. GitHub's official guide describes this deployment setup: https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages
+**Important:** GitHub repository pages and README files cannot display a live Google sign-in dialog or run the app's JavaScript. The prominent link above opens the independent GitHub Pages app, where the sign-in prompt lives.
+
+## Publishing Brawl Cloud
+
+The `.github/workflows/deploy-pages.yml` workflow publishes the static site with GitHub Pages. In repository Settings → Pages, choose **GitHub Actions** as the source if needed.
 
 ## Wii Mod Manager Releases
 
-The `.github/workflows/build-wii.yml` workflow is separate. When its build succeeds, it publishes only the Wii manager package:
+The `.github/workflows/build-wii.yml` workflow is separate. When its build succeeds, it publishes the Wii manager package:
 
 - `boot.dol`
 - `meta.xml`
 - `brawl-mod-manager-wii.zip`
 
-No cloud-library website files or mod archives are attached to these releases. The Releases page is: https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases
+Releases: https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases
 
-## Important Wii compatibility boundary
+## Wii compatibility status
 
-The current native Wii app is a profile-menu prototype. It does not yet fetch the cloud catalog, download mod files, hook Brawl's file access, or load network mods inside the game. A static cloud library and a Wii Homebrew Channel menu do not automatically create a working network mod loader. That end-to-end loader still needs to be implemented and tested on Dolphin and a real Wii.
+The current native Wii app is still a profile-menu prototype. It does not yet authenticate to Google Drive, fetch the Brawl Cloud catalog, download files to SD, hook Brawl's file access, or load network mods inside the game. That end-to-end loader still needs to be implemented and tested on Dolphin and a real Wii.
 
-## Legacy Cloudflare code
+## Mod permissions
 
-The old `cloud/worker/` folder is a legacy experiment and is not part of the current Brawl Cloud website or Wii release workflow. It requires Cloudflare R2, which was not enabled on the connected account.
+Only upload mods you created or have permission to store and share. For other mods, use the creator's official download or project page rather than rehosting files without permission.
