@@ -1,26 +1,34 @@
-# Brawl Mod Manager: Wii Homebrew prototype
+# Brawl Mod Manager for Wii
 
-This is a companion profile manager for the existing Super Smash Bros. Brawl game. It is not a separate game and it is not a replacement or fork of Riivolution.
+A **standalone Wii Homebrew Channel application** that will act as the console-side companion to the separate Brawl Cloud website.
+
+## Two-app design
+
+- **Brawl Cloud (web):** account sign-in, mod storage, uploads, metadata, and catalog publishing.
+- **Brawl Mod Manager (Wii):** browse the shared catalog, select Wii-compatible profiles, and manage supported downloads on the SD card.
+
+The Wii app does not host the library and must not contain Google sign-in credentials or cloud administrator secrets. It should consume a read-only catalog/download API.
 
 ## Current native Wii app scaffold
 
-The first Homebrew Channel application source is in this folder:
-- `source/main.c`: native Wii video/controller initialization and a basic profile-selection screen.
+- `source/main.c`: native Wii video/controller initialization and basic profile-selection screen.
 - `Makefile`: devkitPPC/libogc build configuration.
 - `meta.xml`: Homebrew Channel app metadata.
-- `BUILD.md`: build instructions and current limitations.
-- `riivolution/README.md`: notes for future Riivolution/RiiFS integration.
+- `BUILD.md`: build instructions and limitations.
+- `riivolution/README.md`: future loader integration notes.
 
-The current screen uses placeholder profiles only. It does not yet connect to Wi-Fi, fetch the cloud catalog, create Riivolution XML, start Riivolution, or launch Brawl.
+The current screen is still a prototype with placeholder profiles. It does not yet connect to Wi-Fi, fetch Brawl Cloud's catalog, download files to SD, create Riivolution XML, start Riivolution, or launch Brawl.
 
-## Cloud goal
+## Shared cloud connection
 
-The intended storage experience is iCloud-like: keep the mod library on an internet-accessible server and let compatible Wii loading software request files over the network. Riivolution's RiiFS support is the protocol direction to investigate. RiiFS is not generic HTTPS or direct iCloud Drive access; a compatible server is required.
+The planned API lives in `../cloud/worker/`. It is designed around a public read-only catalog and mod-download endpoints, with separate administrator-only publishing routes. The web app currently uses Google Drive, while this Worker is designed for Cloudflare R2; they are not synchronized yet. A publishing/sync service or unified storage backend is required before the Wii app can see website uploads.
 
-## Important compatibility warning
+The Wii client must validate catalog data, restrict downloads to approved catalog URLs, handle interrupted downloads safely, and avoid storing credentials. Network transport and TLS compatibility must be tested on real Wii hardware.
 
-Standard Riivolution is designed for retail-disc patching. USB Loader GX compatibility is a separate issue and must be tested. Do not assume this app can launch Riivolution or load network assets through USB Loader GX until an end-to-end test succeeds.
+## Mod loading limitations
+
+Riivolution's RiiFS network protocol is not generic HTTPS and is not the same thing as downloading a file from the cloud API. Network catalog/download support alone does not inject assets into Brawl. A separate, tested handoff or file-access integration is required. Compatibility with USB Loader GX must not be assumed.
 
 ## Build status
 
-The source scaffold has been committed, but no compiled `boot.dol` is included. Build it with devkitPPC and libogc in a configured devkitPro environment, then test in Dolphin and on the Wii. Network catalog, RiiFS integration, mod-profile parsing, and launch handoff remain future milestones.
+This source scaffold is not a complete cloud-connected manager. Build with devkitPPC/libogc, then test in Dolphin and on a real Wii. Cloud catalog, download-to-SD, profile parsing, and supported loader handoff remain future milestones.
