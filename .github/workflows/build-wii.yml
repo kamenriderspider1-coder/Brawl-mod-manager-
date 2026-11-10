@@ -20,14 +20,15 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
 
-      - name: Install complete Wii development tools
+      - name: Add ELF-to-DOL converter
         run: |
-          dkp-pacman -Sy --noconfirm wii-dev
-          . /etc/profile.d/devkit-env.sh
+          command -v cc
+          curl -fsSL https://raw.githubusercontent.com/devkitPro/gamecube-tools/master/elftool/elf2dol.c -o /tmp/elf2dol.c
+          cc -O2 -o /usr/local/bin/elf2dol /tmp/elf2dol.c
+          elf2dol -h
 
       - name: Verify Wii toolchain
         run: |
-          . /etc/profile.d/devkit-env.sh
           test -n "$DEVKITPPC"
           test -f "$DEVKITPPC/wii_rules"
           command -v powerpc-eabi-gcc
@@ -35,7 +36,6 @@ jobs:
 
       - name: Build Homebrew Channel manager
         run: |
-          . /etc/profile.d/devkit-env.sh
           cd wii
           make -j2
           test -s boot.dol
