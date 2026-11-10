@@ -1,58 +1,38 @@
 # Brawl Cloud storage
 
-Brawl Cloud is a browser-based file manager backed by this GitHub repository. The website is in the root `index.html`; the public catalog and uploaded files live in this folder.
+Brawl Cloud is a standalone browser app hosted with GitHub Pages. GitHub is used to develop and publish the app; the mod files are stored in the user's own Google Drive.
 
-## Features in the website
+## Google Drive connection
 
-- Browse the public mod catalog without signing in.
-- Search by mod name, creator, description, or compatibility.
-- Filter by category and sort by newest or name.
-- Download files stored in `cloud-library/files/`.
-- Upload permitted files and add their metadata to the catalog.
-- Remove a listed file from the catalog and repository.
+The website now includes a **Connect Google Drive** flow using Google's Identity Services OAuth token flow.
 
-## Uploading from the website
+1. In Google Cloud Console, create or select a project.
+2. Enable the **Google Drive API**.
+3. Configure the Google Auth Platform consent screen.
+4. Create an OAuth 2.0 Client ID with application type **Web application**.
+5. Under **Authorized JavaScript origins**, add the exact origin where the GitHub Pages site is hosted (for this repository's standard GitHub Pages URL, use `https://kamenriderspider1-coder.github.io`; do not add a path).
+6. Open Brawl Cloud, choose **Manage Storage**, paste the OAuth Client ID, and select **Connect Google Drive**.
+7. Sign in to Google and approve the requested access.
 
-1. Open the Brawl Cloud website and choose **Manage Storage**.
-2. Create a GitHub fine-grained personal access token restricted to this repository.
-3. Grant **Contents: Read and write** only. Do not grant unrelated permissions.
-4. Enter the token into the app. It is kept in page memory only, the input is cleared after connecting, and the app does not save it in local storage or commit it.
-5. Choose a file no larger than 20 MB, fill in the details, and upload it.
+Google's OAuth Client ID is a public identifier and is entered in the app. Do not create or enter a client secret in the browser app. The app requests only the `https://www.googleapis.com/auth/drive.file` scope. It creates a **Brawl Cloud** folder and a `brawl-cloud-catalog.json` file in that folder. It can manage files it creates in that app folder, rather than receiving broad access to the user's entire Drive.
 
-The token is a powerful credential. Never paste it into a chat, commit it, or share it. Disconnect when finished. If it is exposed, revoke it in GitHub settings.
+The OAuth access token is kept in page memory only. It is not written to GitHub or browser local storage and is cleared when the user disconnects or closes the page. The OAuth Client ID is saved in browser local storage for convenience; it is not a secret.
 
-## Public storage and limits
+## Storage behavior and limits
 
-- This repository is public. Every uploaded file and catalog entry is public and can be copied by anyone.
-- Only upload files you created or have clear permission to redistribute.
-- This is not private or unlimited storage. GitHub imposes repository and file-size limits; the website uses a conservative 20 MB per-file limit.
-- Keep archives reasonably sized. For larger files, link to the creator's official download page instead of mirroring the archive.
-- Do not upload passwords, access tokens, personal information, or private files.
+- Mod archives are stored in the user's Google Drive, in a folder named **Brawl Cloud**.
+- The catalog is a JSON file inside that folder.
+- The app has a 13 GB target limit for files listed in its Brawl Cloud catalog. This does not reserve 13 GB or increase the Google account's storage quota.
+- Google account storage is shared with Google Drive, Gmail, and Google Photos.
+- The current browser uploader has a conservative 20 MB per-file limit.
+- Google Drive files remain subject to the user's account quota and Google's terms and API limits.
+- Files in the user's Drive are not automatically public. Downloads require appropriate Google account access.
+- Only upload mods you created or have permission to use and store.
 
 ## Catalog format
 
-- `catalog.json` is the public index read by the website.
-- `files/` stores permitted downloadable files.
-- `schema.json` documents the catalog format.
-
-Example entry:
-
-```json
-{
-  "name": "Example Pack",
-  "type": "mod-pack",
-  "creator": "Creator name",
-  "summary": "Short description.",
-  "compatibility": "State the tested game/mod version",
-  "file": "cloud-library/files/example-pack.zip",
-  "size": 123456,
-  "uploadedAt": "2026-11-09T20:00:00.000Z",
-  "source": "https://creator.example/download-page"
-}
-```
-
-The example is documentation only, not an actual downloadable mod.
+Catalog entries include a Google Drive `fileId`, file size, category, creator, description, compatibility, and upload date. The catalog is stored in the user's own Drive folder, not in this repository.
 
 ## Wii integration status
 
-The website's cloud file manager and the Wii Homebrew app are separate pieces. The Wii prototype does not yet authenticate to GitHub, fetch this catalog, download files to SD, or hand off to Riivolution. Those Wii networking and game integration milestones still need to be implemented and tested.
+The Wii Homebrew app is still a prototype. It does not yet authenticate to Google Drive, fetch the Brawl Cloud catalog, download files to SD, or hand off to Riivolution. Wii networking and Google Drive integration are separate future milestones; do not assume the current Wii package can access this browser app's Drive session.
