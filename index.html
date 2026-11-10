@@ -35,9 +35,8 @@ hr{border:0;border-top:1px solid var(--line);margin:17px 0}.status{min-height:22
 <div class="notice"><strong>Google Drive storage:</strong> files are saved in a Brawl Cloud folder in your connected Google account. Google storage is shared with Gmail and Google Photos. Only upload files you created or have permission to use.</div></section>
 <section id="manage" class="hidden">
 <div class="panel"><div class="row"><div><h2>Connect Google Drive</h2><p class="muted small">Authorize Brawl Cloud with Google's secure sign-in. Your access token stays in memory and is cleared when you disconnect or close the page.</p></div><span id="authBadge" class="tag">NOT CONNECTED</span></div>
-<div id="signedOut"><div class="field"><label for="googleClientId">Google OAuth Client ID</label><input id="googleClientId" type="text" autocomplete="off" spellcheck="false" placeholder="Paste your Google OAuth Web client ID"></div>
-<div class="row" style="margin-top:10px"><button id="connect" class="primary">Connect Google Drive</button><a class="muted small" href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">Google Cloud credentials ↗</a></div>
-<p class="muted small">Create an OAuth 2.0 Client ID of type Web application. Add your Brawl Cloud website's domain under Authorized JavaScript origins, enable the Google Drive API, and use the <code>drive.file</code> permission. The client ID is public; never put a client secret in this website.</p></div>
+<div id="signedOut"><div class="row" style="margin-top:10px"><button id="connect" class="primary">Continue with Google</button></div>
+<p class="muted small">Google sign-in will connect the selected account to its Brawl Cloud folder. The app is waiting for its one-time Google OAuth registration to be configured by the app administrator. You will not need to paste a Client ID or enter Google Cloud settings.</p></div>
 <div id="signedIn" class="hidden"><div class="row"><div><strong id="who">Google Drive connected</strong><div class="muted small">Brawl Cloud folder is ready in your Drive.</div></div><button id="disconnect" class="danger">Disconnect</button></div></div><div id="authStatus" class="status" aria-live="polite"></div>
 <div class="small muted">Storage target: <strong>13 GB maximum for Brawl Cloud files</strong>. This is a target within your Google account's shared storage, not an increase to Google's free quota.</div><div class="meta" id="storageUsage">Connect Google Drive to check your Brawl Cloud library usage.</div></div>
 <div class="panel"><h2>Upload a mod file</h2><p class="muted small">Files upload directly into your private Brawl Cloud folder in Google Drive and are added to your Drive catalog. For reliability, this version accepts files up to 20 MB each.</p>
@@ -59,7 +58,9 @@ hr{border:0;border-top:1px solid var(--line);margin:17px 0}.status{min-height:22
 const $=id=>document.getElementById(id);
 const DRIVE='https://www.googleapis.com/drive/v3',UPLOAD='https://www.googleapis.com/upload/drive/v3/files';
 const MAX_FILE=20*1024*1024,TARGET_BYTES=13*1024*1024*1024;
-let clientId='',accessToken='',tokenClient=null,folderId='',catalogFileId='',catalog={schemaVersion:1,entries:[]};
+// Set once by the app maintainer after registering Brawl Cloud as a Google OAuth Web app.
+const GOOGLE_OAUTH_CLIENT_ID = '';
+let accessToken='',tokenClient=null,folderId='',catalogFileId='',catalog={schemaVersion:1,entries:[]};
 function setStatus(id,msg,kind=''){const el=$(id);el.textContent=msg;el.className='status '+kind;}
 function setBusy(v){['connect','uploadButton','refresh'].forEach(id=>{if($(id))$(id).disabled=v;});}
 function escapeHTML(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
@@ -74,12 +75,11 @@ function renderCards(){const q=$('search').value.trim().toLowerCase(),type=$('fi
 function multipartBody(metadata,file,boundary){return new Blob(['--'+boundary+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n',JSON.stringify(metadata),'\r\n--'+boundary+'\r\nContent-Type: '+(file.type||'application/octet-stream')+'\r\n\r\n',file,'\r\n--'+boundary+'--'],{type:'multipart/related; boundary='+boundary});}
 async function saveCatalog(){const body=JSON.stringify(catalog,null,2);if(catalogFileId){await driveRequest(UPLOAD+'/'+catalogFileId+'?uploadType=media',{method:'PATCH',headers:{'Content-Type':'application/json'},body});}else{const boundary='brawlcloud_'+crypto.randomUUID().replace(/-/g,'');const blob=new Blob(['--'+boundary+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n',JSON.stringify({name:'brawl-cloud-catalog.json',mimeType:'application/json',parents:[folderId]}),'\r\n--'+boundary+'\r\nContent-Type: application/json\r\n\r\n',body,'\r\n--'+boundary+'--'],{type:'multipart/related; boundary='+boundary});const r=await fetch(UPLOAD+'?uploadType=multipart&fields=id',{method:'POST',headers:driveHeaders({'Content-Type':'multipart/related; boundary='+boundary}),body:blob});if(!r.ok)throw new Error('Could not create the library catalog (HTTP '+r.status+').');catalogFileId=(await r.json()).id;}}
 async function connect() {
-  clientId = $('googleClientId').value.trim();
+  const clientId = GOOGLE_OAUTH_CLIENT_ID.trim();
   if (!clientId || !clientId.endsWith('.apps.googleusercontent.com')) {
-    setStatus('authStatus', 'Enter a valid Google OAuth Web client ID ending in .apps.googleusercontent.com.', 'error');
+    setStatus('authStatus', 'Google sign-in is not configured yet. The app maintainer must register Brawl Cloud once with Google and add the public Web Client ID to the app. This is a one-time setup, not something you should have to enter.', 'error');
     return;
   }
-  localStorage.setItem('brawlCloudGoogleClientId', clientId);
   setBusy(true);
   setStatus('authStatus', "Opening Google's secure sign-in…");
   try {
@@ -132,19 +132,11 @@ $('sort').addEventListener('change',renderCards);
 $('connect').addEventListener('click',connect);
 $('connectTop').addEventListener('click',()=>{
   showTab('manage');
-  const saved=$('googleClientId').value.trim();
-  if(saved){
-    setStatus('authStatus','Starting Google Drive sign-in…');
-    connect();
-  }else{
-    setStatus('authStatus','Setup needed: enter a Google OAuth Web Client ID here first. Google currently blocks Cloud Console access for your school-managed under-18 account, so use an eligible personal Google account or ask your Workspace administrator.','error');
-    $('googleClientId').focus();
-  }
+  connect();
 });
 $('disconnect').addEventListener('click',disconnect);
 $('uploadForm').addEventListener('submit',uploadFile);
 $('file').addEventListener('change',()=>{const f=$('file').files[0];$('fileInfo').textContent=f?f.name+' · '+formatSize(f.size):'No file selected';});
-const savedClientId=localStorage.getItem('brawlCloudGoogleClientId');if(savedClientId)$('googleClientId').value=savedClientId;
 window.addEventListener('pagehide',()=>{accessToken='';});
 loadCatalog();
 </script>
