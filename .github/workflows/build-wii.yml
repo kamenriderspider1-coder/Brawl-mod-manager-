@@ -20,11 +20,17 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
 
+      - name: Verify Wii toolchain
+        run: |
+          test -n "$DEVKITPPC"
+          test -f "$DEVKITPPC/wii_rules"
+          command -v powerpc-eabi-gcc
+          command -v elf2dol
+
       - name: Build Homebrew Channel app
         run: |
           cd wii
-          make clean || true
-          make
+          make -j2 boot.dol
           test -s boot.dol
           test -s meta.xml
 
