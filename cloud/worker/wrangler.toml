@@ -1,0 +1,9 @@
+name = "brawl-mod-cloud"
+main = "src/index.js"
+compatibility_date = "2026-11-09"
+
+[[r2_buckets]]
+binding = "BRAWL_MODS"
+bucket_name = "brawl-cloud"
+
+# Set ADMIN_TOKEN as a Worker secret. Never commit it to this repository.
