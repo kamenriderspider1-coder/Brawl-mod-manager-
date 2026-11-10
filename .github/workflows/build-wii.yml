@@ -24,13 +24,15 @@ jobs:
         run: |
           test -n "$DEVKITPPC"
           test -f "$DEVKITPPC/wii_rules"
+          export PATH="$DEVKITPPC/bin:$PATH"
           command -v powerpc-eabi-gcc
 
       - name: Build Homebrew Channel manager
         run: |
           curl -fsSL https://raw.githubusercontent.com/devkitPro/gamecube-tools/master/elftool/elf2dol.c -o /tmp/elf2dol.c
           cc -O2 -o /tmp/elf2dol /tmp/elf2dol.c
-          export PATH="/tmp:$PATH"
+          export PATH="$DEVKITPPC/bin:/tmp:$PATH"
+          command -v powerpc-eabi-gcc
           command -v elf2dol
           cd wii
           make -j2
