@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Brawl Cloud catalog",
+  "title": "Brawl Cloud Google Drive catalog",
   "type": "object",
   "required": ["schemaVersion", "entries"],
   "properties": {
@@ -10,19 +10,14 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["name", "type"],
+        "required": ["name", "type", "fileId", "size", "uploadedAt"],
         "properties": {
           "name": { "type": "string", "minLength": 1 },
-          "type": {
-            "enum": ["character", "stage", "music", "ui", "mod-pack", "other"]
-          },
+          "type": { "enum": ["character", "stage", "music", "ui", "mod-pack", "other"] },
           "creator": { "type": "string" },
           "summary": { "type": "string" },
           "compatibility": { "type": "string" },
-          "file": {
-            "type": "string",
-            "description": "Repository-relative path to a permitted file, e.g. cloud-library/files/example.zip"
-          },
+          "fileId": { "type": "string", "description": "Google Drive file ID in the user's Brawl Cloud folder" },
           "download": { "type": "string", "format": "uri" },
           "source": { "type": "string", "format": "uri" },
           "size": { "type": "integer", "minimum": 0 },
@@ -30,7 +25,7 @@
         },
         "additionalProperties": false,
         "anyOf": [
-          { "required": ["file"] },
+          { "required": ["fileId"] },
           { "required": ["download"] },
           { "required": ["source"] }
         ]
