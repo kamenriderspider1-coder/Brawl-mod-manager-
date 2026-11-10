@@ -73,6 +73,4 @@ jobs:
           prerelease: true
           make_latest: false
           files: |
-            wii/boot.dol
-            wii/meta.xml
             dist/brawl-mod-manager-wii.zip
