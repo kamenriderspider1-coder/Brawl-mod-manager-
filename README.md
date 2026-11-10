@@ -1,27 +1,40 @@
-# Brawl Mod Manager
+# Brawl Mod Manager + Brawl Cloud
 
-A Wii-focused manager and cloud-library prototype for Super Smash Bros. Brawl mods.
+This repository contains two separate pieces:
 
-## Current components
+1. **Brawl Cloud**: a public, repository-backed mod catalog and file library.
+2. **Wii Mod Manager**: a separate Homebrew Channel manager prototype. Its downloadable package belongs in GitHub Releases.
 
-- `index.html`: browser discovery and import-queue prototype.
-- `catalog.json`: starter metadata catalog with official-source links.
-- `wii/`: native Homebrew Channel manager scaffold. It currently displays placeholder profiles and is not yet a Brawl in-game loader.
-- `cloud/worker/`: Cloudflare Worker HTTP API backed by an R2 bucket. It serves a catalog and mod objects, with token-protected upload endpoints.
-- `cloud/README.md`: profile format and hosting constraints.
+## Brawl Cloud
 
-## Cloud service
+- Website entry point: `index.html`
+- Public mod catalog: `cloud-library/catalog.json`
+- Mod files you are allowed to redistribute: `cloud-library/files/`
+- The website reads the catalog and provides links to the permitted files or creators' official pages.
+- Mod archives are **not** published as GitHub Release assets.
 
-The Worker source and Wrangler configuration are in [cloud/worker](cloud/worker/README.md). It expects an R2 bucket named `brawl-cloud` and a Worker secret named `ADMIN_TOKEN`.
+This is a public static library, not private or unlimited storage. GitHub repository file hosting has practical file and repository-size limits. A secure upload form cannot safely store a GitHub access token in public browser code, so this version is read-only for visitors. To add a file, add it to `cloud-library/files/` and add its metadata to `cloud-library/catalog.json` in the repository.
 
-**Provisioning status:** the connected Cloudflare account currently has R2 disabled. Cloudflare returned error 10042 and requires R2 to be enabled in the Dashboard before a bucket or live service can be created. No live endpoint is deployed yet.
+Only add files you created or that their authors explicitly permit you to redistribute. For other mods, list the creator's official page instead of mirroring the file.
+
+## Publishing the Brawl Cloud website
+
+The `.github/workflows/deploy-pages.yml` workflow publishes the static site with GitHub Pages. In repository Settings → Pages, choose **GitHub Actions** as the source if it is not already selected. GitHub's official guide describes this deployment setup: https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages
+
+## Wii Mod Manager Releases
+
+The `.github/workflows/build-wii.yml` workflow is separate. When its build succeeds, it publishes only the Wii manager package:
+
+- `boot.dol`
+- `meta.xml`
+- `brawl-mod-manager-wii.zip`
+
+No cloud-library website files or mod archives are attached to these releases. The Releases page is: https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases
 
 ## Important Wii compatibility boundary
 
-The cloud service is an HTTP API. It is not a Riivolution RiiFS server. Standard Riivolution's RiiFS network protocol is not generic HTTPS, and Cloudflare Workers do not expose a raw TCP RiiFS listener. A Wii-side HTTP client plus a Brawl runtime file-access hook would still be required to stream these objects into the game. The existing Homebrew Channel screen does not implement that hook.
+The current native Wii app is a profile-menu prototype. It does not yet fetch the cloud catalog, download mod files, hook Brawl's file access, or load network mods inside the game. A static cloud library and a Wii Homebrew Channel menu do not automatically create a working network mod loader. That end-to-end loader still needs to be implemented and tested on Dolphin and a real Wii.
 
-This repository therefore does **not** yet provide a working zero-SD Brawl mod loader. The goal remains to keep the mod library in R2 and keep only the menu/loader components on the SD card, but that end-to-end path must be implemented and tested before it can be called functional.
+## Legacy Cloudflare code
 
-## Publishing rules
-
-Only upload mod files you created or that their authors explicitly permit you to host. Otherwise, keep metadata and links to official creator pages. Never commit Cloudflare tokens, passwords, or private credentials.
+The old `cloud/worker/` folder is a legacy experiment and is not part of the current Brawl Cloud website or Wii release workflow. It requires Cloudflare R2, which was not enabled on the connected account.
