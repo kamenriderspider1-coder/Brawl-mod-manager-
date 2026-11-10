@@ -1,94 +1,86 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0b1020">
-<title>Brawl Cloud</title>
+<title>Brawl Cloud | Mod Storage</title>
 <style>
-:root{color-scheme:dark;--bg:#0b1020;--panel:#141d31;--line:#2a3854;--text:#f2f6ff;--muted:#a8b5ca;--accent:#78e0c0;--blue:#8ab8ff}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#203d62,var(--bg) 62%);color:var(--text);font:15px system-ui,-apple-system,Segoe UI,sans-serif}
-header{padding:30px max(20px,calc((100vw - 1080px)/2));border-bottom:1px solid var(--line);background:#0b1020d9}
-h1{font-size:clamp(2.1rem,6vw,3.3rem);letter-spacing:-.05em;margin:0}header p{max-width:700px;color:var(--muted);line-height:1.6}
-main{max-width:1080px;margin:auto;padding:24px 18px 60px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
-.tab{border:1px solid var(--line);background:#121b2c;color:var(--muted);padding:10px 15px;border-radius:12px;font:inherit;cursor:pointer}
-.tab.active{background:#183b3a;border-color:#367b70;color:#eafff8}
-.panel{border:1px solid var(--line);background:linear-gradient(145deg,#18253b,#111a2a);border-radius:17px;padding:19px;margin:15px 0}
-h2{font-size:1.2rem;margin:0 0 10px}.muted{color:var(--muted);line-height:1.55}
-.toolbar{display:grid;grid-template-columns:1fr 190px;gap:10px;margin:16px 0}
-input,select{width:100%;min-width:0;padding:12px;border:1px solid var(--line);border-radius:11px;background:#0d1626;color:var(--text);font:inherit}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
-.card{border:1px solid var(--line);background:#0d1728;border-radius:14px;padding:15px;display:flex;flex-direction:column;gap:9px}
-.card h3{margin:0;font-size:1.03rem}.tag{font-size:.72rem;color:var(--accent);text-transform:uppercase;letter-spacing:.08em}
-.meta{font-size:.82rem;color:var(--muted);overflow-wrap:anywhere}
-a.button{display:inline-block;text-decoration:none;border:1px solid #426b83;border-radius:10px;padding:10px 13px;background:#17344a;color:white;font-weight:650;width:max-content}
-a.primary{background:#174b42;border-color:#347d6d}.empty{padding:25px;text-align:center;border:1px dashed var(--line);border-radius:12px;color:var(--muted)}
-.notice{border:1px solid #66572c;background:#2b271b;color:#f5e8bf;border-radius:13px;padding:14px;line-height:1.5}
-.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}.step{background:#0d1728;border:1px solid var(--line);border-radius:12px;padding:13px}
-.hidden{display:none}footer{color:var(--muted);font-size:.82rem;margin-top:26px;line-height:1.6}
-@media(max-width:620px){.toolbar{grid-template-columns:1fr}}
+:root{color-scheme:dark;--bg:#080d18;--line:#293b57;--text:#f3f6ff;--muted:#a8b6cc;--mint:#79e3c3}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -18%,#23466b 0%,var(--bg) 58%);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+header{padding:30px max(18px,calc((100vw - 1120px)/2));border-bottom:1px solid var(--line);background:#080d18df}.brand{display:flex;align-items:center;gap:13px}.logo{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(145deg,#286c69,#1a3858);font-size:25px}
+h1{font-size:clamp(2rem,5vw,3.1rem);letter-spacing:-.055em;margin:0}header p{color:var(--muted);max-width:720px;margin:10px 0 0}main{max-width:1120px;margin:auto;padding:22px 18px 60px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}button,.btn{font:inherit;border:1px solid var(--line);border-radius:11px;padding:10px 14px;background:#17253a;color:var(--text);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+button:hover,.btn:hover{border-color:#6685a9}button:disabled{opacity:.55;cursor:wait}.tab{color:var(--muted)}.tab.active{background:#17453f;border-color:#367e70;color:#effff9}
+.panel{border:1px solid var(--line);background:linear-gradient(145deg,#17253a,#101827);border-radius:17px;padding:18px;margin:14px 0;box-shadow:0 12px 35px #0002}
+h2{font-size:1.2rem;margin:0 0 7px}h3{font-size:1rem;margin:0}.muted{color:var(--muted)}.small{font-size:.83rem}.toolbar{display:grid;grid-template-columns:minmax(180px,1fr) 190px 150px;gap:9px;margin:16px 0}
+input,select,textarea{font:inherit;color:var(--text);background:#0b1423;border:1px solid var(--line);border-radius:10px;padding:11px;width:100%;min-width:0}textarea{min-height:80px;resize:vertical}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(245px,1fr));gap:12px}.card{background:#0c1626;border:1px solid var(--line);border-radius:14px;padding:15px;display:flex;flex-direction:column;gap:9px;min-width:0}
+.tag{color:var(--mint);font-size:.72rem;text-transform:uppercase;letter-spacing:.09em}.meta{font-size:.82rem;color:var(--muted);overflow-wrap:anywhere}.card-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:5px}
+.primary{background:#175348;border-color:#397f70}.danger{background:#3a2029;border-color:#75404a;color:#ffdede}.ghost{background:transparent}.empty{border:1px dashed #40536f;border-radius:13px;text-align:center;padding:28px;color:var(--muted);grid-column:1/-1}
+.notice{border:1px solid #66572c;background:#292518;color:#f6e9c2;border-radius:12px;padding:13px;margin:12px 0}.success{border-color:#286a59;background:#102c28;color:#d6fff1}.error{border-color:#77404b;background:#321d25;color:#ffe0e0}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.hidden{display:none!important}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:flex;flex-direction:column;gap:5px}.field.full{grid-column:1/-1}.field label{font-size:.84rem;color:var(--muted)}
+hr{border:0;border-top:1px solid var(--line);margin:17px 0}.status{min-height:22px;margin:10px 0;color:var(--muted)}footer{font-size:.82rem;color:var(--muted);line-height:1.65;margin-top:25px}
+@media(max-width:680px){.toolbar{grid-template-columns:1fr 1fr}.toolbar input{grid-column:1/-1}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}}
 </style>
 </head>
 <body>
-<header><h1>☁️ Brawl Cloud</h1><p>Your Brawl mod library, organized in one place. Browse the public cloud catalog here. The Wii Mod Manager download is kept separate in the repository's Releases.</p></header>
+<header><div class="brand"><div class="logo">☁️</div><div><h1>Brawl Cloud</h1><div class="muted">Your Brawl mod library, in one place.</div></div></div><p>Browse, organize, upload and download permitted mod files. GitHub is the storage engine behind this app.</p></header>
 <main>
-<nav class="tabs" aria-label="Main sections">
-<button class="tab active" data-tab="library">Cloud Library</button>
-<button class="tab" data-tab="manager">Wii Mod Manager</button>
-</nav>
-<section id="library">
-<div class="panel">
-<h2>Mod library</h2>
-<p class="muted">Browse the files and creator links currently published in the cloud-library folder. Search by name or filter by type.</p>
-<div class="toolbar"><input id="search" type="search" placeholder="Search mods, creators, descriptions…"><select id="type"><option value="">All types</option><option value="character">Characters / skins</option><option value="stage">Stages</option><option value="music">Music / sound</option><option value="ui">Menus / UI</option><option value="mod-pack">Mod packs</option><option value="other">Other</option></select></div>
-<div id="status" class="muted" aria-live="polite">Loading catalog…</div>
-<div id="mods" class="grid"></div>
-</div>
-<div class="panel">
-<h2>How to add mods to the cloud</h2>
-<div class="steps">
-<div class="step"><strong>1. Add the archive</strong><p class="muted">Put a mod file you are allowed to redistribute in <code>cloud-library/files/</code> in the GitHub repository.</p></div>
-<div class="step"><strong>2. Add its catalog entry</strong><p class="muted">Add the file path, name, type, creator, and source details to <code>cloud-library/catalog.json</code>.</p></div>
-<div class="step"><strong>3. Publish</strong><p class="muted">After the commit and Pages deployment, the mod appears here as a downloadable item.</p></div>
-</div>
-<p class="muted">This is a public, repository-backed library, not private or unlimited storage. Large archives and files you do not have permission to redistribute should stay at their creators' official download pages. A secure in-browser upload feature would require a protected sign-in service, so this public page deliberately does not ask for passwords or access tokens.</p>
-</div>
+<nav class="tabs"><button class="tab active" data-tab="library">☁️ Cloud Library</button><button class="tab" data-tab="manage">⬆ Manage Storage</button><button class="tab" data-tab="wii">🎮 Wii Manager</button></nav>
+<section id="library"><div class="panel">
+<div class="row"><div><h2>Cloud library</h2><div class="muted small">Public files stored in this GitHub repository</div></div><button id="refresh" class="ghost">↻ Refresh</button></div>
+<div class="toolbar"><input id="search" type="search" placeholder="Search mods, creators, descriptions…"><select id="filter"><option value="">All categories</option><option value="character">Characters / skins</option><option value="stage">Stages</option><option value="music">Music / sound</option><option value="ui">Menus / UI</option><option value="mod-pack">Mod packs</option><option value="other">Other</option></select><select id="sort"><option value="new">Newest first</option><option value="az">Name A–Z</option></select></div>
+<div id="libraryStatus" class="status" aria-live="polite">Loading cloud catalog…</div><div id="cards" class="grid"></div></div>
+<div class="notice"><strong>Public storage:</strong> files uploaded here are visible to anyone. Only upload files you created or have clear permission to redistribute. This is not private or unlimited storage.</div></section>
+<section id="manage" class="hidden">
+<div class="panel"><div class="row"><div><h2>Storage access</h2><p class="muted small">Sign in with a GitHub fine-grained token to upload or remove files. Browsing and downloads do not require sign-in.</p></div><span id="authBadge" class="tag">READ-ONLY</span></div>
+<div id="signedOut"><div class="field"><label for="token">GitHub access token</label><input id="token" type="password" autocomplete="off" spellcheck="false" placeholder="Paste a fine-grained token with Contents: Read and write"></div>
+<div class="row" style="margin-top:10px"><button id="connect" class="primary">Connect GitHub</button><a class="muted small" href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Create a fine-grained token ↗</a></div>
+<p class="muted small">Limit the token to this repository only and grant Contents: Read and write. The app keeps it in memory only, clears the input after connecting, and never saves it to browser storage. Disconnect before closing the page.</p></div>
+<div id="signedIn" class="hidden"><div class="row"><div><strong id="who"></strong><div class="muted small">Connected for this browser session only</div></div><button id="disconnect" class="danger">Disconnect</button></div></div><div id="authStatus" class="status" aria-live="polite"></div></div>
+<div class="panel"><h2>Upload a mod file</h2><p class="muted small">Uploads go into <code>cloud-library/files/</code> and are added to the public catalog. For reliability, this app accepts files up to 20 MB each.</p>
+<form id="uploadForm"><div class="formgrid">
+<div class="field full"><label for="file">Choose a file (max 20 MB)</label><input id="file" type="file" required></div>
+<div class="field"><label for="name">Mod name</label><input id="name" required maxlength="90" placeholder="Example: Custom Stage Pack"></div>
+<div class="field"><label for="category">Category</label><select id="category"><option value="mod-pack">Mod pack</option><option value="character">Character / skin</option><option value="stage">Stage</option><option value="music">Music / sound</option><option value="ui">Menu / UI</option><option value="other">Other</option></select></div>
+<div class="field"><label for="creator">Creator</label><input id="creator" maxlength="90" placeholder="Creator name or handle"></div>
+<div class="field"><label for="compatibility">Compatibility</label><input id="compatibility" maxlength="120" placeholder="Example: Brawl USA, Project+ version…"></div>
+<div class="field full"><label for="summary">Description</label><textarea id="summary" maxlength="500" placeholder="What does this mod include?"></textarea></div>
+<div class="field full"><label for="source">Original creator/source page (optional)</label><input id="source" type="url" placeholder="https://…"></div>
+</div><div class="row" style="margin-top:13px"><button id="uploadButton" class="primary" type="submit">⬆ Upload to Brawl Cloud</button><span id="fileInfo" class="muted small">No file selected</span></div></form><div id="uploadStatus" class="status" aria-live="polite"></div></div>
+<div class="panel"><h2>Storage rules</h2><ul class="muted small"><li>Files are public because this GitHub repository is public.</li><li>Use a fine-grained token restricted to this repository, with Contents read/write permission only.</li><li>Never paste a token into a chat, commit it, or share it with anyone.</li><li>Keep files small. GitHub is repository storage, not an unlimited file-hosting service.</li><li>Only upload files you own or are authorized to redistribute.</li></ul></div>
 </section>
-<section id="manager" class="hidden">
-<div class="panel">
-<h2>Wii Mod Manager</h2>
-<p class="muted">The Releases section is reserved for the Wii Homebrew Channel manager package only. Cloud-library data and mod archives do not go in Releases.</p>
-<a class="button primary" href="https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases" target="_blank" rel="noopener">Open Wii Manager Releases</a>
-<p class="muted">The downloadable package will appear after the Wii build workflow succeeds. It is a manager prototype, not yet a finished in-game network mod loader.</p>
-</div>
-</section>
-<footer>Hosted as a static GitHub Pages site. Public catalog and permitted files are stored in this repository. Wii network loading remains a separate development milestone.</footer>
+<section id="wii" class="hidden"><div class="panel"><h2>Wii Mod Manager</h2><p class="muted">The Wii Homebrew Channel package is published separately from mod files.</p><a class="btn primary" href="https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases" target="_blank" rel="noopener">Open Wii Manager Releases ↗</a><hr><p class="muted small">Important: the current Wii app is still a prototype. This website's cloud file manager does not automatically connect the Wii to GitHub. Wii networking, safe downloads to SD, and Riivolution integration are separate features that still need to be built and tested.</p></div></section>
+<footer>Hosted on GitHub Pages · Storage: this public GitHub repository · No separate cloud account. The access token is session-only and is never written into the repository or browser local storage.</footer>
 </main>
 <script>
-let entries=[];
-const mods=document.getElementById('mods'),statusEl=document.getElementById('status');
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function render(){
- const q=document.getElementById('search').value.trim().toLowerCase(),t=document.getElementById('type').value;
- const found=entries.filter(x=>(!t||x.type===t)&&[x.name,x.creator,x.summary,x.type].join(' ').toLowerCase().includes(q));
- statusEl.textContent=found.length+' item(s) in the public catalog';
- if(!found.length){mods.innerHTML='<div class="empty">No matching mods yet. Add permitted files and entries to cloud-library in GitHub.</div>';return}
- mods.innerHTML=found.map(x=>{
-  const href=x.file?new URL(x.file,location.href).href:x.download||x.source||'';
-  const label=x.file?'Download mod':(x.download?'Open download':'Open creator page');
-  const link=href?'<a class="button" href="'+esc(href)+'" target="_blank" rel="noopener">'+label+'</a>':'';
-  const source=x.source?'<div class="meta">Creator/source: <a href="'+esc(x.source)+'" target="_blank" rel="noopener">Open source page</a></div>':'';
-  return '<article class="card"><span class="tag">'+esc(x.type||'other')+'</span><h3>'+esc(x.name||'Untitled mod')+'</h3><p class="muted">'+esc(x.summary||'No description provided.')+'</p><div class="meta">Creator: '+esc(x.creator||'Not listed')+'</div><div class="meta">Compatibility: '+esc(x.compatibility||'Check creator instructions')+'</div>'+source+link+'</article>';
- }).join('');
-}
-document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{
- document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));
- document.getElementById('library').classList.toggle('hidden',b.dataset.tab!=='library');
- document.getElementById('manager').classList.toggle('hidden',b.dataset.tab!=='manager');
-}));
-document.getElementById('search').addEventListener('input',render);
-document.getElementById('type').addEventListener('change',render);
-fetch('./cloud-library/catalog.json').then(r=>{if(!r.ok)throw new Error('Catalog not found');return r.json()}).then(data=>{entries=Array.isArray(data.entries)?data.entries:[];render()}).catch(()=>{statusEl.textContent='Could not load the catalog. Check that cloud-library/catalog.json exists and Pages has deployed.';mods.innerHTML='<div class="empty">Catalog unavailable.</div>'});
+'use strict';
+const OWNER='kamenriderspider1-coder',REPO='Brawl-mod-manager-',BRANCH='main',CATALOG='cloud-library/catalog.json',MAX_FILE=20*1024*1024;
+const API='https://api.github.com/repos/'+OWNER+'/'+REPO;
+let accessToken='',catalog={schemaVersion:1,description:'Public Brawl Cloud catalog. Only list files you may redistribute.',entries:[]};
+const $=id=>document.getElementById(id);
+const headers=()=>({'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',...(accessToken?{'Authorization':'Bearer '+accessToken}:{})});
+function escapeHTML(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function setStatus(id,msg,kind=''){const el=$(id);el.textContent=msg;el.className='status '+kind;}
+function setBusy(v){['connect','uploadButton','refresh'].forEach(id=>$(id).disabled=v);}
+function apiError(data,status){return (data&&data.message?data.message:'GitHub request failed')+' (HTTP '+status+')';}
+async function request(url,options={}){const r=await fetch(url,{...options,headers:{...headers(),...(options.headers||{})}});let data={};try{data=await r.json()}catch{}if(!r.ok)throw new Error(apiError(data,r.status));return data;}
+async function loadCatalog(){setStatus('libraryStatus','Loading cloud catalog…');try{const d=await fetch('./'+CATALOG+'?v='+Date.now(),{cache:'no-store'});if(!d.ok)throw new Error('Catalog request returned '+d.status);const j=await d.json();catalog={schemaVersion:1,description:j.description||'',entries:Array.isArray(j.entries)?j.entries:[]};renderCards();setStatus('libraryStatus',catalog.entries.length+' item(s) in the public cloud library.');}catch(e){setStatus('libraryStatus','Could not load catalog: '+e.message,'error');$('cards').innerHTML='<div class="empty">Cloud catalog unavailable. Try Refresh in a moment.</div>';}}
+function fileURL(path){return 'https://raw.githubusercontent.com/'+OWNER+'/'+REPO+'/'+BRANCH+'/'+path.split('/').map(encodeURIComponent).join('/');}
+function renderCards(){const q=$('search').value.trim().toLowerCase(),type=$('filter').value,sort=$('sort').value;let rows=catalog.entries.filter(x=>(!type||x.type===type)&&[x.name,x.creator,x.summary,x.type,x.compatibility].join(' ').toLowerCase().includes(q));rows.sort((a,b)=>sort==='az'?String(a.name).localeCompare(String(b.name)):String(b.uploadedAt||'').localeCompare(String(a.uploadedAt||'')));$('cards').innerHTML=rows.length?rows.map(x=>{const href=x.file?fileURL(x.file):(x.download||x.source||'');const size=x.size?formatSize(x.size):'';return '<article class="card"><span class="tag">'+escapeHTML(x.type||'other')+'</span><h3>'+escapeHTML(x.name||'Untitled file')+'</h3><div class="muted small">'+escapeHTML(x.summary||'No description provided.')+'</div><div class="meta">Creator: '+escapeHTML(x.creator||'Not listed')+'</div><div class="meta">Compatibility: '+escapeHTML(x.compatibility||'Not specified')+'</div><div class="meta">'+escapeHTML(size)+(x.uploadedAt?' · Added '+escapeHTML(new Date(x.uploadedAt).toLocaleDateString()):'')+'</div><div class="card-actions">'+(href?'<a class="btn primary" href="'+escapeHTML(href)+'" target="_blank" rel="noopener">⬇ Download / open</a>':'')+(accessToken&&x.file?'<button class="danger remove" data-file="'+escapeHTML(x.file)+'">Remove</button>':'')+'</div></article>';}).join(''):'<div class="empty">No matching files yet. Upload your first permitted mod from Manage Storage.</div>';document.querySelectorAll('.remove').forEach(b=>b.addEventListener('click',()=>removeEntry(b.dataset.file)));}
+function formatSize(n){if(n<1024)return n+' B';if(n<1048576)return (n/1024).toFixed(1)+' KB';return (n/1048576).toFixed(1)+' MB';}
+function utf8Base64(str){const bytes=new TextEncoder().encode(str);let binary='';for(let i=0;i<bytes.length;i+=0x8000)binary+=String.fromCharCode(...bytes.subarray(i,i+0x8000));return btoa(binary);}
+function bytesBase64(buffer){const bytes=new Uint8Array(buffer);let binary='';for(let i=0;i<bytes.length;i+=0x8000)binary+=String.fromCharCode(...bytes.subarray(i,i+0x8000));return btoa(binary);}
+async function getCatalogForWrite(){const d=await request(API+'/contents/'+CATALOG+'?ref='+BRANCH);const raw=atob(d.content.replace(/\n/g,''));const bytes=Uint8Array.from(raw,c=>c.charCodeAt(0));return {sha:d.sha,data:JSON.parse(new TextDecoder().decode(bytes))};}
+async function saveCatalog(next,sha,message){return request(API+'/contents/'+CATALOG,{method:'PUT',body:JSON.stringify({message,content:utf8Base64(JSON.stringify(next,null,2)+'\n'),sha,branch:BRANCH})});}
+function cleanFilename(name){return name.normalize('NFKD').replace(/[^a-zA-Z0-9._-]+/g,'-').replace(/^-+|-+$/g,'').slice(0,100)||'upload.bin';}
+async function connect(){const t=$('token').value.trim();if(!t){setStatus('authStatus','Paste a GitHub token first.','error');return;}setBusy(true);setStatus('authStatus','Checking repository access…');try{const r=await fetch(API,{headers:{'Accept':'application/vnd.github+json','Authorization':'Bearer '+t,'X-GitHub-Api-Version':'2022-11-28'}});const d=await r.json();if(!r.ok)throw new Error(apiError(d,r.status));if(!d.permissions||!d.permissions.push)throw new Error('This token can read the repository but does not have write access. Grant Contents: Read and write.');accessToken=t;$('token').value='';$('signedOut').classList.add('hidden');$('signedIn').classList.remove('hidden');$('authBadge').textContent='CONNECTED';$('who').textContent='GitHub repository access verified';setStatus('authStatus','Connected. Your token is held in memory only.','success');renderCards();}catch(e){accessToken='';setStatus('authStatus',e.message,'error');}finally{setBusy(false);}}
+function disconnect(){accessToken='';$('token').value='';$('signedOut').classList.remove('hidden');$('signedIn').classList.add('hidden');$('authBadge').textContent='READ-ONLY';setStatus('authStatus','Disconnected.','');renderCards();}
+async function uploadFile(ev){ev.preventDefault();if(!accessToken){setStatus('uploadStatus','Connect GitHub in Storage access before uploading.','error');return;}const f=$('file').files[0];if(!f){setStatus('uploadStatus','Choose a file first.','error');return;}if(f.size>MAX_FILE){setStatus('uploadStatus','This file is over the 20 MB app limit. Choose a smaller file.','error');return;}if(!f.size){setStatus('uploadStatus','Empty files cannot be uploaded.','error');return;}const name=$('name').value.trim();if(!name){setStatus('uploadStatus','Enter a mod name.','error');return;}const source=$('source').value.trim();if(source&&!/^https:\/\//i.test(source)){setStatus('uploadStatus','Source page must use HTTPS.','error');return;}setBusy(true);$('uploadButton').textContent='Uploading…';try{setStatus('uploadStatus','Reading file…');const path='cloud-library/files/'+Date.now()+'-'+cleanFilename(f.name);const b64=bytesBase64(await f.arrayBuffer());setStatus('uploadStatus','Uploading file to GitHub…');await request(API+'/contents/'+path,{method:'PUT',body:JSON.stringify({message:'Upload cloud mod: '+name,content:b64,branch:BRANCH})});setStatus('uploadStatus','File uploaded. Updating the public catalog…');const current=await getCatalogForWrite();const next=current.data;if(!Array.isArray(next.entries))next.entries=[];next.entries.push({name,type:$('category').value,creator:$('creator').value.trim(),summary:$('summary').value.trim(),compatibility:$('compatibility').value.trim(),file:path,size:f.size,uploadedAt:new Date().toISOString(),...(source?{source}:{})});await saveCatalog(next,current.sha,'Add cloud mod: '+name);catalog=next;renderCards();$('uploadForm').reset();$('fileInfo').textContent='No file selected';setStatus('uploadStatus','Upload complete. '+name+' is now in the public cloud library.','success');setStatus('libraryStatus',catalog.entries.length+' item(s) in the public cloud library.');}catch(e){setStatus('uploadStatus','Upload stopped: '+e.message+' If the file uploaded before the error, it may remain in cloud-library/files without a catalog entry.','error');}finally{setBusy(false);$('uploadButton').textContent='⬆ Upload to Brawl Cloud';}}
+async function removeEntry(path){if(!accessToken||!confirm('Remove this file from the public Brawl Cloud catalog and delete its stored copy?'))return;setBusy(true);setStatus('libraryStatus','Removing file…');try{const current=await getCatalogForWrite();const entry=current.data.entries.find(x=>x.file===path);if(!entry)throw new Error('That file is no longer listed in the catalog.');const next={...current.data,entries:current.data.entries.filter(x=>x.file!==path)};await saveCatalog(next,current.sha,'Remove cloud mod: '+entry.name);try{const file=await request(API+'/contents/'+path+'?ref='+BRANCH);await request(API+'/contents/'+path,{method:'DELETE',body:JSON.stringify({message:'Delete cloud mod file: '+entry.name,sha:file.sha,branch:BRANCH})});setStatus('libraryStatus','Removed '+entry.name+' from the library and repository.','success');}catch(e){setStatus('libraryStatus','Removed from catalog, but the stored file may remain: '+e.message,'error');}catalog=next;renderCards();}catch(e){setStatus('libraryStatus','Could not remove file: '+e.message,'error');}finally{setBusy(false);}}
+document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));['library','manage','wii'].forEach(id=>$(id).classList.toggle('hidden',id!==b.dataset.tab));}));
+$('refresh').addEventListener('click',loadCatalog);$('search').addEventListener('input',renderCards);$('filter').addEventListener('change',renderCards);$('sort').addEventListener('change',renderCards);$('connect').addEventListener('click',connect);$('disconnect').addEventListener('click',disconnect);$('uploadForm').addEventListener('submit',uploadFile);$('file').addEventListener('change',()=>{const f=$('file').files[0];$('fileInfo').textContent=f?f.name+' · '+formatSize(f.size):'No file selected';});
+window.addEventListener('pagehide',()=>{accessToken='';});
+loadCatalog();
 </script>
-</body>
-</html>
+</body></html>
