@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0b1020">
-<title>Brawl Mod Manager | Local REX + Cloud Mods</title>
+<title>Brawl Mod Manager | Wii App + Cloud Mod Library</title>
 <style>
 :root{color-scheme:dark;--bg:#080d18;--panel:#121e30;--line:#293b57;--text:#f3f6ff;--muted:#a8b6cc;--mint:#79e3c3;--blue:#8bbcff}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -18%,#23466b 0%,var(--bg) 58%);color:var(--text);font:15px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}
@@ -19,22 +19,22 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
 </style>
 </head>
 <body>
-<header><div class="brand"><div class="logo">🎮</div><div><h1>Brawl Mod Manager</h1><div class="muted">Your existing REX setup stays local. Additional mod packs live in the cloud.</div></div></div><p>One library view, two storage locations: keep REX on the Wii SD card and browse other mod packs from this project's free GitHub cloud library.</p></header>
+<header><div class="brand"><div class="logo">🎮</div><div><h1>Brawl Mod Manager</h1><div class="muted">The Wii app lives on SD. The mod library lives in the cloud.</div></div></div><p>The SD card holds the Brawl Mod Manager homebrew app. The GitHub cloud library is intended to host the mod files, which the Wii manager will access over Wi-Fi through a compatible network-loading system.</p></header>
 <main>
 <section class="panel">
-  <div class="row"><h2>Storage overview</h2><span class="tag">Local + cloud</span></div>
+  <div class="row"><h2>Storage overview</h2><span class="tag">Wii app + cloud library</span></div>
   <div class="storage-grid">
     <article class="storage local">
       <div class="row"><span class="storage-icon">💾</span><span class="status"><i class="dot"></i> Wii SD card</span></div>
-      <h3>REX · Existing local installation</h3>
-      <p class="muted">Your REX installation stays on your SD card. The Wii Mod Manager is intended to check for the existing REX files when it runs. Do not upload another REX copy to the cloud library.</p>
-      <p class="small muted"><strong>Location:</strong> Existing Wii SD card folders. The website cannot inspect your physical SD card; the Wii app must perform that check.</p>
+      <h3>Mod Manager app only</h3>
+      <p class="muted">The SD card contains the Homebrew Channel application and its required app files. It is the launcher and network client, not the intended storage location for the cloud mod library.</p>
+      <p class="small muted"><strong>App location:</strong> <code>sd:/apps/</code>. Any existing REX installation is left untouched and is not duplicated here.</p>
     </article>
     <article class="storage cloud">
       <div class="row"><span class="storage-icon">☁️</span><span class="status"><i class="dot blue"></i> GitHub cloud library</span></div>
-      <h3>Additional mod packs</h3>
+      <h3>Cloud-hosted Brawl mod library</h3>
       <p class="small"><a href="https://kamenriderspider1-coder.github.io/Brawl-mod-manager-/cloud-mods.json" target="_blank" rel="noopener">Open the machine-readable cloud mod link catalog (JSON) ↗</a></p>
-      <p class="muted">The entries below are visible in your cloud library as a catalog. Their original downloads remain hosted by the creators or official project sites; this hub links to those sources rather than copying files without permission.</p>
+      <p class="muted">This page currently contains a catalog of mod sources. The intended finished system will store permitted mod archives in cloud storage and let the Wii manager access supported files over Wi-Fi. A source-page link is not itself a hosted mod archive.</p>
       <div class="steps">
         <div class="step"><strong>Project+</strong><p>Official competitive Brawl mod build.</p><p><a href="https://projectplusgame.com/download" target="_blank" rel="noopener">Official download ↗</a></p></div>
         <div class="step"><strong>Project+ All-Stars v1.1.6</strong><p>Community build combining character versions, modern costumes, and quality-of-life updates.</p><p><a href="https://gamebanana.com/mods/626137" target="_blank" rel="noopener">GameBanana page ↗</a></p></div>
@@ -45,15 +45,15 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
         <div class="step"><strong>Subspace Emissary Final Version</strong><p>Custom Subspace-themed stage pack.</p><p><a href="https://gamebanana.com/mods/309182" target="_blank" rel="noopener">GameBanana page ↗</a></p></div>
         <div class="step"><strong>Sans costume for Ness</strong><p>Undertale-inspired Ness costume pack.</p><p><a href="https://gamebanana.com/mods/247260" target="_blank" rel="noopener">GameBanana page ↗</a></p></div>
       </div>
-      <div class="notice">Project Universe: I could not verify the exact Brawl mod page, so it is not listed yet. Send its GameBanana URL and I can add the correct entry. REX is intentionally excluded because you already have it on your SD card.</div>
-      <p class="muted">Other mod packs are stored as public GitHub Release assets. Browse the library separately from the REX files already on your SD card.</p>
+      <div class="notice">Project Universe is waiting for its original YouTube description link so the correct mod can be identified. REX is not duplicated in the cloud library.</div>
+      <p class="muted">GitHub Releases can host permitted mod archives. The Wii app will need a compatible network-loading layer to access them; GitHub Pages and a JSON catalog alone cannot stream Brawl game files.</p>
       <div class="row" style="margin-top:12px">
         <a class="btn primary" href="https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases" target="_blank" rel="noopener">Browse Cloud Mods ↗</a>
         <a class="btn" href="https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases/new" target="_blank" rel="noopener">Add Mod Pack ↗</a>
       </div>
     </article>
   </div>
-  <div class="notice">Storage status: this page explains where each collection belongs. Actual REX detection happens on the Wii, not in the browser. Cloud browsing is available here, but automatic cloud-to-Wii loading and combining mods are not implemented in the current Wii app.</div>
+  <div class="notice">Current implementation status: the published v20 Wii app is still an SD-card file browser. It does not yet connect to GitHub, stream mod files, detect REX, or launch Brawl. Direct cloud loading requires a Wii-compatible network filesystem or streaming bridge and testing with the chosen Brawl loader.</div>
 </section>
 <section class="panel" id="featured-builds">
   <div class="row"><h2>⭐ Featured builds</h2><span class="tag">Added to catalog</span></div>
@@ -65,7 +65,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
 </section>
 <section class="panel" id="mods">
   <div class="row"><h2>🧩 Mods catalog · GameBanana</h2><span class="tag">REX excluded</span></div>
-  <p class="muted">A curated catalog of notable Super Smash Bros. Brawl projects and add-ons. Open the original GameBanana page to review the creator's files, requirements, version, and installation instructions. These are source links, not copies stored in this GitHub library.</p>
+  <p class="muted">A source catalog of Brawl projects and add-ons. These links help identify the correct releases; they do not mean the archives are already stored in this repository's cloud library. Only add files that their creators permit you to redistribute.</p>
   <div class="steps">
     <div class="step"><strong>Legacy MP+ v2.4.2</strong><p>Large Project+ extended build featuring hundreds of stages, songs, and costumes.</p><p><a href="https://gamebanana.com/mods/479109" target="_blank" rel="noopener">View on GameBanana ↗</a></p><p class="small muted">Separate Project+ build. Not a REX add-on.</p></div>
     <div class="step"><strong>Project+ Tournament Edition</strong><p>Competitive-focused Project+ build with additional stages, costumes, and presentation features.</p><p><a href="https://gamebanana.com/mods/410039" target="_blank" rel="noopener">View on GameBanana ↗</a></p><p class="small muted">Separate Project+ build. Not designed to stack with REX.</p></div>
@@ -74,37 +74,38 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
     <div class="step"><strong>Sans costume for Ness</strong><p>An Undertale-inspired costume pack with alternate looks and UI assets.</p><p><a href="https://gamebanana.com/mods/247260" target="_blank" rel="noopener">View on GameBanana ↗</a></p><p class="small muted">The page lists Project M, Legacy TE, Legacy XP, and Brawl Minus. REX compatibility is not confirmed.</p></div>
     <div class="step"><strong>Smash 3C Project+ Pack</strong><p>A Project+ build focused on Smash 3C costume designs and presentation.</p><p><a href="https://gamebanana.com/mods/290683" target="_blank" rel="noopener">View on GameBanana ↗</a></p><p class="small muted">Separate Project+ build. Not a REX add-on.</p></div>
   </div>
-  <div class="notice">Important: this catalog does not mean these mods are installed in your cloud storage or ready to load on the Wii. The Wii app does not yet import GameBanana links, download files, or merge them with REX. Only use additions whose creator confirms compatibility with your exact REX version.</div>
-  <p class="small muted">GameBanana remains the source and download host. The hub links to creator pages instead of re-uploading files, and respects each project's license and distribution terms.</p>
+  <div class="notice">Important: these are source links, not verified cloud-hosted archives. The Wii app cannot yet access cloud files. Full game builds such as Project+, Project+ All-Stars, Legacy MP+, and Brawl Minus are separate builds, not packs to stack together. Add-ons require compatibility checks against the exact base build.</div>
+  <p class="small muted">GameBanana and official project pages remain the source of the files until redistribution-permitted archives are added to GitHub Releases. Respect each project's license and distribution terms.</p>
 </section>
 <section class="panel">
-  <h2>How the two libraries fit together</h2>
+  <h2>How the Wii app and cloud library fit together</h2>
   <div class="steps">
-    <div class="step"><strong>1. Keep REX on SD</strong><p>Leave your current REX installation where it is. The manager should detect it without replacing its files.</p></div>
-    <div class="step"><strong>2. Store other packs in GitHub</strong><p>Upload only mod packs you have permission to share as assets on GitHub Releases. REX does not need to be uploaded.</p></div>
-    <div class="step"><strong>3. Browse the cloud library</strong><p>Use the Releases link to see available cloud-hosted packs and their descriptions.</p></div>
-    <div class="step"><strong>4. Check compatibility</strong><p>Only compatible additions can safely be combined. Remote access requires a supported network-loading method; a GitHub link alone is not a Wii filesystem.</p></div>
+    <div class="step"><strong>1. Install the manager on SD</strong><p>The SD card stores the Wii homebrew app and its network-client files.</p></div>
+    <div class="step"><strong>2. Keep mod archives in the cloud</strong><p>Store redistribution-permitted mod archives as GitHub Release assets. Keep a catalog of names, versions, and archive URLs.</p></div>
+    <div class="step"><strong>3. Connect over Wi-Fi</strong><p>The Wii app reads the cloud catalog and displays available mods. This connection is a planned feature, not present in v20.</p></div>
+    <div class="step"><strong>4. Load compatible files remotely</strong><p>A Wii-compatible network filesystem or streaming bridge must serve the files in a format the Brawl loader can use. Not every mod or loader supports remote access.</p></div>
   </div>
 </section>
 <section class="panel">
   <div class="row"><h2>Wii Brawl Mod Manager app</h2><span class="tag">Current published package: v20</span></div>
-  <p class="muted">The existing Homebrew Channel package is still the SD-card file-browser prototype. It does not yet detect REX, read the GitHub library, combine mods, or launch Brawl.</p>
+  <p class="muted">The existing Homebrew Channel package is still the SD-card file-browser prototype. It does not yet connect to the GitHub cloud library, stream mod archives over Wi-Fi, detect REX, combine mods, or launch Brawl.</p>
   <div class="row" style="margin-top:14px">
     <a class="btn primary" href="https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases/download/wii-manager-v20/brawl-mod-manager-wii.zip" target="_blank" rel="noopener">Download Wii Manager ZIP ↗</a>
     <a class="btn" href="https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases/tag/wii-manager-v20" target="_blank" rel="noopener">Release details ↗</a>
   </div>
-  <p class="small muted" style="margin-top:12px">The app package itself is installed under <code>sd:/apps/</code>. Keep your existing REX folders separate and unchanged.</p>
+  <p class="small muted" style="margin-top:12px">Only the manager application is intended to live under <code>sd:/apps/</code>. Cloud streaming is a future feature and requires implementation in the Wii app plus a compatible Brawl loading method.</p>
 </section>
 <section class="panel">
-  <h2>Add packs to the cloud library</h2>
+  <h2>Populate the cloud mod library</h2>
   <ol class="muted">
     <li>Open <a href="https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases/new" target="_blank" rel="noopener">New GitHub Release</a>.</li>
-    <li>Give the release a clear pack name and description.</li>
-    <li>Attach the permitted mod archive(s), then publish the release.</li>
-    <li>Use the Releases page to browse the public cloud library.</li>
+    <li>Give the release a clear mod name, version, base-game requirement, and compatibility notes.</li>
+    <li>Attach only archive files you have permission to redistribute, then publish the release.</li>
+    <li>Add the archive's direct asset URL and metadata to <code>cloud-mods.json</code>.</li>
+    <li>The future Wii network client will read this catalog and load supported files through the network bridge.</li>
   </ol>
   <p class="small muted">Release assets are public. Do not upload private information or files you do not have permission to distribute.</p>
 </section>
-<footer>Brawl Cloud uses GitHub Releases in this repository as its public file library. No separate paid storage service, Google Drive connection, or API key is used. GitHub Pages serves this information page; publishing changes may take several minutes to appear.</footer>
+<footer>Brawl Cloud is designed around GitHub Releases as the public archive host and GitHub Pages as the catalog interface. The Wii SD card holds the manager app; the cloud holds permitted mod archives. Network streaming into Brawl is not implemented in the current v20 app and will require a Wii-compatible bridge and loader integration.</footer>
 </main>
 </body></html>
