@@ -45,6 +45,22 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
         <div class="step"><strong>Subspace Emissary Final Version</strong><p>Custom Subspace-themed stage pack.</p><p><a href="https://gamebanana.com/mods/309182" target="_blank" rel="noopener">GameBanana page ↗</a></p></div>
         <div class="step"><strong>Sans costume for Ness</strong><p>Undertale-inspired Ness costume pack.</p><p><a href="https://gamebanana.com/mods/247260" target="_blank" rel="noopener">GameBanana page ↗</a></p></div>
       </div>
+      <section class="panel" id="custom-cloud-links" style="margin-top:16px">
+        <div class="row"><h2>＋ Add a mod download link</h2><span class="tag">Your link collection</span></div>
+        <p class="muted">Paste a mod's direct download URL or its creator page. Give it a name, then add it to your personal list below.</p>
+        <form id="cloud-link-form" class="steps" style="grid-template-columns:repeat(auto-fit,minmax(210px,1fr));align-items:end">
+          <label class="step">Mod name<input id="cloud-mod-name" name="name" required maxlength="80" placeholder="Example: Project Universe" style="display:block;width:100%;margin-top:8px;padding:11px;border-radius:8px;border:1px solid var(--line);background:#080d18;color:var(--text)"></label>
+          <label class="step">Download or source URL<input id="cloud-mod-url" name="url" type="url" required placeholder="https://..." style="display:block;width:100%;margin-top:8px;padding:11px;border-radius:8px;border:1px solid var(--line);background:#080d18;color:var(--text)"></label>
+          <button class="btn primary" type="submit">Add link to list</button>
+        </form>
+        <div id="cloud-link-status" class="small muted" role="status" aria-live="polite" style="margin-top:10px">Your custom links are saved in this browser on this device.</div>
+        <div id="custom-cloud-link-list" class="steps" aria-live="polite"></div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn" id="export-cloud-links" type="button">Export my links as JSON</button>
+          <button class="btn" id="clear-cloud-links" type="button">Clear my custom links</button>
+        </div>
+        <p class="small muted">Note: GitHub Pages is a static website, so this form saves links in this browser only. It does not publish them to the shared GitHub catalog or make them appear on the Wii automatically. Use Export to save your list; shared cloud publishing and Wii syncing need a secure server-side connection.</p>
+      </section>
       <div class="notice">Project Universe is waiting for its original YouTube description link so the correct mod can be identified. REX is not duplicated in the cloud library.</div>
       <p class="muted">GitHub Releases can host permitted mod archives. The Wii app will need a compatible network-loading layer to access them; GitHub Pages and a JSON catalog alone cannot stream Brawl game files.</p>
       <div class="row" style="margin-top:12px">
@@ -108,4 +124,51 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
 </section>
 <footer>Brawl Cloud is designed around GitHub Releases as the public archive host and GitHub Pages as the catalog interface. The Wii SD card holds the manager app; the cloud holds permitted mod archives. Network streaming into Brawl is not implemented in the current v20 app and will require a Wii-compatible bridge and loader integration.</footer>
 </main>
+
+<script>
+(function(){
+  const KEY = "brawl-mod-manager-custom-links-v1";
+  const form = document.getElementById("cloud-link-form");
+  const nameInput = document.getElementById("cloud-mod-name");
+  const urlInput = document.getElementById("cloud-mod-url");
+  const list = document.getElementById("custom-cloud-link-list");
+  const status = document.getElementById("cloud-link-status");
+  const read = () => { try { const v = JSON.parse(localStorage.getItem(KEY) || "[]"); return Array.isArray(v) ? v : []; } catch (_) { return []; } };
+  const write = items => localStorage.setItem(KEY, JSON.stringify(items));
+  function render(){
+    const items = read();
+    list.replaceChildren();
+    if (!items.length) { const p=document.createElement("p"); p.className="muted small"; p.textContent="No custom links added yet."; list.append(p); return; }
+    items.forEach((item,index)=>{
+      const card=document.createElement("div"); card.className="step";
+      const title=document.createElement("strong"); title.textContent=item.name;
+      const link=document.createElement("a"); link.href=item.url; link.target="_blank"; link.rel="noopener noreferrer"; link.textContent="Open download / source ↗";
+      const remove=document.createElement("button"); remove.type="button"; remove.className="btn"; remove.style.marginLeft="8px"; remove.textContent="Remove";
+      remove.addEventListener("click",()=>{ const next=read(); next.splice(index,1); write(next); render(); status.textContent="Link removed from this browser."; });
+      card.append(title,link,remove); list.append(card);
+    });
+  }
+  form.addEventListener("submit",event=>{
+    event.preventDefault();
+    const name=nameInput.value.trim();
+    let url;
+    try { url=new URL(urlInput.value.trim()); } catch (_) { status.textContent="Please enter a valid web URL."; return; }
+    if (!name || !["http:","https:"].includes(url.protocol)) { status.textContent="Use a name and an http or https link."; return; }
+    const items=read();
+    if (items.some(x=>x.url===url.href)) { status.textContent="That URL is already in your list."; return; }
+    items.push({name,url:url.href});
+    write(items); form.reset(); render(); status.textContent="Added to your personal link list on this device.";
+  });
+  document.getElementById("export-cloud-links").addEventListener("click",()=>{
+    const blob=new Blob([JSON.stringify({schemaVersion:1,mods:read()},null,2)],{type:"application/json"});
+    const a=document.createElement("a"); const objectUrl=URL.createObjectURL(blob); a.href=objectUrl; a.download="my-brawl-cloud-links.json"; a.click(); URL.revokeObjectURL(objectUrl);
+  });
+  document.getElementById("clear-cloud-links").addEventListener("click",()=>{
+    if (!confirm("Clear all custom links saved in this browser?")) return;
+    localStorage.removeItem(KEY); render(); status.textContent="Your custom link list has been cleared.";
+  });
+  render();
+})();
+</script>
+
 </body></html>
