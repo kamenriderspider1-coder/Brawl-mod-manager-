@@ -1,4 +1,4 @@
-name: Build Wii Homebrew App
+name: Build Wii Homebrew App and Publish Release
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -30,16 +30,42 @@ jobs:
       - name: Build Homebrew Channel app
         run: |
           cd wii
-          make -j2 boot.dol
+          make -j2
           test -s boot.dol
           test -s meta.xml
 
-      - name: Package Wii app
+      - name: Package SD-card app
+        run: |
+          mkdir -p dist/brawl-mod-manager
+          cp wii/boot.dol dist/brawl-mod-manager/boot.dol
+          cp wii/meta.xml dist/brawl-mod-manager/meta.xml
+          cd dist
+          zip -r brawl-mod-manager-wii.zip brawl-mod-manager
+          test -s brawl-mod-manager-wii.zip
+
+      - name: Keep a short-lived build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: brawl-mod-manager-wii-prototype
+          name: brawl-mod-manager-wii-build
           path: |
             wii/boot.dol
             wii/meta.xml
+            dist/brawl-mod-manager-wii.zip
           if-no-files-found: error
           retention-days: 14
+
+      - name: Publish downloadable GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: wii-prototype-${{ github.run_number }}
+          name: Brawl Mod Manager Wii Prototype ${{ github.run_number }}
+          body: |
+            Automated Wii Homebrew Channel prototype build.
+
+            **Important:** This is a menu prototype only. It does not yet download mods from Cloudflare or load them inside Brawl. Check the repository README for current limitations.
+          prerelease: true
+          make_latest: false
+          files: |
+            wii/boot.dol
+            wii/meta.xml
+            dist/brawl-mod-manager-wii.zip
