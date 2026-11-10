@@ -70,7 +70,7 @@ jobs:
             This release contains the Wii manager package only. The Brawl Cloud website and mod library are maintained separately in the repository.
 
             Important: this is currently a profile-menu prototype. It does not yet download mods or load them inside Brawl.
-          prerelease: true
-          make_latest: false
+          prerelease: false
+          make_latest: true
           files: |
             dist/brawl-mod-manager-wii.zip
