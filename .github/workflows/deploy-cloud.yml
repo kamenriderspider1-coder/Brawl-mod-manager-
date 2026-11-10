@@ -2,11 +2,6 @@ name: Deploy Brawl Mod Cloud
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - "cloud/worker/**"
-      - ".github/workflows/deploy-cloud.yml"
 
 permissions:
   contents: read
