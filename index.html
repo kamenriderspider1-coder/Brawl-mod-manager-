@@ -3,60 +3,73 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0b1020">
-<title>Brawl Cloud | Free Mod Library</title>
+<title>Brawl Mod Manager | Local REX + Cloud Mods</title>
 <style>
-:root{color-scheme:dark;--bg:#080d18;--line:#293b57;--text:#f3f6ff;--muted:#a8b6cc;--mint:#79e3c3}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -18%,#23466b 0%,var(--bg) 58%);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+:root{color-scheme:dark;--bg:#080d18;--panel:#121e30;--line:#293b57;--text:#f3f6ff;--muted:#a8b6cc;--mint:#79e3c3;--blue:#8bbcff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -18%,#23466b 0%,var(--bg) 58%);color:var(--text);font:15px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}
 header{padding:30px max(18px,calc((100vw - 1120px)/2));border-bottom:1px solid var(--line);background:#080d18df}.brand{display:flex;align-items:center;gap:13px}.logo{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(145deg,#286c69,#1a3858);font-size:25px}
-h1{font-size:clamp(2rem,5vw,3.1rem);letter-spacing:-.055em;margin:0}header p{color:var(--muted);max-width:760px;margin:10px 0 0}main{max-width:1120px;margin:auto;padding:22px 18px 60px}
+h1{font-size:clamp(2rem,5vw,3.1rem);letter-spacing:-.055em;margin:0}header p{color:var(--muted);max-width:780px;margin:10px 0 0}main{max-width:1120px;margin:auto;padding:22px 18px 60px}
 .panel{border:1px solid var(--line);background:linear-gradient(145deg,#17253a,#101827);border-radius:17px;padding:18px;margin:14px 0;box-shadow:0 12px 35px #0002}
 h2{font-size:1.2rem;margin:0 0 7px}.muted{color:var(--muted)}.small{font-size:.83rem}.row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .btn{font:inherit;border:1px solid var(--line);border-radius:11px;padding:10px 14px;background:#17253a;color:var(--text);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:7px}.btn:hover{border-color:#6685a9}.primary{background:#175348;border-color:#397f70}
 .tag{color:var(--mint);font-size:.72rem;text-transform:uppercase;letter-spacing:.09em}.notice{border:1px solid #66572c;background:#292518;color:#f6e9c2;border-radius:12px;padding:13px;margin:12px 0}.success{border-color:#286a59;background:#102c28;color:#d6fff1}
-.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:15px}.step{background:#0c1626;border:1px solid var(--line);border-radius:13px;padding:14px}.step strong{display:block;margin-bottom:5px}
-code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2px 5px}ol{padding-left:22px}.step p{margin:5px 0 0;color:var(--muted);font-size:.9rem}footer{font-size:.82rem;color:var(--muted);line-height:1.65;margin-top:25px}
+.storage-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:16px}.storage{border:1px solid var(--line);background:#0c1626;border-radius:14px;padding:17px}.storage.local{border-color:#286a59}.storage.cloud{border-color:#315c86}.storage-icon{font-size:1.7rem}.storage h3{margin:7px 0 3px;font-size:1.05rem}.status{display:inline-flex;align-items:center;gap:7px;font-size:.76rem;letter-spacing:.05em;text-transform:uppercase}.dot{width:8px;height:8px;border-radius:50%;background:#79e3c3;display:inline-block}.dot.blue{background:#8bbcff}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:15px}.step{background:#0c1626;border:1px solid var(--line);border-radius:13px;padding:14px}.step strong{display:block;margin-bottom:5px}.step p{margin:5px 0 0;color:var(--muted);font-size:.9rem}
+code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2px 5px}ol{padding-left:22px}footer{font-size:.82rem;color:var(--muted);line-height:1.65;margin-top:25px}
 </style>
 </head>
 <body>
-<header><div class="brand"><div class="logo">☁️</div><div><h1>Brawl Cloud</h1><div class="muted">A free online library for your Brawl mods.</div></div></div><p>Keep downloadable mod archives in this project's GitHub Releases. Browse the library here, then move selected files to your Wii SD card.</p></header>
+<header><div class="brand"><div class="logo">🎮</div><div><h1>Brawl Mod Manager</h1><div class="muted">Your existing REX setup stays local. Additional mod packs live in the cloud.</div></div></div><p>One library view, two storage locations: keep REX on the Wii SD card and browse other mod packs from this project's free GitHub cloud library.</p></header>
 <main>
 <section class="panel">
-  <div class="row"><h2>☁️ Brawl Cloud Library</h2><span class="tag">Free public file hosting</span></div>
-  <p class="muted">The mod files are stored as downloadable assets in GitHub Releases. This uses the existing project repository, not Google Drive, a paid storage account, or a separate storage provider.</p>
-  <div class="row" style="margin-top:14px">
-    <a class="btn primary" href="https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases" target="_blank" rel="noopener">Browse / Download Mods ↗</a>
-    <a class="btn" href="https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases/new" target="_blank" rel="noopener">Add a Release / Upload Files ↗</a>
+  <div class="row"><h2>Storage overview</h2><span class="tag">Local + cloud</span></div>
+  <div class="storage-grid">
+    <article class="storage local">
+      <div class="row"><span class="storage-icon">💾</span><span class="status"><i class="dot"></i> Wii SD card</span></div>
+      <h3>REX · Existing local installation</h3>
+      <p class="muted">Your REX installation stays on your SD card. The Wii Mod Manager is intended to check for the existing REX files when it runs. Do not upload another REX copy to the cloud library.</p>
+      <p class="small muted"><strong>Location:</strong> Existing Wii SD card folders. The website cannot inspect your physical SD card; the Wii app must perform that check.</p>
+    </article>
+    <article class="storage cloud">
+      <div class="row"><span class="storage-icon">☁️</span><span class="status"><i class="dot blue"></i> GitHub cloud library</span></div>
+      <h3>Additional mod packs</h3>
+      <p class="muted">Other mod packs are stored as public GitHub Release assets. Browse the library separately from the REX files already on your SD card.</p>
+      <div class="row" style="margin-top:12px">
+        <a class="btn primary" href="https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases" target="_blank" rel="noopener">Browse Cloud Mods ↗</a>
+        <a class="btn" href="https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases/new" target="_blank" rel="noopener">Add Mod Pack ↗</a>
+      </div>
+    </article>
   </div>
-  <p class="small muted" style="margin-top:12px">Release files in this repository are public. Do not upload private files, personal information, or files you do not have permission to distribute.</p>
+  <div class="notice">Storage status: this page explains where each collection belongs. Actual REX detection happens on the Wii, not in the browser. Cloud browsing is available here, but automatic cloud-to-Wii loading and combining mods are not implemented in the current Wii app.</div>
 </section>
 <section class="panel">
-  <h2>How to add mods to your cloud library</h2>
+  <h2>How the two libraries fit together</h2>
   <div class="steps">
-    <div class="step"><strong>1. Open Releases</strong><p>Use “Add a Release / Upload Files” and sign in to GitHub.</p></div>
-    <div class="step"><strong>2. Create a release</strong><p>Give it a clear title, such as “Brawl Mod Pack 1”.</p></div>
-    <div class="step"><strong>3. Attach your files</strong><p>Drag permitted mod archives into the release attachment area, then publish it.</p></div>
-    <div class="step"><strong>4. Download on your Wii setup</strong><p>Open the release on a computer, download the chosen archive, and copy its supported files to the SD card.</p></div>
+    <div class="step"><strong>1. Keep REX on SD</strong><p>Leave your current REX installation where it is. The manager should detect it without replacing its files.</p></div>
+    <div class="step"><strong>2. Store other packs in GitHub</strong><p>Upload only mod packs you have permission to share as assets on GitHub Releases. REX does not need to be uploaded.</p></div>
+    <div class="step"><strong>3. Browse the cloud library</strong><p>Use the Releases link to see available cloud-hosted packs and their descriptions.</p></div>
+    <div class="step"><strong>4. Check compatibility</strong><p>Only compatible additions can safely be combined. Remote access requires a supported network-loading method; a GitHub link alone is not a Wii filesystem.</p></div>
   </div>
 </section>
 <section class="panel">
-  <div class="row"><h2>🎮 Wii Brawl Mod Manager</h2><span class="tag">Current release: v20</span></div>
-  <p class="muted">Install the Homebrew Channel app package from the latest available release.</p>
+  <div class="row"><h2>Wii Brawl Mod Manager app</h2><span class="tag">Current published package: v20</span></div>
+  <p class="muted">The existing Homebrew Channel package is still the SD-card file-browser prototype. It does not yet detect REX, read the GitHub library, combine mods, or launch Brawl.</p>
   <div class="row" style="margin-top:14px">
     <a class="btn primary" href="https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases/download/wii-manager-v20/brawl-mod-manager-wii.zip" target="_blank" rel="noopener">Download Wii Manager ZIP ↗</a>
     <a class="btn" href="https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases/tag/wii-manager-v20" target="_blank" rel="noopener">Release details ↗</a>
   </div>
-  <p class="small muted" style="margin-top:12px">Extract the ZIP and copy its app folder into <code>sd:/apps/</code> on your Wii SD card.</p>
+  <p class="small muted" style="margin-top:12px">The app package itself is installed under <code>sd:/apps/</code>. Keep your existing REX folders separate and unchanged.</p>
 </section>
 <section class="panel">
-  <h2>Move a downloaded mod to the Wii</h2>
+  <h2>Add packs to the cloud library</h2>
   <ol class="muted">
-    <li>Download the mod archive from the Brawl Cloud Releases library on a computer.</li>
-    <li>Extract it if the mod's instructions require that.</li>
-    <li>Copy the files into the folder specified by that mod's instructions, or into <code>sd:/brawl-mods/</code> for the manager's file list.</li>
-    <li>Put the SD card back in the Wii and open Brawl Mod Manager from the Homebrew Channel.</li>
+    <li>Open <a href="https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases/new" target="_blank" rel="noopener">New GitHub Release</a>.</li>
+    <li>Give the release a clear pack name and description.</li>
+    <li>Attach the permitted mod archive(s), then publish the release.</li>
+    <li>Use the Releases page to browse the public cloud library.</li>
   </ol>
-  <div class="notice">Wii internet syncing is not in the current v20 app yet. This version browses files already on the SD card. A later version needs an HTTPS downloader and a compatible mod catalog before it can download directly over Wi-Fi.</div>
+  <p class="small muted">Release assets are public. Do not upload private information or files you do not have permission to distribute.</p>
 </section>
-<footer>Brawl Cloud uses GitHub Releases as a public file library. GitHub's public release downloads do not require a personal access token. No Google sign-in, Google Drive API, or paid cloud-storage service is used.</footer>
+<footer>Brawl Cloud uses GitHub Releases in this repository as its public file library. No separate paid storage service, Google Drive connection, or API key is used. GitHub Pages serves this information page; publishing changes may take several minutes to appear.</footer>
 </main>
 </body></html>
