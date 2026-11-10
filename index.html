@@ -119,8 +119,31 @@ async function connect() {
 function disconnect(){accessToken='';folderId='';catalogFileId='';tokenClient=null;catalog={schemaVersion:1,entries:[]};$('signedOut').classList.remove('hidden');$('signedIn').classList.add('hidden');$('authBadge').textContent='NOT CONNECTED';setStatus('authStatus','Disconnected. Your Google access token has been cleared.');renderCards();$('storageUsage').textContent='Connect Google Drive to check your Brawl Cloud library usage.';setStatus('libraryStatus','Connect Google Drive in Manage Storage to view your private mod library.');}
 async function uploadFile(ev){ev.preventDefault();if(!accessToken||!folderId){setStatus('uploadStatus','Connect Google Drive before uploading.','error');return;}const f=$('file').files[0];if(!f){setStatus('uploadStatus','Choose a file first.','error');return;}if(f.size>MAX_FILE){setStatus('uploadStatus','This first version accepts files up to 20 MB each.','error');return;}if(!f.size){setStatus('uploadStatus','Empty files cannot be uploaded.','error');return;}const name=$('name').value.trim();if(!name){setStatus('uploadStatus','Enter a mod name.','error');return;}const source=$('source').value.trim();if(source&&!/^https:\/\//i.test(source)){setStatus('uploadStatus','Source page must use HTTPS.','error');return;}const used=catalog.entries.reduce((n,x)=>n+(Number(x.size)||0),0);if(used+f.size>TARGET_BYTES){setStatus('uploadStatus','This upload would exceed the 13 GB Brawl Cloud target.','error');return;}setBusy(true);$('uploadButton').textContent='Uploading…';try{setStatus('uploadStatus','Uploading to your Google Drive…');const boundary='brawlcloud_'+crypto.randomUUID().replace(/-/g,'');const metadata={name:f.name,parents:[folderId],description:'Stored by Brawl Cloud'};const body=multipartBody(metadata,f,boundary);const r=await fetch(UPLOAD+'?uploadType=multipart&fields=id,name,size,webViewLink',{method:'POST',headers:driveHeaders({'Content-Type':'multipart/related; boundary='+boundary}),body});if(!r.ok){let m='Google Drive upload failed';try{m=(await r.json()).error?.message||m;}catch{}throw new Error(m+' (HTTP '+r.status+')');}const saved=await r.json();catalog.entries.push({name,type:$('category').value,creator:$('creator').value.trim(),summary:$('summary').value.trim(),compatibility:$('compatibility').value.trim(),fileId:saved.id,size:f.size,uploadedAt:new Date().toISOString(),...(source?{source}:{})});await saveCatalog();renderCards();$('uploadForm').reset();$('fileInfo').textContent='No file selected';const total=catalog.entries.reduce((n,x)=>n+(Number(x.size)||0),0);$('storageUsage').textContent='Brawl Cloud files: '+formatSize(total)+' of 13 GB target · '+catalog.entries.length+' item(s)';setStatus('uploadStatus',name+' uploaded to your Google Drive.','success');setStatus('libraryStatus',catalog.entries.length+' item(s) in your Google Drive library.','success');}catch(e){setStatus('uploadStatus','Upload stopped: '+e.message,'error');}finally{setBusy(false);$('uploadButton').textContent='⬆ Upload to Brawl Cloud';}}
 async function removeEntry(fileId){if(!accessToken||!confirm('Delete this mod file from your Google Drive Brawl Cloud folder?'))return;try{const entry=catalog.entries.find(x=>x.fileId===fileId);catalog.entries=catalog.entries.filter(x=>x.fileId!==fileId);await saveCatalog();await driveRequest(DRIVE+'/files/'+encodeURIComponent(fileId),{method:'DELETE'});renderCards();const total=catalog.entries.reduce((n,x)=>n+(Number(x.size)||0),0);$('storageUsage').textContent='Brawl Cloud files: '+formatSize(total)+' of 13 GB target · '+catalog.entries.length+' item(s)';setStatus('libraryStatus','Removed '+(entry?.name||'file')+' from Brawl Cloud.','success');}catch(e){setStatus('libraryStatus','Could not remove file: '+e.message,'error');}}
-document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));['library','manage','wii'].forEach(id=>$(id).classList.toggle('hidden',id!==b.dataset.tab));}));
-$('refresh').addEventListener('click',loadCatalog);$('search').addEventListener('input',renderCards);$('filter').addEventListener('change',renderCards);$('sort').addEventListener('change',renderCards);$('connect').addEventListener('click',connect);$('connectTop').addEventListener('click',()=>{if($('googleClientId').value.trim()){document.querySelector('[data-tab="manage"]').click();connect();}else{document.querySelector('[data-tab="manage"]').click();$('googleClientId').focus();setStatus('authStatus','Add your Google OAuth Web Client ID once, then select Connect Google Drive to sign in.','');}});$('disconnect').addEventListener('click',disconnect);$('uploadForm').addEventListener('submit',uploadFile);$('file').addEventListener('change',()=>{const f=$('file').files[0];$('fileInfo').textContent=f?f.name+' · '+formatSize(f.size):'No file selected';});
+function showTab(tabName){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tabName));
+  ['library','manage','wii'].forEach(id=>$(id).classList.toggle('hidden',id!==tabName));
+  if(tabName==='manage') $('manage').scrollIntoView({behavior:'smooth',block:'start'});
+}
+document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+$('refresh').addEventListener('click',loadCatalog);
+$('search').addEventListener('input',renderCards);
+$('filter').addEventListener('change',renderCards);
+$('sort').addEventListener('change',renderCards);
+$('connect').addEventListener('click',connect);
+$('connectTop').addEventListener('click',()=>{
+  showTab('manage');
+  const saved=$('googleClientId').value.trim();
+  if(saved){
+    setStatus('authStatus','Starting Google Drive sign-in…');
+    connect();
+  }else{
+    setStatus('authStatus','Setup needed: enter a Google OAuth Web Client ID here first. Google currently blocks Cloud Console access for your school-managed under-18 account, so use an eligible personal Google account or ask your Workspace administrator.','error');
+    $('googleClientId').focus();
+  }
+});
+$('disconnect').addEventListener('click',disconnect);
+$('uploadForm').addEventListener('submit',uploadFile);
+$('file').addEventListener('change',()=>{const f=$('file').files[0];$('fileInfo').textContent=f?f.name+' · '+formatSize(f.size):'No file selected';});
 const savedClientId=localStorage.getItem('brawlCloudGoogleClientId');if(savedClientId)$('googleClientId').value=savedClientId;
 window.addEventListener('pagehide',()=>{accessToken='';});
 loadCatalog();
