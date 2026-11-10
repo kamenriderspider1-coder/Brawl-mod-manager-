@@ -1,62 +1,54 @@
-# ☁️ Brawl Cloud Storage
+# Brawl Cloud + Brawl Mod Manager
 
-> **[☁️ Open Brawl Cloud and connect your Google Drive](https://kamenriderspider1-coder.github.io/Brawl-mod-manager-/)**
->
-> When the app opens, choose **Sign in to Google Drive**. The first visit requires a one-time Google OAuth Web Client ID setup. Follow the on-screen setup instructions. Google sign-in happens on Google's own authorization page.
+This repository contains **two separate apps connected by one shared cloud library**.
 
-Brawl Cloud is the cloud-storage companion for the Brawl Mod Manager. **GitHub is used to build and publish the application; your own Google Drive stores your mod files.** The app is designed around a 13 GB library target within your Google account's existing storage quota.
+- **[Brawl Cloud](https://kamenriderspider1-coder.github.io/Brawl-mod-manager-/)** is the web app. Use it on a computer or phone to sign in, organize the library, upload permitted mod files, and manage catalog entries.
+- **Brawl Mod Manager** is a separate native Wii Homebrew Channel app. It runs on the Wii and is intended to browse the shared catalog, select compatible mod profiles, and prepare files for the Wii's mod-loading workflow.
 
----
+They are not two tabs in one app. Brawl Cloud is the storage/control website; Brawl Mod Manager is the console-side companion.
 
-# Brawl Mod Manager
+## How the two apps are intended to connect
 
-This repository contains two connected project components:
+```
+Brawl Cloud (web)
+  |  uploads authorized files and publishes catalog metadata
+  v
+Shared cloud API + object storage
+  |  public read-only catalog and mod downloads
+  v
+Brawl Mod Manager (Wii homebrew)
+  |  downloads compatible files to SD / hands off to supported loader
+  v
+Wii mod setup
+```
 
-1. **Brawl Cloud**: a browser-based mod library that stores your files in your own Google Drive after you authorize it.
-2. **Wii Mod Manager**: a separate Homebrew Channel manager prototype. Its downloadable package belongs in GitHub Releases.
+The Wii app must never contain Google passwords, OAuth refresh tokens, or cloud administrator credentials. The web app handles account sign-in and upload permissions. The Wii app should only use a deliberately designed read-only download interface.
 
-## Brawl Cloud
+## Brawl Cloud web app
 
-- Website entry point: `index.html`
-- Google Drive folder: `Brawl Cloud` (created after you authorize the app)
-- Catalog: `brawl-cloud-catalog.json` inside that Drive folder
-- Google permission requested: `drive.file`, which limits access to files created or explicitly opened with this app.
-- The Google OAuth access token is kept in page memory and is not committed to this repository.
-- A 13 GB app-level target is enforced for catalogued files. This is not reserved space and does not increase your Google account quota.
-- Current browser uploader limit: 20 MB per file.
+- Website: [Open Brawl Cloud](https://kamenriderspider1-coder.github.io/Brawl-mod-manager-/)
+- Source: `index.html`
+- Current browser sign-in/storage implementation: Google Drive OAuth using the limited `drive.file` permission.
+- Current per-file upload cap: 20 MB.
+- The 13 GB figure is an app-level target, not additional Google storage.
 
-### One-time Google setup
+**Google OAuth setup is not yet complete.** A registered Google OAuth Web Client ID is required before the real Google account chooser and Drive connection can work. It must be configured once by an eligible app administrator. The site must not ask each user to paste a Client ID.
 
-1. Open [Google Cloud Console Credentials](https://console.cloud.google.com/apis/credentials).
-2. Select or create a Google Cloud project and enable the **Google Drive API**.
-3. Configure the Google Auth Platform consent screen.
-4. Create an OAuth 2.0 Client ID with application type **Web application**.
-5. Add the exact deployed website origin to **Authorized JavaScript origins**. For this repository's standard GitHub Pages URL, use `https://kamenriderspider1-coder.github.io` (origin only, no path).
-6. Open Brawl Cloud, paste the public OAuth Client ID, and select **Connect Google Drive**.
-7. Complete Google's authorization flow.
+## Wii Brawl Mod Manager
 
-Never put a Google OAuth client secret, password, or access token in this public repository or into the browser app. The Client ID is a public identifier; the access token is session-only.
+- Native source: `wii/source/main.c`
+- Homebrew metadata: `wii/meta.xml`
+- Build instructions: `wii/BUILD.md`
+- Release packages: [GitHub Releases](https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases)
 
-**Important:** GitHub repository pages and README files cannot display a live Google sign-in dialog or run the app's JavaScript. The prominent link above opens the independent GitHub Pages app, where the sign-in prompt lives.
+The current Wii executable is a profile-menu prototype. It does not yet fetch the shared catalog, download files to SD, or launch Riivolution. Those features must be implemented and tested separately.
 
-## Publishing Brawl Cloud
+## Important cloud integration detail
 
-The `.github/workflows/deploy-pages.yml` workflow publishes the static site with GitHub Pages. In repository Settings → Pages, choose **GitHub Actions** as the source if needed.
+The current web app stores files in Google Drive, while the planned Wii-facing API under `cloud/worker/` is designed for Cloudflare R2. These are **not connected yet**. A secure publishing/sync step or a single shared storage backend must be implemented before uploads made on the website appear in the Wii manager. The Wii cannot simply reuse the browser's private Google Drive session.
 
-## Wii Mod Manager Releases
-
-The `.github/workflows/build-wii.yml` workflow is separate. When its build succeeds, it publishes the Wii manager package:
-
-- `boot.dol`
-- `meta.xml`
-- `brawl-mod-manager-wii.zip`
-
-Releases: https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases
-
-## Wii compatibility status
-
-The current native Wii app is still a profile-menu prototype. It does not yet authenticate to Google Drive, fetch the Brawl Cloud catalog, download files to SD, hook Brawl's file access, or load network mods inside the game. That end-to-end loader still needs to be implemented and tested on Dolphin and a real Wii.
+The Cloudflare Worker is a read-only public catalog/download API with administrator-only upload routes. It still requires an enabled R2 bucket, deployment, and secrets configured outside this public repository. Never put an admin token or OAuth secret in the Wii app or browser source.
 
 ## Mod permissions
 
-Only upload mods you created or have permission to store and share. For other mods, use the creator's official download or project page rather than rehosting files without permission.
+Only upload files you created or have permission to store and share. Otherwise, keep catalog metadata and link to the creator's official download page.
