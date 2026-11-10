@@ -16,7 +16,7 @@ INCLUDES :=
 CFLAGS   = -g -O2 -Wall -Wextra $(MACHDEP) $(INCLUDE)
 CXXFLAGS = $(CFLAGS)
 LDFLAGS  = -g $(MACHDEP) -Wl,-Map,$(notdir $@).map
-LIBS     := -lwiiuse -lbte -logc -lm
+LIBS     := -lwiiuse -lbte -lfat -logc -lm
 LIBDIRS  := $(PORTLIBS)
 
 ifneq ($(BUILD),$(notdir $(CURDIR)))
