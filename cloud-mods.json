@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "title": "Brawl Mod Manager Cloud Library",
+  "description": "Link catalog only. Mod archives are hosted by their original creators or official project pages.",
+  "downloadBehavior": {
+    "trigger": "user-selected",
+    "target": "USB storage",
+    "directory": "usb:/brawl-mods/",
+    "statusLabels": [
+      "Available",
+      "Downloading",
+      "Downloaded",
+      "Failed"
+    ],
+    "note": "A Wii client must implement Wi-Fi networking, download handling, archive validation, USB mounting, and compatibility checks before these links can be downloaded or launched."
+  },
+  "mods": [
+    {
+      "id": "project-plus",
+      "name": "Project+",
+      "type": "standalone-build",
+      "source": "official",
+      "url": "https://projectplusgame.com/download",
+      "status": "Available",
+      "compatibleWithRex": false
+    },
+    {
+      "id": "project-plus-all-stars",
+      "name": "Project+ All-Stars v1.1.6",
+      "type": "standalone-build",
+      "source": "gamebanana",
+      "url": "https://gamebanana.com/mods/626137",
+      "status": "Available",
+      "compatibleWithRex": false
+    },
+    {
+      "id": "legacy-mp-plus",
+      "name": "Legacy MP+ v2.4.2",
+      "type": "standalone-build",
+      "source": "gamebanana",
+      "url": "https://gamebanana.com/mods/479109",
+      "status": "Available",
+      "compatibleWithRex": false
+    },
+    {
+      "id": "project-plus-tournament-edition",
+      "name": "Project+ Tournament Edition",
+      "type": "standalone-build",
+      "source": "gamebanana",
+      "url": "https://gamebanana.com/mods/410039",
+      "status": "Available",
+      "compatibleWithRex": false
+    },
+    {
+      "id": "brawl-minus-42",
+      "name": "Brawl Minus 4.2",
+      "type": "standalone-build",
+      "source": "gamebanana",
+      "url": "https://gamebanana.com/mods/49327",
+      "status": "Available",
+      "compatibleWithRex": false
+    },
+    {
+      "id": "smash-3c-project-plus",
+      "name": "Smash 3C Project+ Pack",
+      "type": "standalone-build",
+      "source": "gamebanana",
+      "url": "https://gamebanana.com/mods/290683",
+      "status": "Available",
+      "compatibleWithRex": false
+    },
+    {
+      "id": "subspace-emissary-final",
+      "name": "Subspace Emissary Final Version",
+      "type": "add-on",
+      "source": "gamebanana",
+      "url": "https://gamebanana.com/mods/309182",
+      "status": "Available",
+      "compatibleWithRex": "unconfirmed"
+    },
+    {
+      "id": "sans-ness-costume",
+      "name": "Sans costume for Ness",
+      "type": "costume-add-on",
+      "source": "gamebanana",
+      "url": "https://gamebanana.com/mods/247260",
+      "status": "Available",
+      "compatibleWithRex": "unconfirmed"
+    }
+  ],
+  "excludedLocalInstallations": [
+    {
+      "id": "smash-rex",
+      "name": "Smash REX",
+      "location": "existing Wii SD card",
+      "reason": "Already installed locally; do not duplicate in cloud catalog."
+    }
+  ],
+  "pending": [
+    {
+      "id": "project-universe",
+      "name": "Project Universe",
+      "reason": "Needs the original YouTube description/download link to identify the correct project."
+    }
+  ]
+}
