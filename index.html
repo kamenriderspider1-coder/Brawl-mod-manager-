@@ -24,9 +24,9 @@ hr{border:0;border-top:1px solid var(--line);margin:17px 0}.status{min-height:22
 </style>
 </head>
 <body>
-<header><div class="brand"><div class="logo">☁️</div><div><h1>Brawl Cloud</h1><div class="muted">Your Brawl mod library, in one place.</div></div></div><p>Browse, organize, upload and download permitted mod files. GitHub builds the app; your Google Drive stores your library.</p></header>
+<header><div class="brand"><div class="logo">☁️</div><div><h1>Brawl Cloud</h1><div class="muted">Your Brawl mod library, in one place.</div></div></div><p>Browse, organize, upload and download permitted mod files. GitHub hosts the app; your own Google Drive stores your library. No separate Cloudflare storage bucket is used.</p></header>
 <main>
-<div class="panel success" id="driveConnectPrompt"><div class="row"><div><h2>☁️ Connect your Google Drive</h2><p class="muted small">Sign in to use your own Drive for Brawl Cloud storage. Your library target is 13 GB.</p></div><button id="connectTop" class="primary">Sign in to Google Drive</button></div><p class="muted small" style="margin:9px 0 0">First-time setup requires a Google OAuth Web Client ID. The app will guide you through it. Google handles the sign-in securely.</p></div>
+<div class="panel success" id="driveConnectPrompt"><div class="row"><div><h2>☁️ Connect your Google Drive</h2><p class="muted small">Sign in to use your own Drive for Brawl Cloud storage. Brawl Cloud uses your own Google Drive storage.</p></div><button id="connectTop" class="primary">Sign in to Google Drive</button></div><p class="muted small" style="margin:9px 0 0">First-time setup requires a Google OAuth Web Client ID. The app will guide you through it. Google handles the sign-in securely.</p></div>
 <nav class="tabs"><button class="tab active" data-tab="library">☁️ Cloud Library</button><button class="tab" data-tab="manage">⬆ Manage Storage</button></nav>
 <section id="library"><div class="panel">
 <div class="row"><div><h2>Cloud library</h2><div class="muted small">Files stored in your connected Google Drive</div></div><button id="refresh" class="ghost">↻ Refresh</button></div>
@@ -51,7 +51,7 @@ hr{border:0;border-top:1px solid var(--line);margin:17px 0}.status{min-height:22
 </div><div class="row" style="margin-top:13px"><button id="uploadButton" class="primary" type="submit">⬆ Upload to Brawl Cloud</button><span id="fileInfo" class="muted small">No file selected</span></div></form><div id="uploadStatus" class="status" aria-live="polite"></div></div>
 <div class="panel"><h2>Privacy and storage</h2><ul class="muted small"><li>Files are stored in your own Google Drive under a Brawl Cloud folder.</li><li>The app requests the limited <code>drive.file</code> permission, not access to your entire Drive.</li><li>Your Google access token is held in memory only and is not saved in GitHub or browser storage.</li><li>The 13 GB target is a Brawl Cloud usage limit. Your Google account's storage is shared with Gmail and Google Photos.</li><li>Only upload mods you created or have permission to use and share.</li></ul></div></section>
 
-<footer><a class="muted" href="https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases" target="_blank" rel="noopener">🎮 Get the separate Wii Brawl Mod Manager ↗</a><br>Brawl Cloud is the web storage app. The separate Brawl Mod Manager is a Wii Homebrew Channel app that will connect to the published cloud catalog and compatible mod files. OAuth tokens are session-only and never written into the repository or browser storage.</footer>
+<footer><a class="muted" href="https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases" target="_blank" rel="noopener">🎮 Get the separate Wii Brawl Mod Manager ↗</a><br>Brawl Cloud is the web storage app. The separate Brawl Mod Manager is a Wii Homebrew Channel app. Google Drive is the intended library source; Wii-side Google Drive access and secure file sharing are not implemented yet. OAuth tokens are session-only and never written into the repository or browser storage.</footer>
 </main>
 <script>
 'use strict';
