@@ -15,13 +15,13 @@ static const unsigned profile_count = sizeof(profiles) / sizeof(profiles[0]);
 
 static void draw(unsigned selected, const char *status) {
     printf("\x1b[2J");
-    printf("\x1b[2;4H BRAWL MOD MANAGER - Wii prototype\n");
-    printf("\n  Browse profiles intended for Riivolution / RiiFS.\n\n");
+    printf("\x1b[2;4H BRAWL MOD MANAGER - Wii\n");
+    printf("\n  Wii companion to the separate Brawl Cloud web library.\n\n");
     for (unsigned i = 0; i < profile_count; ++i)
         printf("  %s %s\n", i == selected ? ">" : " ", profiles[i]);
     printf("\n  UP/DOWN: select    A: details    HOME: exit\n\n");
     printf("  Status: %s\n", status);
-    printf("\n  Prototype only: no cloud connection or game launch yet.\n");
+    printf("\n  Standalone Wii app prototype. Cloud sync is not implemented yet.\n");
 }
 
 int main(int argc, char **argv) {
@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
     if (rmode->viTVMode & VI_NON_INTERLACE) VIDEO_WaitVSync();
 
     unsigned selected = 0;
-    char status[120] = "Ready. Cloud catalog connector is not implemented.";
+    char status[120] = "Ready. Waiting for the shared Brawl Cloud API.";
     draw(selected, status);
     for (;;) {
         WPAD_ScanPads();
