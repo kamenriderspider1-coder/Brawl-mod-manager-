@@ -1,29 +1,32 @@
-# Wii prototype build
+# Wii SD-card manager build
 
-This folder is the first Homebrew Channel application scaffold. It is a small native Wii program, not a web page and not a replacement game.
+This folder contains a native Wii Homebrew Channel application.
 
 ## Build requirements
 - devkitPPC
-- libogc
-- devkitPro Wii build environment and wii_rules
+- libogc and libfat
+- devkitPro Wii build environment and `wii_rules`
 
 Build from this directory in a configured devkitPro shell:
 
     make
 
-The intended output is boot.dol plus meta.xml. Copy those two files into apps/brawl-mod-manager/ on an SD card for Homebrew Channel testing.
+The intended output is `boot.dol` plus `meta.xml`. Copy those files into `apps/brawl-mod-manager/` on the SD card.
 
-## Current prototype scope
+## Current scope
 - Initializes Wii video and controller input.
-- Displays a simple profile-selection screen.
-- Allows selection with Wii Remote D-pad and A.
-- Returns to the Homebrew Channel menu with HOME.
+- Mounts the SD card with libfat.
+- Scans `sd:/brawl-mods/` and lists up to 24 filenames.
+- D-pad selects, A shows the selected filename, B rescans, HOME/START exits.
 
-## Not implemented yet
-- Internet/Wi-Fi connection to the user's Google Drive library.
-- Secure Google authorization and Drive catalog retrieval.
-- Reading real mod manifests.
-- Generating or installing Riivolution patch XML.
+## Manual Google Drive transfer
+
+Download mods from the normal Google Drive website on a computer, then copy them into `sd:/brawl-mods/`. The Wii app makes no network requests and uses no Google API or account credentials.
+
+## Not implemented
+- Installing or activating mod files.
+- Generating Riivolution XML.
 - Launching Riivolution or Brawl.
+- Verifying individual mod compatibility.
 
-Do not treat the placeholder profiles as playable. The next engineering step is a Wii-compatible, secure Google Drive authorization/download design and a real, creator-authorized sample profile. Standard Riivolution and USB Loader GX compatibility must be tested separately.
+A file appearing in the list does not mean it is safe or compatible to load. Test mods with the appropriate loader instructions.
