@@ -1,13 +1,15 @@
 # Brawl Mod Manager for Wii
 
-A **standalone Wii Homebrew Channel application** that will act as the console-side companion to the separate Brawl Cloud website.
+A **standalone Wii Homebrew Channel application** intended to be the console-side companion to the separate Brawl Cloud website.
 
 ## Two-app design
 
-- **Brawl Cloud (web):** account sign-in, mod storage, uploads, metadata, and catalog publishing.
-- **Brawl Mod Manager (Wii):** browse the shared catalog, select Wii-compatible profiles, and manage supported downloads on the SD card.
+- **Brawl Cloud (web):** Google sign-in, mod uploads, metadata, and library management. The user's own Google Drive is the storage.
+- **Brawl Mod Manager (Wii):** intended to browse compatible entries from the same Google Drive library and manage supported downloads to SD.
 
-The Wii app does not host the library and must not contain Google sign-in credentials or cloud administrator secrets. It should consume a read-only catalog/download API.
+## Storage choice
+
+Google Drive is the intended storage provider. The project does not require Cloudflare R2 or a separate storage bucket. The web app currently stores its files and catalog directly in the connected user's Drive.
 
 ## Current native Wii app scaffold
 
@@ -17,18 +19,16 @@ The Wii app does not host the library and must not contain Google sign-in creden
 - `BUILD.md`: build instructions and limitations.
 - `riivolution/README.md`: future loader integration notes.
 
-The current screen is still a prototype with placeholder profiles. It does not yet connect to Wi-Fi, fetch Brawl Cloud's catalog, download files to SD, create Riivolution XML, start Riivolution, or launch Brawl.
+The current screen is a prototype with placeholder profiles. It does not yet connect to Google Drive, fetch the private catalog, download files to SD, create Riivolution XML, start Riivolution, or launch Brawl.
 
-## Shared cloud connection
+## Google Drive connection still to build
 
-The planned API lives in `../cloud/worker/`. It is designed around a public read-only catalog and mod-download endpoints, with separate administrator-only publishing routes. The web app currently uses Google Drive, while this Worker is designed for Cloudflare R2; they are not synchronized yet. A publishing/sync service or unified storage backend is required before the Wii app can see website uploads.
-
-The Wii client must validate catalog data, restrict downloads to approved catalog URLs, handle interrupted downloads safely, and avoid storing credentials. Network transport and TLS compatibility must be tested on real Wii hardware.
+The Wii cannot automatically reuse the Google sign-in session from Safari or the Brawl Cloud website. A Wii-compatible authorization and download method must be implemented and tested. Private Drive files must not be made public automatically, and Google account tokens must not be embedded in the app.
 
 ## Mod loading limitations
 
-Riivolution's RiiFS network protocol is not generic HTTPS and is not the same thing as downloading a file from the cloud API. Network catalog/download support alone does not inject assets into Brawl. A separate, tested handoff or file-access integration is required. Compatibility with USB Loader GX must not be assumed.
+Downloading a file from Drive does not by itself inject assets into Brawl. A separate, tested handoff or file-access integration is required. Riivolution and USB Loader GX compatibility must not be assumed.
 
 ## Build status
 
-This source scaffold is not a complete cloud-connected manager. Build with devkitPPC/libogc, then test in Dolphin and on a real Wii. Cloud catalog, download-to-SD, profile parsing, and supported loader handoff remain future milestones.
+This source scaffold is not a complete Drive-connected manager. Build with devkitPPC/libogc, then test in Dolphin and on a real Wii. Drive catalog access, downloads, profile parsing, and supported loader handoff remain future milestones.
