@@ -1,34 +1,52 @@
 # Brawl Cloud + Brawl Mod Manager
 
-This repository contains two separate apps with a **Google Drive only, manual-transfer workflow**.
+This repository contains Brawl Cloud, a free public mod-file library, and a native Wii Homebrew Channel file manager.
 
-- **[Brawl Cloud](https://kamenriderspider1-coder.github.io/Brawl-mod-manager-/)** is a simple website shortcut and guide for your own Google Drive.
-- **Brawl Mod Manager** is a separate native Wii Homebrew Channel app that scans mod files copied onto the Wii SD card.
+- **[Brawl Cloud website](https://kamenriderspider1-coder.github.io/Brawl-mod-manager-/)** explains and links to the mod library.
+- **[Mod library / GitHub Releases](https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases)** stores downloadable release assets.
+- **Brawl Mod Manager** scans files already copied to the Wii SD card.
 
-## Storage: Google Drive only
+## Free cloud storage
 
-Brawl Cloud opens the normal Google Drive website. Create a folder named `Brawl Cloud` in your own Drive and manage your files there.
+Brawl Cloud uses GitHub Releases in this repository as its public file library. Mod archives are attached to releases and downloaded through their public release links.
 
-There is:
-- No Google Drive API integration.
-- No OAuth, Client ID, API key, or sign-in inside Brawl Cloud.
-- No Google Cloud Storage, Cloudflare R2, or other storage service.
-- No access to your Google account shared with the app or repository.
+There is no separate storage subscription, Google Drive connection, Google API key, OAuth login, or paid API service. Release assets are public, so only upload files you created or are allowed to distribute. Keep private files and personal information out of public releases.
 
-## Manual transfer to the Wii
+To add a mod archive:
+1. Open [New GitHub Release](https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases/new).
+2. Add a clear release title and description.
+3. Attach the mod archive(s) to the release.
+4. Publish the release. It will appear in the Brawl Cloud library link.
 
-1. Open Brawl Cloud and click **Open Google Drive**.
-2. Upload permitted mod files to your `Brawl Cloud` folder.
-3. Download a mod file from Drive onto your computer.
-4. Copy it to `sd:/brawl-mods/` on the Wii SD card.
-5. Open Brawl Mod Manager from the Homebrew Channel. It scans that folder and displays the files it finds.
+## Wii transfer status
 
-The Wii manager is currently an SD-card file browser. It does not install or activate mods, generate Riivolution XML, or patch Brawl. Those functions require separate loader integration and testing.
+The current Wii v20 app is an SD-card file browser. It scans `sd:/brawl-mods/` and lists local files. It does **not** yet connect to GitHub or download files over Wi-Fi.
 
-## Wii app
+Direct Wii syncing is a separate development step. It requires:
+- Wii network initialization and reliable connection handling.
+- HTTPS/TLS support for secure GitHub downloads.
+- A catalog format the Wii app can parse.
+- Download progress, redirect handling, file-size checks, and safe writes to the SD card.
 
-- Native source: `wii/source/main.c`
-- Build instructions: `wii/BUILD.md`
-- Release packages: [GitHub Releases](https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases)
+The Wii's built-in internet connection alone does not add these features. Do not treat the current v20 release as having online download support.
 
-Only download and use mod files you created or are allowed to use.
+## Build
+
+Requirements: devkitPPC, libogc, libfat, and the devkitPro Wii build environment.
+
+From `wii/` in a configured devkitPro shell:
+
+```sh
+make
+```
+
+The intended output is `boot.dol` plus `meta.xml`. Copy those files into `sd:/apps/brawl-mod-manager/`.
+
+## Current Wii app scope
+
+- Initializes Wii video and controller input.
+- Mounts the SD card with libfat.
+- Scans `sd:/brawl-mods/` and lists up to 24 filenames.
+- D-pad selects, A shows the selected filename, B rescans, HOME/START exits.
+
+It does not install or activate mods, generate Riivolution XML, or patch Brawl. A file appearing in the list does not mean it is safe or compatible to load.
