@@ -1,6 +1,6 @@
-# Wii SD-card manager build
+# Wii manager build
 
-This folder contains a native Wii Homebrew Channel application.
+This folder contains the native Wii Homebrew Channel application.
 
 ## Build requirements
 - devkitPPC
@@ -19,14 +19,21 @@ The intended output is `boot.dol` plus `meta.xml`. Copy those files into `apps/b
 - Scans `sd:/brawl-mods/` and lists up to 24 filenames.
 - D-pad selects, A shows the selected filename, B rescans, HOME/START exits.
 
-## Manual Google Drive transfer
+## Brawl Cloud storage
 
-Download mods from the normal Google Drive website on a computer, then copy them into `sd:/brawl-mods/`. The Wii app makes no network requests and uses no Google API or account credentials.
+Brawl Cloud uses public GitHub Releases in this repository as its free mod-file library. Browse and download files at:
+
+https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases
+
+The current Wii app does not connect to GitHub and does not download files over Wi-Fi. Download release files on a computer and copy supported files to the SD card.
 
 ## Not implemented
+- Wii network initialization for this app.
+- HTTPS/TLS or GitHub download support.
+- Parsing an online mod catalog.
 - Installing or activating mod files.
 - Generating Riivolution XML.
 - Launching Riivolution or Brawl.
 - Verifying individual mod compatibility.
 
-A file appearing in the list does not mean it is safe or compatible to load. Test mods with the appropriate loader instructions.
+Direct online syncing needs a tested HTTPS client, redirect handling, download progress, file-size checks, and safe SD writes. A working home Wi-Fi connection by itself is not enough.
