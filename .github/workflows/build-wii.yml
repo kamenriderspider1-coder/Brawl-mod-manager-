@@ -1,4 +1,4 @@
-name: Build Wii Homebrew App and Publish Release
+name: Build Wii Mod Manager and Publish Release
 
 on:
   push:
@@ -20,21 +20,28 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
 
+      - name: Install complete Wii development tools
+        run: |
+          dkp-pacman -Sy --noconfirm wii-dev
+          . /etc/profile.d/devkit-env.sh
+
       - name: Verify Wii toolchain
         run: |
+          . /etc/profile.d/devkit-env.sh
           test -n "$DEVKITPPC"
           test -f "$DEVKITPPC/wii_rules"
           command -v powerpc-eabi-gcc
           command -v elf2dol
 
-      - name: Build Homebrew Channel app
+      - name: Build Homebrew Channel manager
         run: |
+          . /etc/profile.d/devkit-env.sh
           cd wii
           make -j2
           test -s boot.dol
           test -s meta.xml
 
-      - name: Package SD-card app
+      - name: Package Wii manager for SD card
         run: |
           mkdir -p dist/brawl-mod-manager
           cp wii/boot.dol dist/brawl-mod-manager/boot.dol
@@ -54,15 +61,17 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-      - name: Publish downloadable GitHub Release
+      - name: Publish Wii manager only
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: wii-prototype-${{ github.run_number }}
-          name: Brawl Mod Manager Wii Prototype ${{ github.run_number }}
+          tag_name: wii-manager-v${{ github.run_number }}
+          name: Brawl Mod Manager for Wii ${{ github.run_number }}
           body: |
-            Automated Wii Homebrew Channel prototype build.
+            Wii Homebrew Channel manager prototype.
 
-            **Important:** This is a menu prototype only. It does not yet download mods from Cloudflare or load them inside Brawl. Check the repository README for current limitations.
+            This release contains the Wii manager package only. The Brawl Cloud website and mod library are maintained separately in the repository.
+
+            Important: this is currently a profile-menu prototype. It does not yet download mods or load them inside Brawl.
           prerelease: true
           make_latest: false
           files: |
