@@ -4,10 +4,12 @@ on:
   push:
     paths:
       - "backend/**"
+      - "cloud/worker/**"
       - ".github/workflows/backend-check.yml"
   pull_request:
     paths:
       - "backend/**"
+      - "cloud/worker/**"
       - ".github/workflows/backend-check.yml"
   workflow_dispatch:
 
@@ -15,8 +17,8 @@ permissions:
   contents: read
 
 jobs:
-  test-local-backend:
-    name: Test Mac companion backend
+  test-backends:
+    name: Test local and cloud backends
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -25,6 +27,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - name: Run backend tests
+      - name: Test Mac companion backend
         working-directory: backend
         run: npm test
+      - name: Test Cloudflare Worker API
+        run: node --test cloud/worker/index.test.mjs
