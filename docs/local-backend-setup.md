@@ -1,82 +1,59 @@
-# Local backend setup
+# Mac companion backend
 
-This first milestone connects the GitHub Pages interface to a small service running on your Mac. It deliberately exposes only a health check. It does not yet sign in to MEGA/Google Drive, download or extract mods, or serve files to the Wii.
+This is an **optional local companion service** for the GitHub Pages app. GitHub Actions now runs automated tests for the backend whenever its files change. Actions checks the code; it does **not** host a permanent server for your Mac or Wii.
 
-## 1. Requirements
+## What works now
 
-- macOS with Node.js 22 or newer (use an LTS release).
-- Internet access to download the repository files.
-- Keep this backend folder private on your Mac. Do not put account passwords, MEGA session data, OAuth secrets, or downloaded private files in GitHub.
+- A loopback-only health endpoint at `http://127.0.0.1:8787/health`.
+- CORS restricted to this project's GitHub Pages origin.
+- Browser preflight support, including the Private Network Access preflight header when requested.
+- Automated Node.js tests, run by GitHub Actions.
 
-Official Node.js downloads: https://nodejs.org/en/download/
+## What is not implemented
 
-## 2. Get the backend folder
+MEGA or Google Drive sign-in, cloud browsing, mod searching, downloading, archive extraction, uploads, Wii/LAN file serving, and Wii streaming are not connected yet. The health check is only a connection test.
 
-Download this repository as a ZIP from GitHub, extract it, and open the extracted `backend` folder. You can also clone the repository if Git is already installed.
+## Run locally on an approved Mac
 
-## 3. Check Node.js
+Requirements: macOS and Node.js 22 or newer. If this is a school-managed Mac, use the service only if its administrator permits it. Do not bypass device restrictions.
 
-Open Terminal and run:
+1. Download the repository ZIP from GitHub and extract it.
+2. Open Terminal in the extracted `backend` folder.
+3. Check the available runtime:
 
-```sh
-node -v
-npm -v
-```
+   ```sh
+   node -v
+   npm -v
+   ```
 
-If Terminal says `command not found`, Node.js is not installed or is not on your PATH. Install an LTS version from the official Node.js site. If your Mac is managed and blocks installation, do not try to bypass that restriction; ask the device administrator for approval.
+4. Start the service:
 
-## 4. Install the background service on your M-series Mac
+   ```sh
+   npm start
+   ```
 
-The repository includes an installer for Apple silicon Macs, including M2. It creates a per-user macOS LaunchAgent under `~/Library/LaunchAgents`. Apple's `launchd` is the supported macOS mechanism for managing background agents. The installer:
+5. Keep the Mac awake and connected to Wi-Fi while using this local service.
+6. Open the GitHub Pages app and select **Check connection again**.
 
-- Starts the backend when you log in.
-- Restarts it if the process exits.
-- Runs `caffeinate -i` while the backend is running, preventing idle system sleep while still allowing the display to turn off.
-- Writes logs under `~/Library/Logs/BrawlModManager/`.
+Stop it with Control+C in Terminal.
 
-In Terminal, while inside the extracted `backend` folder, run:
+## Optional login startup
 
-```sh
-bash install-macos-launch-agent.sh
-```
+The `install-macos-launch-agent.sh` script installs a per-user LaunchAgent and uses `caffeinate -i` to prevent idle system sleep while the backend is running. This means the Mac must remain powered on and awake (the display may turn off). A Mac that is asleep or shut down cannot serve requests. Closing a MacBook lid may cause sleep.
 
-If macOS reports that the script is not executable, run:
+Only run the installer if you have permission on the Mac. It writes a LaunchAgent and logs in your user account. It does not change Wi-Fi, router, DNS, firewall, or other network settings.
 
-```sh
-bash install-macos-launch-agent.sh
-```
-
-To check the service, run:
-
-```sh
-launchctl print gui/$(id -u)/com.brawlmodmanager.local
-```
-
-To stop and remove the background agent later:
+To remove the agent later:
 
 ```sh
 launchctl bootout gui/$(id -u) ~/Library/LaunchAgents/com.brawlmodmanager.local.plist
 rm ~/Library/LaunchAgents/com.brawlmodmanager.local.plist
 ```
 
-The service starts after you log in, not before login at the macOS boot screen. It cannot run while the Mac is shut down or asleep. On a MacBook, closing the lid can still put the Mac to sleep; the installer does not change lid behavior or power settings.
+## Security
 
-**No network configuration is changed.** The installer does not alter Wi-Fi, router, DNS, firewall, or network settings. The backend stays bound to `127.0.0.1`, meaning only the Mac itself can connect to this first-stage service. Wii/LAN access is not enabled yet.
+The server listens only on `127.0.0.1` and rejects requests from origins other than this project's GitHub Pages origin. Do not change it to `0.0.0.0` or expose port 8787 to the internet. Never put MEGA passwords, session keys, OAuth secrets, or private mod archives in this public repository.
 
-## 5. Connect the GitHub Pages app
+## GitHub-hosted execution
 
-Open:
-
-https://kamenriderspider1-coder.github.io/Brawl-mod-manager-/
-
-The Local backend status card should change to **Connected** when the app can reach `http://127.0.0.1:8787/health`.
-
-If it says not connected:
-- Confirm the Terminal window still shows the server is listening.
-- Check that the address is exactly `http://127.0.0.1:8787/health`.
-- Refresh the GitHub Pages app.
-- If Safari reports a CORS or local-network permission error, tell me the exact message. Browser policies can differ.
-
-## Security boundary
-
-The service binds to loopback only and allows requests only from this project's GitHub Pages origin. Do not change the host to `0.0.0.0` or expose this port to the internet. The health endpoint is intentionally read-only. Before adding downloads, cloud sign-in, file writes, or Wii access, the next milestone must add request authentication, strict URL and file validation, safe archive extraction, and provider-specific secure session handling.
+The workflow at `.github/workflows/backend-check.yml` runs tests on GitHub-hosted runners. These runners are temporary jobs, not an always-on backend. They cannot receive requests from the Pages app or keep serving files after a job ends. A cloud storage integration will need a separate hosted API/service and server-side secrets configured securely.
