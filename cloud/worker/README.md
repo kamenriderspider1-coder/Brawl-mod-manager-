@@ -7,7 +7,11 @@ The Worker is hosted on Cloudflare and does not require the Mac to be awake, ins
 ## What is live
 
 - `GET /api/health`: reports service status and the actual enabled capabilities.
-- `GET /api/catalog`: returns the committed, read-only catalog.
+- `GET /api/catalog`
+- `GET /api/discover?url=...`
+- `GET /api/archive?url=...`: returns the committed, read-only catalog.
+- `GET /api/discover?url=<creator-page>`: scans supported HTTPS GameBanana and Project+ pages for candidate ZIP/download links (up to 20 candidates; page scan capped at 2 MB).
+- `GET /api/archive?url=<detected-link>`: streams a detected archive through the Worker to the browser, capped at 100 MB.
 - CORS is restricted to `https://kamenriderspider1-coder.github.io`.
 - Requests without an Origin header can read the catalog for future Wii-side clients.
 - Writes and unknown routes are rejected.
@@ -21,7 +25,9 @@ Important boundaries:
 - The live browser session exists only in page memory and ends when disconnected or when the page is closed.
 - The library is unofficial, so this is an experimental first connection, not an official MEGA integration. The user must test it with their own MEGA account.
 - The catalog importer is user-assisted: it does not crawl creator pages or automatically resolve download links. The user must obtain the archive from the creator page and select the ZIP.
-- Automatic background downloading, archive processing on the server, RAR/7z support, background jobs, and Wii/RiiFS file delivery are not implemented.
+- The new discovery flow scans only the allowlisted GameBanana and Project+ hostnames. Redirects outside those hosts are rejected. It does not crawl unrelated domains, bypass logins/paywalls, or guarantee that every creator page exposes a detectable direct archive link.
+- The archive proxy streams supported downloads to the browser with a 100 MB cap. The browser still validates/extracts ZIPs and uploads their contents through the active experimental MEGAJS session. No server-side MEGA account access or background job is implemented.
+- RAR/7z support, background jobs, and Wii/RiiFS file delivery are not implemented.
 - The browser importer is experimental and memory-limited; large archives may fail on some devices. Uploads completed before an error remain in MEGA.
 - No existing Smash REX files on the Wii are changed.
 
