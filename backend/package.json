@@ -1,11 +1,12 @@
 {
   "name": "brawl-mod-manager-local-backend",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "description": "Loopback-only local companion service for the Brawl Mod Manager GitHub Pages app",
   "scripts": {
-    "start": "node server.mjs"
+    "start": "node server.mjs",
+    "test": "node --test"
   },
   "engines": {
     "node": ">=22"
