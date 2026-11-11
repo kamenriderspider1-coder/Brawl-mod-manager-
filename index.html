@@ -76,7 +76,8 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
       <input id="brawl-mod-search-query" type="search" maxlength="300" placeholder="e.g. Brawl custom character costumes or stages" style="display:block;width:100%;margin:8px 0;padding:12px;border-radius:10px;border:1px solid var(--line);background:#080d18;color:var(--text);font:inherit">
       <button class="btn primary" id="brawl-mod-search-web" type="submit">Search web</button>
     </form>
-    <p class="small muted" id="brawl-mod-search-status" role="status" aria-live="polite">Searches open in a new tab. Check that each result supports the original Wii version of Super Smash Bros. Brawl.</p>
+    <div id="brawl-mod-search-results" aria-live="polite" style="display:grid;gap:10px;margin-top:14px"></div>
+    <p class="small muted" id="brawl-mod-search-status" role="status" aria-live="polite">Search results appear here. Check creator pages for Wii compatibility before downloading.</p>
   </section>
 
   <section class="panel" id="mod-request-panel">
@@ -437,23 +438,34 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
 
 <script>
 (function(){
-  const form=document.getElementById('brawl-mod-search-form');
-  const input=document.getElementById('brawl-mod-search-query');
-  const status=document.getElementById('brawl-mod-search-status');
-  if(!form||!input||!status)return;
-  form.addEventListener('submit',function(event){
-    event.preventDefault();
-    const query=input.value.trim();
-    if(!query){
-      status.textContent='Enter a mod name or type of Brawl mod to search for.';
-      input.focus();
-      return;
-    }
-    const search=encodeURIComponent(query+' Super Smash Bros. Brawl Wii mod');
-    const url='https://www.google.com/search?q='+search;
-    window.open(url,'_blank','noopener,noreferrer');
-    status.textContent='Opened a web search for: '+query+'. Check creator pages for Wii compatibility and download requirements.';
-  });
+ const form=document.getElementById('brawl-mod-search-form');
+ const input=document.getElementById('brawl-mod-search-query');
+ const status=document.getElementById('brawl-mod-search-status');
+ const results=document.getElementById('brawl-mod-search-results');
+ if(!form||!input||!status||!results)return;
+ const api='https://brawl-mod-manager-api.brawlmodmanager.workers.dev';
+ form.addEventListener('submit',async function(event){
+  event.preventDefault();
+  const query=input.value.trim();
+  if(query.length<2){status.textContent='Enter at least two characters.';input.focus();return;}
+  status.textContent='Searching the web…';results.replaceChildren();
+  const button=document.getElementById('brawl-mod-search-web');button.disabled=true;
+  try{
+   const response=await fetch(api+'/api/search?q='+encodeURIComponent(query));
+   const data=await response.json();
+   if(!response.ok||!data.ok)throw new Error(data.error||'Search failed.');
+   if(!data.results.length){status.textContent='No results were returned. Try a different search.';return;}
+   status.textContent='Found '+data.results.length+' web results for “'+query+'”.';
+   data.results.forEach(item=>{
+    const card=document.createElement('article');card.className='step';
+    const title=document.createElement('strong');title.textContent=item.title;
+    const desc=document.createElement('p');desc.className='small muted';desc.textContent=item.snippet||'Open the creator page to check details and download availability.';
+    const link=document.createElement('a');link.className='btn';link.href=item.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Open source page ↗';
+    card.append(title,desc,link);results.append(card);
+   });
+  }catch(error){status.textContent='Search unavailable: '+error.message;}
+  finally{button.disabled=false;}
+ });
 })();
 </script>
 
