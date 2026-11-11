@@ -1,33 +1,40 @@
 # Brawl Mod Manager cloud API
 
-This Worker is deployed to Cloudflare by **GitHub Actions**. It runs in the cloud and does not require the Mac to be awake, installed, or running a local server. GitHub Pages itself is static hosting; the Worker is the separate API service.
+Live endpoint: **https://brawl-mod-manager-api.brawlmodmanager.workers.dev**
 
-## What is live in this version
+The Worker is hosted on Cloudflare and does not require the Mac to be awake, installed, or running a local server. GitHub Pages hosts the website; this Worker is the separate API service.
+
+## What is live
 
 - `GET /api/health`: reports service status and the actual enabled capabilities.
-- `GET /api/catalog`: returns the committed, read-only mod catalog.
-- CORS is restricted to the project's GitHub Pages origin. Requests without an Origin header are accepted for Wii-side clients.
-- The API rejects writes and unknown routes. It does not accept arbitrary uploads or execute downloaded files.
+- `GET /api/catalog`: returns the committed, read-only catalog.
+- CORS is restricted to `https://kamenriderspider1-coder.github.io`.
+- Requests without an Origin header can read the catalog for future Wii-side clients.
+- Writes and unknown routes are rejected.
 
-## One-time GitHub setup
+## MEGA connection status
 
-Open the repository's **Settings → Secrets and variables → Actions → New repository secret** and add:
+The website now has a browser-side MEGA connection panel based on the community-maintained, unofficial `megajs` package. It can attempt a direct MEGA sign-in, create/find a `Brawl Mods` folder, list that folder, and upload files the user explicitly selects (up to 50 MB per file in this initial browser workflow).
 
-- `CLOUDFLARE_API_TOKEN`: a Cloudflare API token with permission to edit Workers Scripts for the intended account.
-- `CLOUDFLARE_ACCOUNT_ID`: the Cloudflare account ID.
+Important boundaries:
+- The MEGA login is performed by the browser library directly against MEGA. The password is not sent to this Cloudflare Worker and is not saved by the page; the input is cleared after the login attempt.
+- The live browser session exists only in page memory and ends when disconnected or when the page is closed.
+- The library is unofficial, so this is an experimental first connection, not an official MEGA integration. The user must test it with their own MEGA account.
+- Automatic source-page crawling, downloading arbitrary mod URLs, archive extraction, background jobs, and Wii/RiiFS file delivery are not implemented.
+- No existing Smash REX files on the Wii are changed.
 
-Do not commit either value, put them in GitHub Pages, or send them in chat.
+## Deploying updates
 
-After those two secrets are saved, every push to `main` that changes `cloud/worker/**` or the deploy workflow will run tests and deploy the Worker. You can also run **Actions → Deploy Brawl Mod Cloud → Run workflow**. The workflow checks for missing secrets and reports a clear setup error.
+The repository includes a GitHub Actions workflow at `.github/workflows/deploy-cloud.yml`. To let GitHub Actions deploy future Worker source changes automatically, add these repository Actions secrets:
 
-## Find the deployed API URL
+- `CLOUDFLARE_API_TOKEN`: Cloudflare API token with Workers Scripts Edit permission.
+- `CLOUDFLARE_ACCOUNT_ID`: Cloudflare account ID.
 
-Open **Actions → Deploy Brawl Mod Cloud**, select the successful run, and open its deploy log. Wrangler prints the deployed `.workers.dev` URL. The URL normally looks like:
+Do not commit either value, put them in GitHub Pages, or send them in chat. The currently live Worker was deployed through the authorized Cloudflare connection. The workflow will fail its credential check until the two GitHub secrets are added.
 
-`https://brawl-mod-manager-api.<your-workers-subdomain>.workers.dev`
+## API routes
 
-## Not implemented yet
+- `GET /api/health`
+- `GET /api/catalog`
 
-This deployment is a working cloud health/catalog API, not the full MEGA mod pipeline. MEGA account authorization, private session storage, downloading and safely extracting permitted archives, uploading to MEGA, and Wii/RiiFS file delivery still need separate implementations and end-to-end testing. Existing REX files on the Wii are not changed by this API.
-
-GitHub cannot silently create Cloudflare credentials or grant itself account access. The two repository secrets are a one-time authorization step; after that, deployment is driven by GitHub.
+The API currently exposes no MEGA credentials, session data, or file upload routes.
