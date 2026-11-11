@@ -109,7 +109,7 @@
     }
   ],
   "cloudStorage": {
-    "provider": "google-drive",
+    "provider": "user-selected",
     "appRole": "The Cloud Storage app manages discovery, link intake, download jobs, archive extraction, validation, organization, and Wii library access.",
     "driveFolder": "My Drive/Brawl Mods/",
     "pipeline": [
@@ -133,6 +133,26 @@
       "google-drive"
     ],
     "defaultProvider": "mega",
-    "providerSelection": "The user selects MEGA or Google Drive for each mod request."
+    "providerSelection": "The user selects MEGA or Google Drive for each mod request.",
+    "wiiAccess": {
+      "intendedFlow": [
+        "Wii connects to the user's Cloud Storage service over home Wi-Fi",
+        "Wii manager requests the user's processed mod library",
+        "Service checks that the selected mod files exist in MEGA or Google Drive",
+        "Wii-compatible network filesystem or temporary cache provides files to the selected Brawl loader",
+        "Manager launches Brawl through the compatible loader with the selected mod"
+      ],
+      "status": "not-implemented",
+      "playButton": "disabled-until-wii-network-client-storage-bridge-and-loader-integration-are-tested",
+      "requirements": [
+        "Wii homebrew network client",
+        "authenticated library service reachable from the Wii over Wi-Fi",
+        "MEGA/Google Drive file proxy or secure temporary cache",
+        "Wii-compatible remote filesystem or loader-supported file delivery",
+        "compatibility validation for each mod and base Brawl build",
+        "launch integration with the user's installed Brawl loader"
+      ],
+      "note": "The current Wii v20 package is an SD-card file browser prototype. The browser library panel can display catalog entries only; it cannot connect to a Wii, stream mod files, or launch Brawl."
+    }
   }
 }
