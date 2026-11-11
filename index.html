@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0b1020">
-<title>Brawl Mod Manager | Wii App + Cloud Mod Library</title>
+<title>Brawl Mod Manager V1 | Cloud Mod Finder</title>
 <style>
 :root{color-scheme:dark;--bg:#080d18;--panel:#121e30;--line:#293b57;--text:#f3f6ff;--muted:#a8b6cc;--mint:#79e3c3;--blue:#8bbcff}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -18%,#23466b 0%,var(--bg) 58%);color:var(--text);font:15px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}
@@ -19,7 +19,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
 </style>
 </head>
 <body>
-<header><div class="brand"><div class="logo">🎮</div><div><h1>Brawl Mod Manager</h1><div class="muted">The Wii app lives on SD. The mod library lives in the cloud.</div></div></div><p>The SD card holds the Brawl Mod Manager homebrew app. Use MEGA's official website to store mod folders; automatic Wii network delivery is not implemented yet.</p></header>
+<header><div class="brand"><div class="logo">🎮</div><div><h1>Brawl Mod Manager <span style="font-size:.55em;color:var(--mint)">V1</span></h1><div class="muted">The Wii app lives on SD. The mod library lives in the cloud.</div></div></div><p>Version 1 provides in-app mod search, supported creator-page scanning, and archive downloads through a hosted cloud API. MEGA uploads and Wii network loading remain manual/not connected.</p></header>
 <main>\n
 <section class="panel" id="cloud-backend-panel">
   <div class="row"><h2>☁️ Cloud backend</h2><span class="tag">Hosted service</span></div>
@@ -30,13 +30,13 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
     <button class="btn" id="check-cloud-api" type="button">Check cloud connection</button>
     <p class="small muted">API: <code>https://brawl-mod-manager-api.brawlmodmanager.workers.dev</code></p>
   </div>
-  <p class="small muted">Currently live: health checks and a read-only catalog endpoint. MEGA file operations, archive extraction, automatic source-page scanning, and Wii file delivery are separate features and are not live yet.</p>
+  <p class="small muted">Version 1 live features: hosted search, supported creator-page scanning, and archive downloads. Files are downloaded to this device; MEGA upload and Wii delivery are not connected.</p>
 </section>
 
 
 <section class="panel" id="cloud-storage-workspace">
   <div class="row"><h2>☁️ Cloud Storage workspace</h2><span class="tag">App control center</span></div>
-  <p class="muted">This workspace finds supported creator downloads, checks ZIP contents, and prepares a folder-preserving bundle for you to upload through MEGA's official website.</p>
+  <p class="muted">Version 1: search inside the app, scan supported creator pages for archive links, and download archives. Upload downloaded files to MEGA manually using its official website.</p>
   <div class="storage-grid">
     <article class="storage cloud" id="mega-storage-card">
       <div class="storage-icon">🟣</div><h3>MEGA official storage</h3>
@@ -63,7 +63,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
         <li>Upload the extracted mod folder into your MEGA account.</li>
         <li>Publish its metadata to the Wii library.</li>
       </ol>
-      <p class="small muted">The assisted import tool below downloads a creator ZIP through the cloud service, validates its paths, extracts it in your browser, and packages the extracted folder for download. You then upload the extracted folder to MEGA using its official website.</p>
+      <p class="small muted">The Version 1 importer scans supported creator pages and downloads the selected ZIP archive to this device. It does not extract archives or upload to MEGA automatically.</p>
     </article>
   </div>
 
@@ -95,7 +95,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
       </select>
       <button class="btn primary" type="submit">Add to mod request queue</button>
     </form>
-    <p class="small muted" id="mod-request-status" role="status" aria-live="polite">Requests are currently queued in this browser only. Automatic source-page scanning, downloading, and archive extraction are not connected yet. Manual MEGA uploads are available in the MEGA panel.</p>
+    <p class="small muted" id="mod-request-status" role="status" aria-live="polite">Requests are saved in this browser. Select Process on a request to scan its supported creator page and reveal downloadable archives. Upload downloaded files to MEGA manually.</p>
     <h3>Mod request queue</h3>
     <div id="mod-request-list"><p class="small muted">No requests yet.</p></div>
     <button class="btn" id="clear-mod-requests" type="button">Clear request queue</button>
@@ -114,7 +114,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
       </article>
       <article class="storage">
         <div class="row"><strong>Cloud library</strong><span class="status"><i class="dot blue"></i> Catalog only</span></div>
-        <p class="small muted">The list below is loaded from cloud-mods.json. These are source entries, not proof that their files have been stored in MEGA or are ready to play.</p>
+        <p class="small muted">The list below contains catalog source entries. A listed source is not proof that a mod has been downloaded, uploaded to MEGA, or tested on Wii.</p>
       </article>
     </div>
     <div id="wii-mod-library" class="steps" aria-live="polite"><p class="small muted">Loading mod catalog…</p></div>
@@ -160,7 +160,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
           <label class="step">Download or source URL<input id="cloud-mod-url" name="url" type="url" required placeholder="https://..." style="display:block;width:100%;margin-top:8px;padding:11px;border-radius:8px;border:1px solid var(--line);background:#080d18;color:var(--text)"></label>
           <button class="btn primary" type="submit">Add link to list</button>
         </form>
-        <div id="cloud-link-status" class="small muted" role="status" aria-live="polite" style="margin-top:10px">This is a local link queue only. It does not download files or upload them to Google Drive yet.</div>
+        <div id="cloud-link-status" class="small muted" role="status" aria-live="polite" style="margin-top:10px">Saved links are local to this browser. Use the search/import tools above to scan and download supported archives.</div>
         <div id="custom-cloud-link-list" class="steps" aria-live="polite"></div>
         <div class="row" style="margin-top:12px">
           <button class="btn" id="export-cloud-links" type="button">Export my links as JSON</button>
@@ -169,7 +169,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
         <p class="small muted">Note: GitHub Pages is a static website, so this form saves links in this browser only. It does not publish them to the shared GitHub catalog or make them appear on the Wii automatically. Use Export to save your list; shared cloud publishing and Wii syncing need a secure server-side connection.</p>
       </section>
       <div class="notice">Project Universe is waiting for its original YouTube description link so the correct mod can be identified. REX is not duplicated in the cloud library.</div>
-      <p class="muted">Google Drive is the planned file store. The Cloud Storage app needs a secure processing service to fetch, extract, and upload mod files to MEGA, and the Wii needs a compatible network-loading layer.</p>
+      <p class="muted">Version 1 stores downloaded archives on your device until you upload them to MEGA. Wii network delivery is not included.</p>
       <div class="row" style="margin-top:12px">
         <a class="btn primary" href="https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases" target="_blank" rel="noopener">Browse Cloud Mods ↗</a>
         <a class="btn" href="https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases/new" target="_blank" rel="noopener">Add Mod Pack ↗</a>
@@ -299,43 +299,33 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
 
 <script>
 (function(){
- const KEY='brawl-cloud-mod-requests-v1';
- const form=document.getElementById('mod-request-form');
- if(!form) return;
- const name=document.getElementById('requested-mod-name');
- const source=document.getElementById('requested-mod-source');
- const storage=document.getElementById('requested-mod-storage');
- const list=document.getElementById('mod-request-list');
- const status=document.getElementById('mod-request-status');
- const read=()=>{try{const x=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(x)?x:[]}catch(e){return []}};
+ const KEY='brawl-cloud-mod-requests-v1',api='https://brawl-mod-manager-api.brawlmodmanager.workers.dev';
+ const form=document.getElementById('mod-request-form');if(!form)return;
+ const name=document.getElementById('requested-mod-name'),source=document.getElementById('requested-mod-source'),list=document.getElementById('mod-request-list'),status=document.getElementById('mod-request-status');
+ const read=()=>{try{const v=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(v)?v:[]}catch{return[]}};
  const write=x=>localStorage.setItem(KEY,JSON.stringify(x));
- function render(){
-   const items=read(); list.replaceChildren();
-   if(!items.length){const p=document.createElement('p');p.className='small muted';p.textContent='No requests yet.';list.append(p);return;}
-   items.forEach((item,i)=>{
-     const card=document.createElement('div');card.className='step';
-     const title=document.createElement('strong');title.textContent=item.name;
-     const detail=document.createElement('p');detail.className='small muted';detail.textContent='Source: '+item.source;
-     const destination=document.createElement('p');destination.className='small muted';destination.textContent='Storage destination: '+item.storage;
-     const state=document.createElement('p');state.className='small muted';state.textContent='Queued locally. The app still needs its secure processing service to find the file on the source page, download it, extract it, and upload the extracted folder.';
-     const remove=document.createElement('button');remove.type='button';remove.className='btn';remove.textContent='Remove';
-     remove.addEventListener('click',()=>{const next=read();next.splice(i,1);write(next);render();});
-     card.append(title,detail,destination,state,remove);list.append(card);
-   });
+ function el(tag,cls,txt){const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=txt;return n;}
+ async function processItem(item,card){
+  const state=card.querySelector('[data-state]');state.textContent='Scanning supported creator page…';
+  try{
+   const r=await fetch(api+'/api/discover?url='+encodeURIComponent(item.source));const d=await r.json();if(!r.ok||!d.ok)throw Error(d.error||'Could not scan source');
+   if(!d.candidates.length){state.textContent='Scan complete: no supported archive links found. Check the source page manually.';return;}
+   state.textContent='Found '+d.candidates.length+' archive candidate(s). Choose a download:';
+   d.candidates.forEach((c,i)=>{const row=el('div','step');row.append(el('p','small',c.label+' · '+c.host));const b=el('button','btn','Download archive');b.type='button';b.addEventListener('click',async()=>{
+    b.disabled=true;b.textContent='Downloading…';
+    try{const ar=await fetch(api+'/api/archive?url='+encodeURIComponent(c.url));if(!ar.ok){const x=await ar.json().catch(()=>({}));throw Error(x.error||'Download failed');}
+     const blob=await ar.blob(),a=document.createElement('a'),u=URL.createObjectURL(blob);a.href=u;a.download=(item.name||'brawl-mod').replace(/[^a-z0-9._-]+/gi,'_').slice(0,80)+'-'+(i+1)+'.zip';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),30000);b.textContent='Downloaded';state.textContent='Archive downloaded to this device. Upload it to MEGA manually.';
+    }catch(e){b.disabled=false;b.textContent='Retry download';state.textContent='Download failed: '+e.message;}
+   });row.append(b);card.append(row);});
+  }catch(e){state.textContent='Processing failed: '+e.message+' Only supported GameBanana and Project+ URLs can be scanned.';}
  }
- form.addEventListener('submit',e=>{
-   e.preventDefault();
-   const n=name.value.trim(), raw=source.value.trim();
-   let u;try{u=new URL(raw)}catch(e){status.textContent='Please enter a valid http or https mod page or download URL.';return;}
-   if(!n||!['http:','https:'].includes(u.protocol)){status.textContent='Enter a mod name and a valid http or https URL.';return;}
-   const items=read();items.push({name:n,source:u.href,storage:storage.value,createdAt:new Date().toISOString(),status:'queued'});
-   write(items);form.reset();render();
-   status.textContent='Request added to this browser queue. It will not download or upload until the secure processing and storage connections are configured.';
- });
- document.getElementById('clear-mod-requests').addEventListener('click',()=>{
-   if(!confirm('Clear all mod requests saved in this browser?')) return;
-   localStorage.removeItem(KEY);render();status.textContent='Local request queue cleared.';
- });
+ function render(){list.replaceChildren();const items=read();if(!items.length){list.append(el('p','small muted','No requests yet.'));return;}
+  items.forEach((item,i)=>{const card=el('div','step');card.append(el('strong','',item.name),el('p','small muted','Source: '+item.source));const state=el('p','small muted','Ready to scan.');state.dataset.state='1';card.append(state);
+   const b=el('button','btn primary','Process request');b.type='button';b.addEventListener('click',()=>processItem(item,card));const remove=el('button','btn','Remove');remove.type='button';remove.style.marginLeft='8px';remove.addEventListener('click',()=>{const x=read();x.splice(i,1);write(x);render();});card.append(b,remove);list.append(card);
+  });
+ }
+ form.addEventListener('submit',e=>{e.preventDefault();const n=name.value.trim();let u;try{u=new URL(source.value.trim())}catch{status.textContent='Enter a valid source URL.';return;}if(!n||!['http:','https:'].includes(u.protocol)){status.textContent='Enter a name and valid HTTP or HTTPS URL.';return;}const x=read();if(x.some(a=>a.source===u.href)){status.textContent='That source is already queued.';return;}x.push({name:n,source:u.href,createdAt:new Date().toISOString()});write(x);form.reset();render();status.textContent='Saved to this browser. Select Process request to scan and download supported archives.';});
+ document.getElementById('clear-mod-requests').addEventListener('click',()=>{if(confirm('Clear all locally saved mod requests?')){localStorage.removeItem(KEY);render();status.textContent='Queue cleared.';}});
  render();
 })();
 </script>
@@ -372,39 +362,29 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
 
 <script>
 (function(){
-  const form=document.getElementById('ai-mod-search-form');
-  if(!form)return;
-  const prompt=document.getElementById('ai-mod-prompt');
-  const chat=document.getElementById('mod-chat');
-  const status=document.getElementById('ai-mod-search-status');
-  function bubble(label,message){
-    const box=document.createElement('div');box.className='step';box.style.marginTop='10px';
-    const heading=document.createElement('strong');heading.textContent=label;
-    const body=document.createElement('p');body.textContent=message;
-    box.append(heading,body);chat.append(box);return box;
-  }
-  function addSearchLink(parent,label,url){
-    const a=document.createElement('a');a.className='btn';a.style.margin='5px 6px 0 0';
-    a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=label+' ↗';parent.append(a);
-  }
-  form.addEventListener('submit',function(event){
-    event.preventDefault();
-    const query=prompt.value.trim();
-    if(!query)return;
-    bubble('You',query);
-    const reply=bubble('Cloud Mod Finder','I prepared targeted searches from your request. Open the result pages below, then paste any promising creator or download links into the mod request queue.');
-    const encoded=encodeURIComponent(query+' Super Smash Bros Brawl Wii mod download original Wii hardware');
-    const gb=encodeURIComponent(query+' site:gamebanana.com/mods "Super Smash Bros. Brawl" Wii');
-    const vault=encodeURIComponent(query+' site:brawlvault.com Brawl Wii');
-    const github=encodeURIComponent(query+' Brawl mod');
-    addSearchLink(reply,'Search the web','https://www.google.com/search?q='+encoded);
-    addSearchLink(reply,'Search GameBanana','https://www.google.com/search?q='+gb);
-    addSearchLink(reply,'Search Brawl Vault','https://www.google.com/search?q='+vault);
-    addSearchLink(reply,'Search GitHub','https://github.com/search?q='+github+'&type=repositories');
-    const tip=document.createElement('p');tip.className='small muted';tip.textContent='These are live search links, not verified mod results. Check the creator page, platform, version, compatibility, and permission to download before adding a file.';reply.append(tip);
-    status.textContent='Search links created for your request. The app has not automatically verified the search results or downloaded any files.';
-    chat.scrollTop=chat.scrollHeight;prompt.value='';
-  });
+ const form=document.getElementById('ai-mod-search-form');
+ if(!form)return;
+ const prompt=document.getElementById('ai-mod-prompt');
+ const chat=document.getElementById('mod-chat');
+ const status=document.getElementById('ai-mod-search-status');
+ const api='https://brawl-mod-manager-api.brawlmodmanager.workers.dev';
+ form.addEventListener('submit',async e=>{
+  e.preventDefault();const q=prompt.value.trim();if(q.length<2){status.textContent='Enter at least two characters.';return;}
+  const user=document.createElement('div');user.className='step';user.textContent='You: '+q;chat.append(user);
+  const reply=document.createElement('div');reply.className='step';reply.textContent='Searching the web in the cloud…';chat.append(reply);status.textContent='Searching…';
+  try{
+   const r=await fetch(api+'/api/search?q='+encodeURIComponent(q));const data=await r.json();if(!r.ok||!data.ok)throw Error(data.error||'Search failed');
+   reply.textContent='Found '+data.results.length+' results.';
+   data.results.forEach(item=>{const card=document.createElement('div');card.className='step';
+    const title=document.createElement('strong');title.textContent=item.title;
+    const desc=document.createElement('p');desc.className='small muted';desc.textContent=item.snippet||'Open the creator page to review compatibility.';
+    const a=document.createElement('a');a.href=item.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Open source page';a.className='btn';
+    card.append(title,desc,a);reply.append(card);
+   });
+   status.textContent='Search complete. Review creator pages and use the main search panel to scan supported pages for archives.';
+  }catch(err){reply.textContent='Search failed: '+err.message;status.textContent='Cloud search is unavailable.';}
+  prompt.value='';
+ });
 })();
 </script>
 
@@ -438,33 +418,34 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
 
 <script>
 (function(){
- const form=document.getElementById('brawl-mod-search-form');
- const input=document.getElementById('brawl-mod-search-query');
- const status=document.getElementById('brawl-mod-search-status');
- const results=document.getElementById('brawl-mod-search-results');
+ const form=document.getElementById('brawl-mod-search-form'),input=document.getElementById('brawl-mod-search-query'),status=document.getElementById('brawl-mod-search-status'),results=document.getElementById('brawl-mod-search-results');
  if(!form||!input||!status||!results)return;
  const api='https://brawl-mod-manager-api.brawlmodmanager.workers.dev';
- form.addEventListener('submit',async function(event){
-  event.preventDefault();
-  const query=input.value.trim();
-  if(query.length<2){status.textContent='Enter at least two characters.';input.focus();return;}
-  status.textContent='Searching the web…';results.replaceChildren();
-  const button=document.getElementById('brawl-mod-search-web');button.disabled=true;
-  try{
-   const response=await fetch(api+'/api/search?q='+encodeURIComponent(query));
-   const data=await response.json();
-   if(!response.ok||!data.ok)throw new Error(data.error||'Search failed.');
-   if(!data.results.length){status.textContent='No results were returned. Try a different search.';return;}
-   status.textContent='Found '+data.results.length+' web results for “'+query+'”.';
-   data.results.forEach(item=>{
-    const card=document.createElement('article');card.className='step';
-    const title=document.createElement('strong');title.textContent=item.title;
-    const desc=document.createElement('p');desc.className='small muted';desc.textContent=item.snippet||'Open the creator page to check details and download availability.';
-    const link=document.createElement('a');link.className='btn';link.href=item.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Open source page ↗';
-    card.append(title,desc,link);results.append(card);
-   });
-  }catch(error){status.textContent='Search unavailable: '+error.message;}
-  finally{button.disabled=false;}
+ const allowed=h=>['gamebanana.com','www.gamebanana.com','files.gamebanana.com','projectplusgame.com','www.projectplusgame.com'].includes(h);
+ function button(label,fn){const b=document.createElement('button');b.type='button';b.className='btn';b.textContent=label;b.addEventListener('click',fn);return b;}
+ async function download(url,label,b){
+  b.disabled=true;b.textContent='Downloading…';
+  try{const r=await fetch(api+'/api/archive?url='+encodeURIComponent(url));if(!r.ok){const x=await r.json().catch(()=>({}));throw Error(x.error||'Archive download failed');}
+   const blob=await r.blob();const a=document.createElement('a'),obj=URL.createObjectURL(blob);a.href=obj;a.download=(label||'brawl-mod').replace(/[^a-z0-9._-]+/gi,'_').slice(0,80)+'.zip';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(obj),30000);b.textContent='Downloaded';status.textContent='Archive downloaded to this device. Upload it to MEGA manually.';
+  }catch(e){b.textContent='Retry download';status.textContent='Download failed: '+e.message;}finally{b.disabled=false;}
+ }
+ async function scan(url,card){
+  const old=card.querySelector('[data-scan-status]');if(old)old.remove();
+  const note=document.createElement('p');note.className='small muted';note.dataset.scanStatus='1';note.textContent='Scanning creator page…';card.append(note);
+  try{const r=await fetch(api+'/api/discover?url='+encodeURIComponent(url));const d=await r.json();if(!r.ok||!d.ok)throw Error(d.error||'Scan failed');
+   note.textContent=d.candidates.length?'Found '+d.candidates.length+' archive candidate(s):':'No supported ZIP download links found on this page.';
+   d.candidates.forEach((c,i)=>{const row=document.createElement('div');row.className='step';const t=document.createElement('p');t.className='small';t.textContent=c.label+' ('+c.host+')';const b=button('Download archive',()=>download(c.url,'brawl-mod-'+(i+1),b));row.append(t,b);card.append(row);});
+  }catch(e){note.textContent='Could not scan this source: '+e.message+' Supported hosts: GameBanana and Project+.';}
+ }
+ form.addEventListener('submit',async e=>{
+  e.preventDefault();const q=input.value.trim();if(q.length<2){status.textContent='Enter at least two characters.';return;}
+  const b=document.getElementById('brawl-mod-search-web');b.disabled=true;status.textContent='Searching in the cloud…';results.replaceChildren();
+  try{const r=await fetch(api+'/api/search?q='+encodeURIComponent(q));const d=await r.json();if(!r.ok||!d.ok)throw Error(d.error||'Search failed');
+   if(!d.results.length){status.textContent='No results. Try another search.';return;}
+   d.results.forEach(item=>{const card=document.createElement('article');card.className='step';const title=document.createElement('strong');title.textContent=item.title;const desc=document.createElement('p');desc.className='small muted';desc.textContent=item.snippet||'Review the source details and Wii compatibility.';const link=document.createElement('a');link.className='btn';link.href=item.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Open source page';card.append(title,desc,link);
+    let host='';try{host=new URL(item.url).hostname;}catch{}if(allowed(host))card.append(button('Scan for downloads',()=>scan(item.url,card)));else{const tip=document.createElement('p');tip.className='small muted';tip.textContent='Automatic scanning is limited to supported GameBanana and Project+ pages.';card.append(tip);}results.append(card);
+   });status.textContent='Found '+d.results.length+' results. Scan supported pages to reveal archive downloads.';
+  }catch(err){status.textContent='Search unavailable: '+err.message;}finally{b.disabled=false;}
  });
 })();
 </script>
