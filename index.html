@@ -642,8 +642,9 @@ $('disconnect-mega')?.addEventListener('click',()=>{
      let total=0;
      for(const entry of entries){
        const name=entry.name.replace(/\\/g,'/');
-       if(name.startsWith('/')||name.split('/').some(part=>part==='..'||part===''))throw new Error('Unsafe path found in ZIP: '+entry.name);
+       if(name.startsWith('/')||name.split('/').some(part=>part==='..'||part==='.'||part===''))throw new Error('Unsafe path found in ZIP: '+entry.name);
        if(name.includes(':'))throw new Error('Unsafe path found in ZIP: '+entry.name);
+       if(typeof entry.unixPermissions==='number'&&(entry.unixPermissions&0xF000)===0xA000)throw new Error('Symbolic links are not accepted in ZIP archives: '+entry.name);
        const bytes=await entry.async('uint8array');
        total+=bytes.byteLength;
        if(total>300*1024*1024)throw new Error('Extracted content exceeds the 300 MB limit.');
