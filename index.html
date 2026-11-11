@@ -19,7 +19,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
 </style>
 </head>
 <body>
-<header><div class="brand"><div class="logo">🎮</div><div><h1>Brawl Mod Manager <span style="font-size:.55em;color:var(--mint)">V1</span></h1><div class="muted">The Wii app lives on SD. The mod library lives in the cloud.</div></div></div><p>Version 1 provides in-app mod search, supported creator-page scanning, and archive downloads through a hosted cloud API. MEGA uploads and Wii network loading remain manual/not connected.</p></header>
+<header><div class="brand"><div class="logo">🎮</div><div><h1>Brawl Mod Manager <span style="font-size:.55em;color:var(--mint)">V1</span></h1><div class="muted">The Wii app lives on SD. The mod library lives in the cloud.</div></div></div><p>Version 1 provides in-app web search, supported creator-page scanning, and ZIP downloads. Direct MEGA uploads and Wii network loading are not connected yet.</p></header>
 <main>\n
 <section class="panel" id="cloud-backend-panel">
   <div class="row"><h2>☁️ Cloud backend</h2><span class="tag">Hosted service</span></div>
@@ -36,20 +36,20 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
 
 <section class="panel" id="cloud-storage-workspace">
   <div class="row"><h2>☁️ Cloud Storage workspace</h2><span class="tag">App control center</span></div>
-  <p class="muted">Version 1: search inside the app, scan supported creator pages for archive links, and download archives. Upload downloaded files to MEGA manually using its official website.</p>
+  <p class="muted">Search and scan inside this app. ZIP files currently download to this device. Direct transfer into MEGA is marked unavailable until a secure, approved account connection is configured.</p>
   <div class="storage-grid">
     <article class="storage cloud" id="mega-storage-card">
       <div class="storage-icon">🟣</div><h3>MEGA official storage</h3>
       <p class="muted small">Sign in on MEGA's official website in a separate tab. Your password and two-factor code stay on MEGA, not in this app.</p>
       <a class="btn primary" id="mega-sign-in" href="https://mega.nz/" target="_blank" rel="noopener noreferrer">Sign in to MEGA ↗</a>
-      <p class="small muted" id="mega-sign-in-status" role="status" aria-live="polite">After signing in, return to this tab. Opening MEGA does not automatically link your account or grant this app access to your folders.</p>
+      <p class="small muted" id="mega-sign-in-status" role="status" aria-live="polite"><strong>Connection status: Not connected.</strong> Signing in on MEGA's website does not authorize this app. No files are being uploaded automatically.</p>
       <div class="notice" style="margin-top:12px">
-        <strong>How the transfer works right now</strong>
+        <strong>Current transfer status</strong>
         <ol class="small">
-          <li>Use the importer below to download and check a creator ZIP.</li>
-          <li>Download the prepared ZIP bundle to this Mac.</li>
-          <li>Open the bundle with the built-in Archive Utility to extract it.</li>
-          <li>In the official MEGA tab, upload the extracted mod folder to <code>Brawl Mods</code>.</li>
+          <li>Search for a mod and scan a supported creator page.</li>
+          <li>Choose a ZIP archive. It downloads to this device.</li>
+          <li>Extract it locally and review its contents.</li>
+          <li>Automatic upload to <code>MEGA / Brawl Mods</code> is not available yet.</li>
         </ol>
       </div>
       <p class="small muted">Automatic account-to-account upload is not available: MEGA does not publish an official drop-in browser JavaScript SDK for third-party pages. The commonly used MEGAJS package is unofficial, so this app intentionally does not ask for your MEGA credentials.</p>
@@ -58,10 +58,9 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
       <div class="storage-icon">📥</div><h3>Mod download pipeline</h3>
       <ol class="small muted">
         <li>Find a mod online or paste its source/download link.</li>
-        <li>Fetch the permitted archive through a processing service.</li>
-        <li>Extract and validate the archive.</li>
-        <li>Upload the extracted mod folder into your MEGA account.</li>
-        <li>Publish its metadata to the Wii library.</li>
+        <li>Fetch a permitted archive through the hosted processing service.</li>
+        <li>Download the ZIP to this device.</li>
+        <li>MEGA upload and Wii library publishing are future features, not active steps.</li>
       </ol>
       <p class="small muted">The Version 1 importer scans supported creator pages and downloads the selected ZIP archive to this device. It does not extract archives or upload to MEGA automatically.</p>
     </article>
@@ -82,7 +81,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
 
   <section class="panel" id="mod-request-panel">
     <div class="row"><h2>📝 Request a mod</h2><span class="tag">Mod finder queue</span></div>
-    <p class="muted">Tell the Cloud Storage app what mod you want and where to find it. The intended pipeline finds the actual file link on the source page, downloads the archive, extracts it, and uploads the extracted folder to your MEGA account.</p>
+    <p class="muted">Save a mod request in this browser, then scan its supported creator page for archive links. The current version downloads a selected ZIP to this device. It does not extract or upload it automatically.</p>
     <form id="mod-request-form">
       <label for="requested-mod-name"><strong>What mod do you want?</strong></label>
       <input id="requested-mod-name" name="modName" type="text" placeholder="e.g. Brawl character costume pack" required>
@@ -426,7 +425,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
  async function download(url,label,b){
   b.disabled=true;b.textContent='Downloading…';
   try{const r=await fetch(api+'/api/archive?url='+encodeURIComponent(url));if(!r.ok){const x=await r.json().catch(()=>({}));throw Error(x.error||'Archive download failed');}
-   const blob=await r.blob();const a=document.createElement('a'),obj=URL.createObjectURL(blob);a.href=obj;a.download=(label||'brawl-mod').replace(/[^a-z0-9._-]+/gi,'_').slice(0,80)+'.zip';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(obj),30000);b.textContent='Downloaded';status.textContent='Archive downloaded to this device. Upload it to MEGA manually.';
+   const blob=await r.blob();const a=document.createElement('a'),obj=URL.createObjectURL(blob);a.href=obj;a.download=(label||'brawl-mod').replace(/[^a-z0-9._-]+/gi,'_').slice(0,80)+'.zip';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(obj),30000);b.textContent='Downloaded';status.textContent='ZIP downloaded to this device. Automatic MEGA upload is not connected.';
   }catch(e){b.textContent='Retry download';status.textContent='Download failed: '+e.message;}finally{b.disabled=false;}
  }
  async function scan(url,card){
@@ -434,7 +433,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
   const note=document.createElement('p');note.className='small muted';note.dataset.scanStatus='1';note.textContent='Scanning creator page…';card.append(note);
   try{const r=await fetch(api+'/api/discover?url='+encodeURIComponent(url));const d=await r.json();if(!r.ok||!d.ok)throw Error(d.error||'Scan failed');
    note.textContent=d.candidates.length?'Found '+d.candidates.length+' archive candidate(s):':'No supported ZIP download links found on this page.';
-   d.candidates.forEach((c,i)=>{const row=document.createElement('div');row.className='step';const t=document.createElement('p');t.className='small';t.textContent=c.label+' ('+c.host+')';const b=button('Download archive',()=>download(c.url,'brawl-mod-'+(i+1),b));row.append(t,b);card.append(row);});
+   d.candidates.forEach((c,i)=>{const row=document.createElement('div');row.className='step';const t=document.createElement('p');t.className='small';t.textContent=c.label+' ('+c.host+')';const b=button('Download ZIP to this device',()=>download(c.url,'brawl-mod-'+(i+1),b));row.append(t,b);card.append(row);});
   }catch(e){note.textContent='Could not scan this source: '+e.message+' Supported hosts: GameBanana and Project+.';}
  }
  form.addEventListener('submit',async e=>{
