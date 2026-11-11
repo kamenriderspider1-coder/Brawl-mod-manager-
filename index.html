@@ -784,7 +784,7 @@ $('disconnect-mega')?.addEventListener('click',()=>{
      prepared.push({name,bytes});
    }
    const root=context.modDestination.folder;
-   const folderName=mod.name.replace(/[^a-z0-9 _.-]/gi,'').trim().replace(/\\s+/g,' ').slice(0,70)||mod.id;
+   const folderName=mod.name.replace(/[^a-z0-9 _.-]/gi,'').trim().replace(/\s+/g,' ').slice(0,70)||mod.id;
    let folder=Array.isArray(root.children)?root.children.find(x=>x.directory&&x.name===folderName):null;
    if(!folder)folder=await root.mkdir(folderName);
    const zipBytes=new Uint8Array(await file.arrayBuffer());
@@ -823,7 +823,7 @@ $('disconnect-mega')?.addEventListener('click',()=>{
          const found=await scan.json();
          if(!scan.ok||!found.ok)throw Error(found.error||'Creator page scan failed');
          const candidates=found.candidates||[];
-         const exact=candidates.filter(c=>/\\.zip(?:$|[?#])/i.test(c.url));
+         const exact=candidates.filter(c=>/\.zip(?:$|[?#])/i.test(c.url));
          const chosen=exact.length===1?exact[0]:(candidates.length===1?candidates[0]:null);
          if(!chosen)throw Error(candidates.length?'Multiple possible downloads; needs manual selection':'No supported archive link detected');
          const result=await importOne(mod,chosen.url,context);
