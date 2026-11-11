@@ -86,7 +86,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
 
   <section class="panel" id="catalog-import-panel">
     <div class="row"><h2>📦 Import a catalog mod to MEGA</h2><span class="tag">Assisted archive import</span></div>
-    <p class="muted">Pick a mod, download its archive from the original creator page, then select the ZIP here. The app extracts the ZIP in your browser and uploads the files into the MEGA folder you choose above.</p>
+    <p class="muted">Choose a Brawl mod source, check that its creator page identifies a real Wii release, then download the full ZIP. The app keeps the original ZIP and extracts its contents into a named folder inside MEGA / Brawl Mods.</p>
     <label for="catalog-import-mod"><strong>Catalog mod</strong></label>
     <select id="catalog-import-mod" style="display:block;width:100%;margin:7px 0;padding:10px;border-radius:9px;background:#0b1423;color:inherit;border:1px solid var(--line)"><option value="">Loading catalog…</option></select>
     <div class="row" style="margin:10px 0">
@@ -95,16 +95,16 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
     </div>
     <div class="row" style="margin:12px 0">
       <button class="btn" id="catalog-import-discover" type="button">Find download link on creator page</button>
-      <span class="small muted" id="catalog-import-discovery-status" role="status" aria-live="polite">Scans supported GameBanana and Project+ pages for archive links.</span>
+      <span class="small muted" id="catalog-import-discovery-status" role="status" aria-live="polite">Scans supported GameBanana and Project+ pages for archive links. Check Wii hardware and Brawl version before importing.</span>
     </div>
     <label for="catalog-import-candidate"><strong>Detected download link</strong></label>
     <select id="catalog-import-candidate" style="display:block;width:100%;margin:7px 0;padding:10px;border-radius:9px;background:#0b1423;color:inherit;border:1px solid var(--line)" disabled><option value="">Scan a creator page first…</option></select>
     <button class="btn primary" id="catalog-import-download" type="button" disabled>Download detected ZIP and upload to MEGA</button>
-    <p class="small muted">The scanner only follows supported HTTPS creator domains. It will not crawl unrelated websites or bypass login/paywalls. Review the detected link before starting the transfer.</p>
+    <p class="small muted">Wii compatibility is not guaranteed by a filename. Before importing, confirm the creator page says the mod supports the original Wii version of Super Smash Bros. Brawl, and check its base-game/loader requirements. Dolphin-only, Ultimate, and other-game mods should not be imported. The scanner only follows supported HTTPS creator domains.</p>
     <label for="catalog-import-archive"><strong>Or select a ZIP manually</strong></label>
     <input id="catalog-import-archive" type="file" accept=".zip,application/zip,application/x-zip-compressed" style="display:block;margin:8px 0">
     <button class="btn primary" id="catalog-import-start" type="button">Extract selected ZIP and upload to MEGA</button>
-    <p class="small muted" id="catalog-import-status" role="status" aria-live="polite">Waiting for a catalog selection and ZIP file. Limits: 100 MB compressed, 300 MB extracted, and 1,000 files per import.</p>
+    <p class="small muted" id="catalog-import-status" role="status" aria-live="polite">Waiting for a catalog selection and ZIP file. The original ZIP is retained alongside extracted files. Limits: 100 MB compressed, 300 MB extracted, and 1,000 files per import.</p>
     <div id="catalog-import-progress" class="small muted" aria-live="polite"></div>
     <p class="small muted">Only import files you are allowed to download and store. ZIP files are inspected in-browser. Password-protected ZIPs, split archives, RAR/7z files, and very large packs are not supported by this first version.</p>
   </section>
@@ -713,11 +713,18 @@ $('disconnect-mega')?.addEventListener('click',()=>{
        if(total>300*1024*1024)throw new Error('Extracted content exceeds the 300 MB limit.');
        prepared.push({name,bytes});
      }
-     say('ZIP checked. Uploading '+prepared.length+' files ('+(total/1024/1024).toFixed(1)+' MB) to '+destination.path+'…');
-     const folderCache=new Map([['',destination.folder]]);
+     const safeModFolder=mod.name.replace(/[^a-z0-9 _.-]/gi,'').trim().replace(/\s+/g,' ').slice(0,70)||mod.id;
+     let modFolder=Array.isArray(destination.folder.children)?destination.folder.children.find(x=>x.directory&&x.name===safeModFolder):null;
+     if(!modFolder)modFolder=await destination.folder.mkdir(safeModFolder);
+     const modPath=destination.path+'/'+safeModFolder;
+     say('ZIP checked. Saving the complete original archive and '+prepared.length+' extracted files ('+(total/1024/1024).toFixed(1)+' MB extracted) to '+modPath+'…');
+     const archiveBytes=new Uint8Array(await file.arrayBuffer());
+     const archiveName=(mod.id||'mod')+'-complete-source.zip';
+     await modFolder.upload({name:archiveName,size:archiveBytes.byteLength},archiveBytes).complete;
+     const folderCache=new Map([['',modFolder]]);
      async function getFolder(relative){
        const parts=relative?relative.split('/').filter(Boolean):[];
-       let current=destination.folder, path='';
+       let current=modFolder, path='';
        for(const part of parts){
          path=path?path+'/'+part:part;
          if(!folderCache.has(path)){
@@ -735,10 +742,10 @@ $('disconnect-mega')?.addEventListener('click',()=>{
        const folder=await getFolder(parts.join('/'));
        await folder.upload({name:filename,size:entry.bytes.byteLength},entry.bytes).complete;
        done++;
-       progress.textContent='Uploaded '+done+' / '+prepared.length+': '+entry.name;
+       progress.textContent='Uploaded '+done+' / '+prepared.length+' extracted files: '+entry.name;
      }
-     say('Import complete: '+mod.name+' was extracted and uploaded to '+destination.path+'.');
-     progress.textContent='Uploaded '+prepared.length+' files. The original ZIP remains in your Downloads unless you remove it.';
+     say('Import complete: '+mod.name+' has its complete original ZIP and extracted contents in '+modPath+'.');
+     progress.textContent='Saved original archive plus '+prepared.length+' extracted files. The full ZIP is preserved in MEGA.';
      $('catalog-import-archive').value='';
      if(typeof megaContext.refresh==='function')await megaContext.refresh();
    }catch(error){say('Import stopped: '+error.message+' Any files already uploaded remain in MEGA.');}
