@@ -37,7 +37,7 @@ The repository includes an installer for Apple silicon Macs, including M2. It cr
 In Terminal, while inside the extracted `backend` folder, run:
 
 ```sh
-./install-macos-launch-agent.sh
+bash install-macos-launch-agent.sh
 ```
 
 If macOS reports that the script is not executable, run:
