@@ -120,11 +120,12 @@
       "upload-extracted-files-to-selected-mega-or-google-drive-account",
       "publish-library-metadata-for-wii"
     ],
-    "implementationStatus": "planned",
+    "implementationStatus": "partial-ui-only",
     "requirements": [
-      "MEGA account integration using a supported secure authentication flow",
-      "Google OAuth client configuration and Google Drive API authorization when Google Drive is selected",
-      "secure server-side source downloader and archive processor",
+      "secure server-side MEGA client integration with private session handling",
+      "secure source downloader and archive processor",
+      "archive validation and mod compatibility checks",
+      "upload extracted mod files into MEGA/Brawl Mods/",
       "Wii-compatible network client and remote-loading bridge or temporary local cache"
     ],
     "security": "Never collect provider passwords in the public app or commit OAuth client secrets, access tokens, or session credentials to the public repository.",
@@ -153,6 +154,18 @@
         "launch integration with the user's installed Brawl loader"
       ],
       "note": "The current Wii v20 package is an SD-card file browser prototype. The browser library panel can display catalog entries only; it cannot connect to a Wii, stream mod files, or launch Brawl."
+    },
+    "megaIntegration": {
+      "status": "not-connected",
+      "authentication": "requires-server-side-MEGA-SDK-integration",
+      "browserLogin": "opening mega.nz/login does not authorize this app to access the account",
+      "credentialPolicy": "never request or store the user's MEGA password, session ID, master key, or tokens in the public GitHub Pages app or repository",
+      "uploadStatus": "disabled-until-secure-provider-service-is-deployed",
+      "notes": [
+        "The official MEGA SDK is a native C++ client access engine, not a drop-in browser OAuth flow.",
+        "The commonly used MEGAJS JavaScript package is unofficial and its account login uses email and password; do not put that login flow in the public app.",
+        "A real integration needs a separately deployed, security-reviewed service using an appropriate supported MEGA client implementation and protected server-side session storage."
+      ]
     }
   }
 }
