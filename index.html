@@ -100,6 +100,8 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
     <label for="catalog-import-candidate"><strong>Detected download link</strong></label>
     <select id="catalog-import-candidate" style="display:block;width:100%;margin:7px 0;padding:10px;border-radius:9px;background:#0b1423;color:inherit;border:1px solid var(--line)" disabled><option value="">Scan a creator page first…</option></select>
     <button class="btn primary" id="catalog-import-download" type="button" disabled>Download detected ZIP and upload to MEGA</button>
+    <button class="btn primary" id="catalog-import-all" type="button" style="margin:8px 0">Import all 8 catalog mods to MEGA</button>
+    <p class="small muted" id="catalog-import-all-status" role="status" aria-live="polite">Bulk import checks each source and only auto-imports when it finds one unambiguous ZIP link. Entries needing a choice will be listed for review.</p>
     <p class="small muted">Wii compatibility is not guaranteed by a filename. Before importing, confirm the creator page says the mod supports the original Wii version of Super Smash Bros. Brawl, and check its base-game/loader requirements. Dolphin-only, Ultimate, and other-game mods should not be imported. The scanner only follows supported HTTPS creator domains.</p>
     <label for="catalog-import-archive"><strong>Or select a ZIP manually</strong></label>
     <input id="catalog-import-archive" type="file" accept=".zip,application/zip,application/x-zip-compressed" style="display:block;margin:8px 0">
@@ -625,7 +627,7 @@ $('disconnect-mega')?.addEventListener('click',()=>{
  let mods=[];
  function say(message){status.textContent=message;}
  fetch('./cloud-mods.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('Catalog unavailable');return r.json();}).then(data=>{
-   mods=(data.mods||[]).filter(m=>m.id!=='smash-rex'&&m.targetPlatform==='Nintendo Wii'&&m.targetGame==='Super Smash Bros. Brawl');
+   mods=(data.mods||[]).filter(m=>m.id!=='smash-rex'&&m.targetPlatform==='Nintendo Wii'&&m.targetGame==='Super Smash Bros. Brawl'); window.__brawlCatalogMods=mods;
    select.replaceChildren(new Option('Choose a mod…',''));
    mods.forEach(mod=>select.add(new Option(mod.name,mod.id)));
    say(mods.length+' Wii-targeted Brawl entries ready. Compatibility is unverified until checked on the creator page.');
@@ -754,4 +756,85 @@ $('disconnect-mega')?.addEventListener('click',()=>{
 })();
 </script>
 
+
+<script type="module">
+(function(){
+ const $=id=>document.getElementById(id);
+ const button=$('catalog-import-all'),status=$('catalog-import-all-status');
+ if(!button||!status)return;
+ const api='https://brawl-mod-manager-api.brawlmodmanager.workers.dev';
+ const say=t=>status.textContent=t;
+ async function importOne(mod,archiveUrl,context){
+   const response=await fetch(api+'/api/archive?url='+encodeURIComponent(archiveUrl),{cache:'no-store'});
+   if(!response.ok){let msg='Archive download failed';try{msg=(await response.json()).error||msg}catch{}throw Error(msg)}
+   const blob=await response.blob();
+   if(!blob.size||blob.size>100*1024*1024)throw Error('Archive empty or over 100 MB');
+   const file=new File([blob],mod.id+'-complete-source.zip',{type:'application/zip'});
+   const pkg=await import('https://cdn.jsdelivr.net/npm/jszip@3.10.1/+esm');
+   const JSZip=pkg.default||pkg,zip=await JSZip.loadAsync(file,{checkCRC32:true});
+   const entries=Object.values(zip.files).filter(x=>!x.dir);
+   if(!entries.length||entries.length>1000)throw Error('ZIP has no files or exceeds 1,000 files');
+   const prepared=[];let total=0;
+   for(const entry of entries){
+     const name=entry.name.replace(/\\/g,'/');
+     if(name.startsWith('/')||name.split('/').some(p=>p==='..'||p==='.'||p==='')||name.includes(':'))throw Error('Unsafe archive path: '+entry.name);
+     if(typeof entry.unixPermissions==='number'&&(entry.unixPermissions&0xF000)===0xA000)throw Error('Archive contains a symbolic link');
+     const bytes=await entry.async('uint8array');total+=bytes.byteLength;
+     if(total>300*1024*1024)throw Error('Extracted files exceed 300 MB');
+     prepared.push({name,bytes});
+   }
+   const root=context.modDestination.folder;
+   const folderName=mod.name.replace(/[^a-z0-9 _.-]/gi,'').trim().replace(/\\s+/g,' ').slice(0,70)||mod.id;
+   let folder=Array.isArray(root.children)?root.children.find(x=>x.directory&&x.name===folderName):null;
+   if(!folder)folder=await root.mkdir(folderName);
+   const zipBytes=new Uint8Array(await file.arrayBuffer());
+   await folder.upload({name:mod.id+'-complete-source.zip',size:zipBytes.byteLength},zipBytes).complete;
+   const cache=new Map([['',folder]]);
+   async function getFolder(relative){
+     let current=folder,path='';
+     for(const part of (relative?relative.split('/').filter(Boolean):[])){
+       path=path?path+'/'+part:part;
+       if(!cache.has(path)){
+         const existing=Array.isArray(current.children)?current.children.find(x=>x.directory&&x.name===part):null;
+         cache.set(path,existing||await current.mkdir(part));
+       }
+       current=cache.get(path);
+     }
+     return current;
+   }
+   for(const entry of prepared){
+     const parts=entry.name.split('/'),filename=parts.pop(),dest=await getFolder(parts.join('/'));
+     await dest.upload({name:filename,size:entry.bytes.byteLength},entry.bytes).complete;
+   }
+   return {files:prepared.length,bytes:total,folder:context.modDestination.path+'/'+folderName};
+ }
+ button.addEventListener('click',async()=>{
+   const context=window.brawlMegaContext?.();
+   if(!context?.storage||!context?.modDestination){say('Connect to MEGA first. The app will use MEGA / Brawl Mods.');return}
+   button.disabled=true;
+   const select=$('catalog-import-mod'),mods=Array.from(select.options).slice(1).map(o=>window.__brawlCatalogMods?.find(m=>m.id===o.value)).filter(Boolean);
+   if(!mods.length){say('Catalog has not loaded. Refresh the page and try again.');button.disabled=false;return}
+   const results=[];
+   try{
+     for(let i=0;i<mods.length;i++){
+       const mod=mods[i];say('Checking '+(i+1)+' / '+mods.length+': '+mod.name);
+       try{
+         const scan=await fetch(api+'/api/discover?url='+encodeURIComponent(mod.url),{cache:'no-store'});
+         const found=await scan.json();
+         if(!scan.ok||!found.ok)throw Error(found.error||'Creator page scan failed');
+         const candidates=found.candidates||[];
+         const exact=candidates.filter(c=>/\\.zip(?:$|[?#])/i.test(c.url));
+         const chosen=exact.length===1?exact[0]:(candidates.length===1?candidates[0]:null);
+         if(!chosen)throw Error(candidates.length?'Multiple possible downloads; needs manual selection':'No supported archive link detected');
+         const result=await importOne(mod,chosen.url,context);
+         results.push('✓ '+mod.name+': '+result.files+' extracted files + original ZIP saved');
+       }catch(e){results.push('• '+mod.name+': review needed ('+e.message+')')}
+       say('Processed '+(i+1)+' / '+mods.length+'\\n'+results.join('\\n'));
+     }
+     say('Bulk import pass finished.\\n'+results.join('\\n')+'\\nOnly successful entries were uploaded. Refresh the MEGA folder list to verify.');
+     await context.refresh?.();
+   }finally{button.disabled=false}
+ });
+})();
+</script>
 </body></html>
