@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "title": "Brawl Mod Manager Cloud Library",
-  "description": "Mod source catalog for the separate Brawl Mod Manager Cloud Storage app. MEGA and Google Drive are user-selected file stores connected inside the app.",
+  "description": "Wii-targeted Super Smash Bros. Brawl mod source catalog. Every entry still requires creator-page compatibility verification; catalog presence is not proof of Wii hardware compatibility.",
   "downloadBehavior": {
     "trigger": "user-selected",
     "target": "User-selected MEGA or Google Drive account",
@@ -27,7 +27,11 @@
       "source": "official",
       "url": "https://projectplusgame.com/download",
       "status": "Available",
-      "compatibleWithRex": false
+      "compatibleWithRex": false,
+      "targetPlatform": "Nintendo Wii",
+      "targetGame": "Super Smash Bros. Brawl",
+      "hardwareCompatibility": "unverified",
+      "importNote": "Confirm the creator page explicitly supports original Wii hardware and the required Brawl revision/loader before importing."
     },
     {
       "id": "project-plus-all-stars",
@@ -36,7 +40,11 @@
       "source": "gamebanana",
       "url": "https://gamebanana.com/mods/626137",
       "status": "Available",
-      "compatibleWithRex": false
+      "compatibleWithRex": false,
+      "targetPlatform": "Nintendo Wii",
+      "targetGame": "Super Smash Bros. Brawl",
+      "hardwareCompatibility": "unverified",
+      "importNote": "Confirm the creator page explicitly supports original Wii hardware and the required Brawl revision/loader before importing."
     },
     {
       "id": "legacy-mp-plus",
@@ -45,7 +53,11 @@
       "source": "gamebanana",
       "url": "https://gamebanana.com/mods/479109",
       "status": "Available",
-      "compatibleWithRex": false
+      "compatibleWithRex": false,
+      "targetPlatform": "Nintendo Wii",
+      "targetGame": "Super Smash Bros. Brawl",
+      "hardwareCompatibility": "unverified",
+      "importNote": "Confirm the creator page explicitly supports original Wii hardware and the required Brawl revision/loader before importing."
     },
     {
       "id": "project-plus-tournament-edition",
@@ -54,7 +66,11 @@
       "source": "gamebanana",
       "url": "https://gamebanana.com/mods/410039",
       "status": "Available",
-      "compatibleWithRex": false
+      "compatibleWithRex": false,
+      "targetPlatform": "Nintendo Wii",
+      "targetGame": "Super Smash Bros. Brawl",
+      "hardwareCompatibility": "unverified",
+      "importNote": "Confirm the creator page explicitly supports original Wii hardware and the required Brawl revision/loader before importing."
     },
     {
       "id": "brawl-minus-42",
@@ -63,7 +79,11 @@
       "source": "gamebanana",
       "url": "https://gamebanana.com/mods/49327",
       "status": "Available",
-      "compatibleWithRex": false
+      "compatibleWithRex": false,
+      "targetPlatform": "Nintendo Wii",
+      "targetGame": "Super Smash Bros. Brawl",
+      "hardwareCompatibility": "unverified",
+      "importNote": "Confirm the creator page explicitly supports original Wii hardware and the required Brawl revision/loader before importing."
     },
     {
       "id": "smash-3c-project-plus",
@@ -72,7 +92,11 @@
       "source": "gamebanana",
       "url": "https://gamebanana.com/mods/290683",
       "status": "Available",
-      "compatibleWithRex": false
+      "compatibleWithRex": false,
+      "targetPlatform": "Nintendo Wii",
+      "targetGame": "Super Smash Bros. Brawl",
+      "hardwareCompatibility": "unverified",
+      "importNote": "Confirm the creator page explicitly supports original Wii hardware and the required Brawl revision/loader before importing."
     },
     {
       "id": "subspace-emissary-final",
@@ -81,7 +105,11 @@
       "source": "gamebanana",
       "url": "https://gamebanana.com/mods/309182",
       "status": "Available",
-      "compatibleWithRex": "unconfirmed"
+      "compatibleWithRex": "unconfirmed",
+      "targetPlatform": "Nintendo Wii",
+      "targetGame": "Super Smash Bros. Brawl",
+      "hardwareCompatibility": "unverified",
+      "importNote": "Confirm the creator page explicitly supports original Wii hardware and the required Brawl revision/loader before importing."
     },
     {
       "id": "sans-ness-costume",
@@ -90,7 +118,11 @@
       "source": "gamebanana",
       "url": "https://gamebanana.com/mods/247260",
       "status": "Available",
-      "compatibleWithRex": "unconfirmed"
+      "compatibleWithRex": "unconfirmed",
+      "targetPlatform": "Nintendo Wii",
+      "targetGame": "Super Smash Bros. Brawl",
+      "hardwareCompatibility": "unverified",
+      "importNote": "Confirm the creator page explicitly supports original Wii hardware and the required Brawl revision/loader before importing."
     }
   ],
   "excludedLocalInstallations": [
