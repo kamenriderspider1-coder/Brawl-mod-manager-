@@ -1,18 +1,21 @@
 {
   "schemaVersion": 1,
   "title": "Brawl Mod Manager Cloud Library",
-  "description": "Link catalog only. Mod archives are hosted by their original creators or official project pages.",
+  "description": "Mod source catalog for the separate Brawl Mod Manager Cloud Storage app. Google Drive is the intended file store connected inside the app; it is not the app itself.",
   "downloadBehavior": {
     "trigger": "user-selected",
-    "target": "USB storage",
-    "directory": "usb:/brawl-mods/",
+    "target": "Google Drive",
+    "directory": "My Drive/Brawl Mods/",
     "statusLabels": [
       "Available",
+      "Queued",
       "Downloading",
-      "Downloaded",
+      "Extracting",
+      "Uploading to Drive",
+      "Ready",
       "Failed"
     ],
-    "note": "A Wii client must implement Wi-Fi networking, download handling, archive validation, USB mounting, and compatibility checks before these links can be downloaded or launched."
+    "note": "This is the intended Cloud Storage workflow. It is not implemented yet. The Wii manager currently remains a local SD file-browser prototype and cannot yet access Drive-backed files over Wi-Fi."
   },
   "mods": [
     {
@@ -102,5 +105,25 @@
       "name": "Project Universe",
       "reason": "Needs the original YouTube description/download link to identify the correct project."
     }
-  ]
+  ],
+  "cloudStorage": {
+    "provider": "google-drive",
+    "appRole": "The Cloud Storage app manages discovery, link intake, download jobs, archive extraction, validation, organization, and Wii library access.",
+    "driveFolder": "My Drive/Brawl Mods/",
+    "pipeline": [
+      "discover-or-add-source-link",
+      "fetch-permitted-archive",
+      "extract-and-validate",
+      "upload-extracted-files-to-google-drive",
+      "publish-library-metadata-for-wii"
+    ],
+    "implementationStatus": "planned",
+    "requirements": [
+      "Google OAuth client configuration",
+      "Google Drive API authorization",
+      "secure server-side source downloader and archive processor",
+      "Wii-compatible network client and remote-loading bridge"
+    ],
+    "security": "Never collect Google passwords in the app or commit OAuth client secrets or access tokens to the public repository."
+  }
 }
