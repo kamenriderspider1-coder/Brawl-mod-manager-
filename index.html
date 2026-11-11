@@ -33,10 +33,11 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
       <p class="small muted" id="drive-connection-status" role="status" aria-live="polite">Not connected. Google OAuth client configuration is not installed yet.</p>
     </article>
     <article class="storage cloud">
-      <div class="storage-icon">🟣</div><h3>Connect your MEGA account</h3>
-      <p class="muted small">Open MEGA's official sign-in page. This external sign-in does not yet authorize the Cloud Storage app to browse or upload files.</p>
-      <a class="btn primary" href="https://mega.nz/login" target="_blank" rel="noopener noreferrer">Sign in to MEGA ↗</a>
-      <p class="small muted" id="mega-connection-status" role="status" aria-live="polite">MEGA file access is not connected yet. Do not enter your MEGA password into this GitHub Pages app.</p>
+      <div class="storage-icon">🟣</div><h3>MEGA account connection</h3>
+      <p class="muted small">Your MEGA account is the preferred storage destination. This app will only connect through a secure server-side integration. MEGA's normal website sign-in does not grant this app access.</p>
+      <button class="btn" id="connect-mega" type="button" disabled aria-disabled="true">MEGA connection not configured</button>
+      <p class="small muted" id="mega-connection-status" role="status" aria-live="polite">Not connected. A secure MEGA SDK service and private server-side session handling must be configured before account browsing or uploads can work. Never enter your MEGA password on this GitHub Pages site.</p>
+      <p class="small muted">No account credentials or session keys are stored in this public repository.</p>
     </article>
     <article class="storage">
       <div class="storage-icon">📥</div><h3>Mod download pipeline</h3>
@@ -47,7 +48,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
         <li>Upload the extracted mod folder into your selected MEGA or Google Drive account.</li>
         <li>Publish its metadata to the Wii library.</li>
       </ol>
-      <p class="small muted">Download, extraction, and upload to your selected MEGA or Google Drive account are planned jobs until the secure processing service is configured.</p>
+      <p class="small muted">Download and extraction require a secure processing service. MEGA uploads remain disabled until a supported server-side MEGA integration is configured.</p>
     </article>
   </div>
 
