@@ -67,49 +67,15 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
   </div>
 
 
-  <section class="panel" id="catalog-import-panel">
-    <div class="row"><h2>📦 Import a catalog mod to MEGA</h2><span class="tag">Assisted archive import</span></div>
-    <p class="muted">Choose a Brawl mod source, check that its creator page identifies a real Wii release, then download the full ZIP. The app keeps the original ZIP and extracts its contents into a named folder inside MEGA / Brawl Mods.</p>
-    <label for="catalog-import-mod"><strong>Catalog mod</strong></label>
-    <select id="catalog-import-mod" style="display:block;width:100%;margin:7px 0;padding:10px;border-radius:9px;background:#0b1423;color:inherit;border:1px solid var(--line)"><option value="">Loading catalog…</option></select>
-    <div class="row" style="margin:10px 0">
-      <a class="btn" id="catalog-import-source" href="#" target="_blank" rel="noopener noreferrer" aria-disabled="true">Open creator download page ↗</a>
-      <span class="small muted" id="catalog-import-destination">Connect MEGA. Imports default to MEGA / Brawl Mods.</span>
-    </div>
-    <div class="row" style="margin:12px 0">
-      <button class="btn" id="catalog-import-discover" type="button">Find download link on creator page</button>
-      <span class="small muted" id="catalog-import-discovery-status" role="status" aria-live="polite">Scans supported GameBanana and Project+ pages for archive links. Check Wii hardware and Brawl version before importing.</span>
-    </div>
-    <label for="catalog-import-candidate"><strong>Detected download link</strong></label>
-    <select id="catalog-import-candidate" style="display:block;width:100%;margin:7px 0;padding:10px;border-radius:9px;background:#0b1423;color:inherit;border:1px solid var(--line)" disabled><option value="">Scan a creator page first…</option></select>
-    <button class="btn primary" id="catalog-import-download" type="button" disabled>Download detected ZIP and prepare folder</button>
-    <button class="btn primary" id="catalog-import-all" type="button" style="margin:8px 0">Bulk import is not available</button>
-    <p class="small muted" id="catalog-import-all-status" role="status" aria-live="polite">Import mods one at a time so each creator download can be checked before you upload it.</p>
-    <p class="small muted">Wii compatibility is not guaranteed by a filename. Before importing, confirm the creator page says the mod supports the original Wii version of Super Smash Bros. Brawl, and check its base-game/loader requirements. Dolphin-only, Ultimate, and other-game mods should not be imported. The scanner only follows supported HTTPS creator domains.</p>
-    <label for="catalog-import-archive"><strong>Or select a ZIP manually</strong></label>
-    <input id="catalog-import-archive" type="file" accept=".zip,application/zip,application/x-zip-compressed" style="display:block;margin:8px 0">
-    <button class="btn primary" id="catalog-import-start" type="button">Extract ZIP and prepare folder download</button>
-    <p class="small muted" id="catalog-import-status" role="status" aria-live="polite">Choose a catalog entry and a ZIP. The app validates and prepares a folder-preserving ZIP bundle. Limits: 100 MB compressed, 300 MB extracted, and 1,000 files per import.</p>
-    <div id="catalog-import-progress" class="small muted" aria-live="polite"></div>
-    <p class="small muted">Only import files you are allowed to download and store. ZIP files are inspected in-browser. Password-protected ZIPs, split archives, RAR/7z files, and very large packs are not supported by this first version.</p>
-  </section>
-
-
-  <section class="panel" id="ai-mod-finder">
-    <div class="row"><h2>🤖 AI-style mod finder</h2><span class="tag">Natural-language requests</span></div>
-    <p class="muted">Describe the mod you want in normal language. Searches are narrowed to Super Smash Bros. Brawl for original Nintendo Wii hardware, not Smash Ultimate or unrelated games. Check each creator page for Wii and loader/version support.</p>
-    <div id="mod-chat" style="background:#080f1c;border:1px solid var(--line);border-radius:14px;padding:14px;min-height:120px;max-height:360px;overflow:auto" aria-live="polite">
-      <div class="step"><strong>Cloud Mod Finder</strong><p>Tell me what kind of Brawl mod you're looking for. For example: “Find character costume packs that work with Smash REX” or “Find custom stages for Brawl.”</p></div>
-    </div>
-    <form id="ai-mod-search-form" style="margin-top:12px">
-      <label for="ai-mod-prompt"><strong>What mods should I find?</strong></label>
-      <textarea id="ai-mod-prompt" rows="3" maxlength="700" required placeholder="Find Wii-compatible Super Smash Bros. Brawl character, stage, music, or texture mods. Exclude Dolphin-only and Smash Ultimate mods..." style="width:100%;display:block;margin-top:7px;padding:13px;border-radius:10px;border:1px solid var(--line);background:#080d18;color:var(--text);font:inherit;resize:vertical"></textarea>
-      <div class="row" style="margin-top:10px">
-        <span class="small muted">Searches open in new tabs so you can inspect the original creator pages.</span>
-        <button class="btn primary" type="submit">🔎 Find mods on the web</button>
-      </div>
+  <section class="panel" id="brawl-mod-search-panel">
+    <div class="row"><h2>🔎 Search for Brawl Mods</h2><span class="tag">Web search</span></div>
+    <p class="muted">Search the web for Super Smash Bros. Brawl mods for the original Nintendo Wii. Try character mods, costumes, stages, music, textures, or complete mod packs.</p>
+    <form id="brawl-mod-search-form">
+      <label for="brawl-mod-search-query"><strong>What Brawl mods are you looking for?</strong></label>
+      <input id="brawl-mod-search-query" type="search" maxlength="300" placeholder="e.g. Brawl custom character costumes or stages" style="display:block;width:100%;margin:8px 0;padding:12px;border-radius:10px;border:1px solid var(--line);background:#080d18;color:var(--text);font:inherit">
+      <button class="btn primary" id="brawl-mod-search-web" type="submit">Search web</button>
     </form>
-    <p class="small muted" id="ai-mod-search-status" role="status" aria-live="polite">Search handoff mode: this static website can create live search links, but it cannot automatically read search results. A search API and secure backend are needed for ChatGPT-style results inside this chat.</p>
+    <p class="small muted" id="brawl-mod-search-status" role="status" aria-live="polite">Searches open in a new tab. Check that each result supports the original Wii version of Super Smash Bros. Brawl.</p>
   </section>
 
   <section class="panel" id="mod-request-panel">
@@ -461,165 +427,26 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
 
 
 
-<script type="module">
+<script>
 (function(){
- const $=id=>document.getElementById(id);
- const select=$('catalog-import-mod'), source=$('catalog-import-source');
- const status=$('catalog-import-status'), progress=$('catalog-import-progress');
- const discoveryStatus=$('catalog-import-discovery-status');
- const candidateSelect=$('catalog-import-candidate');
- const discoverButton=$('catalog-import-discover');
- const downloadButton=$('catalog-import-download');
- const api='https://brawl-mod-manager-api.brawlmodmanager.workers.dev';
- let mods=[], discovered=[];
- const say=t=>status.textContent=t;
- fetch('./cloud-mods.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('Catalog unavailable');return r.json();}).then(data=>{
-   mods=(data.mods||[]).filter(m=>m.id!=='smash-rex'&&m.targetPlatform==='Nintendo Wii'&&m.targetGame==='Super Smash Bros. Brawl');
-   window.__brawlCatalogMods=mods;
-   select.replaceChildren(new Option('Choose a mod…',''));
-   mods.forEach(mod=>select.add(new Option(mod.name,mod.id)));
-   say(mods.length+' Wii-targeted Brawl entries ready. Compatibility still needs creator-page verification.');
- }).catch(e=>say('Could not load catalog: '+e.message));
-
- select.addEventListener('change',()=>{
-   discovered=[];candidateSelect.replaceChildren(new Option('Scan a creator page first…',''));
-   candidateSelect.disabled=true;downloadButton.disabled=true;
-   const mod=mods.find(m=>m.id===select.value);
-   if(!mod){source.href='#';source.setAttribute('aria-disabled','true');return;}
-   source.href=mod.url;source.removeAttribute('aria-disabled');
- });
-
- discoverButton.addEventListener('click',async()=>{
-   const mod=mods.find(m=>m.id===select.value);
-   if(!mod){discoveryStatus.textContent='Choose a catalog mod first.';return;}
-   discoverButton.disabled=true;downloadButton.disabled=true;candidateSelect.disabled=true;
-   candidateSelect.replaceChildren(new Option('Scanning creator page…',''));
-   discoveryStatus.textContent='Scanning the supported creator page…';
-   try{
-     const response=await fetch(api+'/api/discover?url='+encodeURIComponent(mod.url),{cache:'no-store'});
-     const result=await response.json();
-     if(!response.ok||!result.ok)throw Error(result.error||'Creator-page scan failed.');
-     discovered=result.candidates||[];
-     candidateSelect.replaceChildren(new Option(discovered.length?'Choose a detected archive…':'No supported archive links found',''));
-     discovered.forEach((item,i)=>candidateSelect.add(new Option(item.label+' ('+item.host+')',String(i))));
-     candidateSelect.disabled=!discovered.length;downloadButton.disabled=!discovered.length;
-     discoveryStatus.textContent=discovered.length+' candidate link(s) found. Choose the correct ZIP.';
-   }catch(e){
-     discovered=[];candidateSelect.replaceChildren(new Option('No download link found',''));
-     discoveryStatus.textContent='Scan failed: '+e.message+' You can still choose a ZIP manually below.';
-   }finally{discoverButton.disabled=false;}
- });
-
- async function prepareBundle(file,mod){
-   if(!/\.zip$/i.test(file.name)||file.size>100*1024*1024)throw Error('Choose a ZIP no larger than 100 MB.');
-   progress.textContent='Opening ZIP and extracting files…';
-   const pkg=await import('https://cdn.jsdelivr.net/npm/jszip@3.10.1/+esm');
-   const JSZip=pkg.default||pkg;
-   const input=await JSZip.loadAsync(file,{checkCRC32:true});
-   const entries=Object.values(input.files).filter(x=>!x.dir);
-   if(!entries.length)throw Error('The ZIP contains no files.');
-   if(entries.length>1000)throw Error('The ZIP contains more than 1,000 files.');
-   const folderName=mod.name.replace(/[^a-z0-9 _.-]/gi,'').trim().replace(/\s+/g,' ').slice(0,70)||mod.id;
-   const safePart=s=>s.replace(/[\\/:*?"<>|]/g,'_').replace(/\s+/g,' ').slice(0,120)||'file';
-   const extracted=[];
-   let total=0,done=0;
-   for(const entry of entries){
-     const name=entry.name.replace(/\\/g,'/');
-     if(name.startsWith('/')||name.split('/').some(p=>p==='..'||p==='.'||p==='')||name.includes(':'))throw Error('Unsafe archive path: '+entry.name);
-     if(typeof entry.unixPermissions==='number'&&(entry.unixPermissions&0xF000)===0xA000)throw Error('Archive contains a symbolic link: '+entry.name);
-     const bytes=await entry.async('uint8array');
-     total+=bytes.byteLength;
-     if(total>300*1024*1024)throw Error('Extracted files exceed 300 MB.');
-     extracted.push({name,bytes});
-     done++;
-     progress.textContent='Extracted '+done+' / '+entries.length+' files…';
-   }
-
-   // Chrome/Edge can save the real directory tree directly. Safari falls back
-   // to individual extracted-file downloads because it does not expose a
-   // supported directory-writing picker.
-   if(window.isSecureContext&&typeof window.showDirectoryPicker==='function'){
-     try{
-       const root=await window.showDirectoryPicker({id:'brawl-mod-extract',mode:'readwrite'});
-       const modDir=await root.getDirectoryHandle(folderName,{create:true});
-       async function writeEntry(entry){
-         const parts=entry.name.split('/');
-         const filename=parts.pop();
-         let dir=modDir;
-         for(const part of parts)dir=await dir.getDirectoryHandle(safePart(part),{create:true});
-         const handle=await dir.getFileHandle(safePart(filename),{create:true});
-         const writable=await handle.createWritable();
-         await writable.write(entry.bytes);
-         await writable.close();
-       }
-       for(let i=0;i<extracted.length;i++){
-         await writeEntry(extracted[i]);
-         progress.textContent='Saved extracted file '+(i+1)+' / '+extracted.length+' to '+folderName+'/…';
-       }
-       return {count:extracted.length,bytes:total,name:folderName+' folder',method:'folder'};
-     }catch(e){
-       if(e&&e.name==='AbortError')throw Error('Folder selection was cancelled.');
-       if(e&&e.name!=='NotAllowedError'&&e.name!=='SecurityError')throw e;
-       progress.textContent='Folder saving is not available here. Preparing individual extracted-file downloads…';
-     }
-   }
-
-   let downloaded=0;
-   for(const entry of extracted){
-     const parts=entry.name.split('/');
-     const leaf=safePart(parts.pop());
-     const relative=parts.map(safePart).join('__');
-     const filename=safePart(folderName)+'__'+(relative?relative+'__':'')+leaf;
-     const blob=new Blob([entry.bytes],{type:'application/octet-stream'});
-     const url=URL.createObjectURL(blob);
-     const a=document.createElement('a');
-     a.href=url;a.download=filename;
-     document.body.append(a);a.click();a.remove();
-     setTimeout(()=>URL.revokeObjectURL(url),120000);
-     downloaded++;
-     progress.textContent='Sending extracted file '+downloaded+' / '+extracted.length+' to browser downloads…';
-     await new Promise(resolve=>setTimeout(resolve,180));
-   }
-   return {count:extracted.length,bytes:total,name:folderName+' extracted files',method:'files'};
- }
-
- async function downloadAndPrepare(url,mod){
-   const response=await fetch(api+'/api/archive?url='+encodeURIComponent(url),{cache:'no-store'});
-   if(!response.ok){let message='Archive download failed.';try{message=(await response.json()).error||message;}catch{}throw Error(message);}
-   const blob=await response.blob();
-   if(!blob.size||blob.size>100*1024*1024)throw Error('Downloaded archive is empty or exceeds 100 MB.');
-   return prepareBundle(new File([blob],mod.id+'-source.zip',{type:'application/zip'}),mod);
- }
-
- downloadButton.addEventListener('click',async()=>{
-   const item=discovered[Number(candidateSelect.value)],mod=mods.find(m=>m.id===select.value);
-   if(!item||!mod){discoveryStatus.textContent='Choose a mod and detected archive first.';return;}
-   downloadButton.disabled=true;discoverButton.disabled=true;
-   try{
-     discoveryStatus.textContent='Downloading creator archive…';
-     const result=await downloadAndPrepare(item.url,mod);
-     discoveryStatus.textContent='Prepared '+result.count+' files ('+(result.bytes/1048576).toFixed(1)+' MB extracted). The extracted files are being saved by your browser.';
-     say('Extracted '+result.count+' files. '+(result.method==='folder'?'The folder was saved directly to your selected location.':'Safari is downloading the extracted files individually. Open your Downloads folder, then upload the files to MEGA.')');
-   }catch(e){discoveryStatus.textContent='Could not prepare archive: '+e.message;}
-   finally{downloadButton.disabled=false;discoverButton.disabled=false;}
- });
-
- $('catalog-import-start').addEventListener('click',async()=>{
-   const mod=mods.find(m=>m.id===select.value),file=$('catalog-import-archive').files?.[0];
-   if(!mod){say('Choose a catalog mod first.');return;}
-   if(!file){say('Choose a ZIP archive first.');return;}
-   const button=$('catalog-import-start');button.disabled=true;progress.textContent='';
-   try{
-     say('Checking archive and preparing upload bundle…');
-     const result=await prepareBundle(file,mod);
-     say('Extracted '+result.count+' files. '+(result.method==='folder'?'The folder was saved directly to your selected location.':'Safari is downloading the extracted files individually. Open your Downloads folder, then upload them to MEGA / Brawl Mods.')');
-     progress.textContent='Extracted '+result.count+' files ('+(result.bytes/1048576).toFixed(1)+' MB). No MEGA password was requested or stored.';
-     $('catalog-import-archive').value='';
-   }catch(e){say('Import stopped: '+e.message);}
-   finally{button.disabled=false;}
- });
- const bulk=$('catalog-import-all');
- if(bulk){bulk.disabled=true;bulk.title='Bulk upload is not supported in this browser-only build.';bulk.textContent='Bulk import unavailable';}
+  const form=document.getElementById('brawl-mod-search-form');
+  const input=document.getElementById('brawl-mod-search-query');
+  const status=document.getElementById('brawl-mod-search-status');
+  if(!form||!input||!status)return;
+  form.addEventListener('submit',function(event){
+    event.preventDefault();
+    const query=input.value.trim();
+    if(!query){
+      status.textContent='Enter a mod name or type of Brawl mod to search for.';
+      input.focus();
+      return;
+    }
+    const search=encodeURIComponent(query+' Super Smash Bros. Brawl Wii mod');
+    const url='https://www.google.com/search?q='+search;
+    window.open(url,'_blank','noopener,noreferrer');
+    status.textContent='Opened a web search for: '+query+'. Check creator pages for Wii compatibility and download requirements.';
+  });
 })();
 </script>
+
 </body></html>
