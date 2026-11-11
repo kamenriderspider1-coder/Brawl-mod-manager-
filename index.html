@@ -19,12 +19,12 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
 </style>
 </head>
 <body>
-<header><div class="brand"><div class="logo">🎮</div><div><h1>Brawl Mod Manager</h1><div class="muted">The Wii app lives on SD. The mod library lives in the cloud.</div></div></div><p>The SD card holds the Brawl Mod Manager homebrew app. The Mod source catalog is intended to host the mod files, which the Wii manager will access over Wi-Fi through a compatible network-loading system.</p></header>
+<header><div class="brand"><div class="logo">🎮</div><div><h1>Brawl Mod Manager</h1><div class="muted">The Wii app lives on SD. The mod library lives in the cloud.</div></div></div><p>The SD card holds the Brawl Mod Manager homebrew app. The extracted mod files are intended to live in your MEGA or Google Drive account, with a Wii-compatible network service providing access.</p></header>
 <main>
 
 <section class="panel" id="cloud-storage-workspace">
   <div class="row"><h2>☁️ Cloud Storage workspace</h2><span class="tag">App control center</span></div>
-  <p class="muted">This is the Brawl Mod Manager's own Cloud Storage app. Google Drive and MEGA can be offered as storage providers connected inside it. You manage mod discovery, download jobs, extraction, organization, and Wii availability here; you do not use the Google Drive website as the app.</p>
+  <p class="muted">This is the Brawl Mod Manager's own Cloud Storage app. MEGA and Google Drive are storage destinations connected to it. You manage mod discovery, download jobs, extraction, organization, and Wii availability here; the app puts the finished files into your selected account.</p>
   <div class="storage-grid">
     <article class="storage cloud">
       <div class="storage-icon">🔐</div><h3>Connect your Google Drive</h3>
@@ -44,16 +44,16 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
         <li>Find a mod online or paste its source/download link.</li>
         <li>Fetch the permitted archive through a processing service.</li>
         <li>Extract and validate the archive.</li>
-        <li>Upload the extracted mod folder into your Google Drive.</li>
+        <li>Upload the extracted mod folder into your selected MEGA or Google Drive account.</li>
         <li>Publish its metadata to the Wii library.</li>
       </ol>
-      <p class="small muted">Download, extraction, and Drive upload are shown as planned jobs until the secure processing service is configured.</p>
+      <p class="small muted">Download, extraction, and upload to your selected MEGA or Google Drive account are planned jobs until the secure processing service is configured.</p>
     </article>
   </div>
 
   <section class="panel" id="mod-request-panel">
     <div class="row"><h2>📝 Request a mod</h2><span class="tag">Mod finder queue</span></div>
-    <p class="muted">Tell the Cloud Storage app what mod you want and where to find it. The intended pipeline finds the actual file link on the source page, downloads the archive, extracts it, and uploads the extracted folder to your chosen storage account.</p>
+    <p class="muted">Tell the Cloud Storage app what mod you want and where to find it. The intended pipeline finds the actual file link on the source page, downloads the archive, extracts it, and uploads the extracted folder to your chosen MEGA or Google Drive account.</p>
     <form id="mod-request-form">
       <label for="requested-mod-name"><strong>What mod do you want?</strong></label>
       <input id="requested-mod-name" name="modName" type="text" placeholder="e.g. Brawl character costume pack" required>
@@ -92,7 +92,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
       <div class="row"><span class="storage-icon">☁️</span><span class="status"><i class="dot blue"></i> GitHub cloud library</span></div>
       <h3>Cloud-hosted Brawl mod library</h3>
       <p class="small"><a href="https://kamenriderspider1-coder.github.io/Brawl-mod-manager-/cloud-mods.json" target="_blank" rel="noopener">Open the machine-readable cloud mod link catalog (JSON) ↗</a></p>
-      <p class="muted">This is a source catalog only. In the finished system, the Cloud Storage app will fetch permitted mod archives, extract them, and save the finished files into your connected Google Drive. A source-page link is not itself a hosted mod archive.</p>
+      <p class="muted">This is a source catalog only. In the finished system, the Cloud Storage app will fetch permitted mod archives, extract them, and save the finished files into your connected MEGA or Google Drive account. A source-page link is not itself a hosted mod archive.</p>
       <div class="steps">
         <div class="step"><strong>Project+</strong><p>Official competitive Brawl mod build.</p><p><a href="https://projectplusgame.com/download" target="_blank" rel="noopener">Official download ↗</a></p></div>
         <div class="step"><strong>Project+ All-Stars v1.1.6</strong><p>Community build combining character versions, modern costumes, and quality-of-life updates.</p><p><a href="https://gamebanana.com/mods/626137" target="_blank" rel="noopener">GameBanana page ↗</a></p></div>
@@ -120,7 +120,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
         <p class="small muted">Note: GitHub Pages is a static website, so this form saves links in this browser only. It does not publish them to the shared GitHub catalog or make them appear on the Wii automatically. Use Export to save your list; shared cloud publishing and Wii syncing need a secure server-side connection.</p>
       </section>
       <div class="notice">Project Universe is waiting for its original YouTube description link so the correct mod can be identified. REX is not duplicated in the cloud library.</div>
-      <p class="muted">Google Drive is the planned file store. The Cloud Storage app needs a secure processing service to fetch, extract, and upload mod files, and the Wii needs a compatible network-loading layer.</p>
+      <p class="muted">Google Drive is the planned file store. The Cloud Storage app needs a secure processing service to fetch, extract, and upload mod files to MEGA or Google Drive, and the Wii needs a compatible network-loading layer.</p>
       <div class="row" style="margin-top:12px">
         <a class="btn primary" href="https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases" target="_blank" rel="noopener">Browse Cloud Mods ↗</a>
         <a class="btn" href="https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases/new" target="_blank" rel="noopener">Add Mod Pack ↗</a>
@@ -155,7 +155,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
   <h2>How the Wii app and cloud library fit together</h2>
   <div class="steps">
     <div class="step"><strong>1. Install the manager on SD</strong><p>The SD card stores the Wii homebrew app and its network-client files.</p></div>
-    <div class="step"><strong>2. Keep mod archives in the cloud</strong><p>Store the extracted mod files in the connected Google Drive folder. Keep a catalog of names, versions, and archive URLs.</p></div>
+    <div class="step"><strong>2. Keep mod archives in the cloud</strong><p>Store the extracted mod files in your connected MEGA or Google Drive account. Keep a catalog of names, versions, and archive URLs.</p></div>
     <div class="step"><strong>3. Connect over Wi-Fi</strong><p>The Wii app connects to the Cloud Storage service and displays available Drive-backed mods. This connection is a planned feature, not present in v20.</p></div>
     <div class="step"><strong>4. Load compatible files remotely</strong><p>A Wii-compatible network filesystem or streaming bridge must serve the files in a format the Brawl loader can use. Not every mod or loader supports remote access.</p></div>
   </div>
@@ -180,7 +180,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
   </ol>
   <p class="small muted">Release assets are public. Do not upload private information or files you do not have permission to distribute.</p>
 </section>
-<footer>Brawl Cloud is designed as a separate Cloud Storage app that connects to Google Drive. The Wii SD card holds the manager app; the cloud holds permitted mod archives. Network streaming into Brawl is not implemented in the current v20 app and will require a Wii-compatible bridge and loader integration.</footer>
+<footer>Brawl Cloud is designed as a separate Cloud Storage app that connects to MEGA or Google Drive. The Wii SD card holds the manager app; your cloud account holds permitted extracted mod files. Network streaming into Brawl is not implemented in the current v20 app and will require a Wii-compatible bridge and loader integration.</footer>
 </main>
 
 <script>
@@ -215,7 +215,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
     const items=read();
     if (items.some(x=>x.url===url.href)) { status.textContent="That URL is already in your list."; return; }
     items.push({name,url:url.href});
-    write(items); form.reset(); render(); status.textContent="Added to this browser's link queue. Drive upload is not configured yet.";
+    write(items); form.reset(); render(); status.textContent="Added to this browser's link queue. MEGA/Drive upload is not configured yet.";
   });
   document.getElementById("export-cloud-links").addEventListener("click",()=>{
     const blob=new Blob([JSON.stringify({schemaVersion:1,mods:read()},null,2)],{type:"application/json"});
