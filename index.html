@@ -20,7 +20,17 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
 </head>
 <body>
 <header><div class="brand"><div class="logo">🎮</div><div><h1>Brawl Mod Manager</h1><div class="muted">The Wii app lives on SD. The mod library lives in the cloud.</div></div></div><p>The SD card holds the Brawl Mod Manager homebrew app. The extracted mod files are intended to live in your MEGA or Google Drive account, with a Wii-compatible network service providing access.</p></header>
-<main>
+<main>\n
+<section class="panel" id="local-backend-panel">
+  <div class="row"><h2>🖥️ Local Mac backend</h2><span class="tag">Local companion service</span></div>
+  <p class="muted">Connect this GitHub Pages app to the companion service running on your Mac. The first connection test checks whether the service is online. It does not access cloud accounts or download files yet.</p>
+  <div class="storage local">
+    <div class="row"><strong>Backend connection</strong><span class="status" id="local-backend-badge"><i class="dot blue"></i> Checking…</span></div>
+    <p class="small muted" id="local-backend-status" role="status" aria-live="polite">Checking http://127.0.0.1:8787/health …</p>
+    <button class="btn" id="check-local-backend" type="button">Check connection again</button>
+  </div>
+</section>
+
 
 <section class="panel" id="cloud-storage-workspace">
   <div class="row"><h2>☁️ Cloud Storage workspace</h2><span class="tag">App control center</span></div>
