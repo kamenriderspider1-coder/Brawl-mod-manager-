@@ -21,26 +21,16 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
 <body>
 <header><div class="brand"><div class="logo">🎮</div><div><h1>Brawl Mod Manager</h1><div class="muted">The Wii app lives on SD. The mod library lives in the cloud.</div></div></div><p>The SD card holds the Brawl Mod Manager homebrew app. The extracted mod files are intended to live in your MEGA or Google Drive account, with a Wii-compatible network service providing access.</p></header>
 <main>\n
-<section class="panel" id="local-backend-panel">
-  <div class="row"><h2>🖥️ Local Mac backend</h2><span class="tag">Local companion service</span></div>
-  <p class="muted">Connect this GitHub Pages app to the companion service running on your Mac. The first connection test checks whether the service is online. It does not access cloud accounts or download files yet.</p>
-  <div class="storage local">
-    <div class="row"><strong>Backend connection</strong><span class="status" id="local-backend-badge"><i class="dot blue"></i> Checking…</span></div>
-    <p class="small muted" id="local-backend-status" role="status" aria-live="polite">Checking http://127.0.0.1:8787/health …</p>
-    <button class="btn" id="check-local-backend" type="button">Check connection again</button>
+<section class="panel" id="cloud-backend-panel">
+  <div class="row"><h2>☁️ Cloud backend</h2><span class="tag">Hosted service</span></div>
+  <p class="muted">The API runs on Cloudflare, so your Mac does not need to stay awake and this app does not change your Wi-Fi or router settings.</p>
+  <div class="storage">
+    <div class="row"><strong>Cloud API connection</strong><span class="status" id="cloud-api-badge"><i class="dot blue"></i> Checking…</span></div>
+    <p class="small muted" id="cloud-api-status" role="status" aria-live="polite">Checking the hosted API…</p>
+    <button class="btn" id="check-cloud-api" type="button">Check cloud connection</button>
+    <p class="small muted">API: <code>https://brawl-mod-manager-api.brawlmodmanager.workers.dev</code></p>
   </div>
-  <div class="step" style="margin-top:12px">
-    <strong>Apple silicon Mac setup (M1/M2/M3/M4)</strong>
-    <p class="small muted">Install the local companion as a macOS LaunchAgent. It starts when you log in, restarts if it stops, and uses macOS caffeinate to prevent idle system sleep while the service is running. The display can turn off.</p>
-    <ol class="small muted">
-      <li>Download the repository ZIP and extract it.</li>
-      <li>Open Terminal and run <code>node -v</code>. Node.js 22 or newer is required.</li>
-      <li>In Terminal, go into the extracted <code>backend</code> folder and run <code>bash install-macos-launch-agent.sh</code>.</li>
-      <li>Refresh this page and press “Check connection again”.</li>
-    </ol>
-    <p class="small muted">The installer changes only your user LaunchAgent files. It does not change Wi-Fi, router, DNS, firewall, or network settings. The backend remains bound to this Mac's loopback address, so Wii/LAN access is not enabled by this step. A sleeping or shut-down Mac cannot serve requests; a MacBook may still sleep when its lid is closed.</p>
-    <p class="small"><a href="https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/blob/main/docs/local-backend-setup.md" target="_blank" rel="noopener">Open complete Mac setup guide ↗</a></p>
-  </div>
+  <p class="small muted">Currently live: health checks and a read-only catalog endpoint. MEGA file operations, archive extraction, automatic source-page scanning, and Wii file delivery are separate features and are not live yet.</p>
 </section>
 
 
@@ -48,18 +38,28 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
   <div class="row"><h2>☁️ Cloud Storage workspace</h2><span class="tag">App control center</span></div>
   <p class="muted">This is the Brawl Mod Manager's own Cloud Storage app. MEGA and Google Drive are storage destinations connected to it. You manage mod discovery, download jobs, extraction, organization, and Wii availability here; the app puts the finished files into your selected account.</p>
   <div class="storage-grid">
-    <article class="storage cloud">
-      <div class="storage-icon">🔐</div><h3>Connect your Google Drive</h3>
-      <p class="muted small">Sign-in will use Google's official authorization screen. Your Google password is never entered into this app.</p>
-      <button class="btn primary" id="connect-google-drive" type="button">Connect Google Drive</button>
-      <p class="small muted" id="drive-connection-status" role="status" aria-live="polite">Not connected. Google OAuth client configuration is not installed yet.</p>
-    </article>
-    <article class="storage cloud">
+    <article class="storage cloud" id="mega-storage-card">
       <div class="storage-icon">🟣</div><h3>MEGA account connection</h3>
-      <p class="muted small">Your MEGA account is the preferred storage destination. This app will only connect through a secure server-side integration. MEGA's normal website sign-in does not grant this app access.</p>
-      <button class="btn" id="connect-mega" type="button" disabled aria-disabled="true">MEGA connection not configured</button>
-      <p class="small muted" id="mega-connection-status" role="status" aria-live="polite">Not connected. A secure MEGA SDK service and private server-side session handling must be configured before account browsing or uploads can work. Never enter your MEGA password on this GitHub Pages site.</p>
-      <p class="small muted">No account credentials or session keys are stored in this public repository.</p>
+      <p class="muted small">Connect directly to MEGA from this browser using the community-maintained MEGAJS library. Your password is sent to MEGA by that library, not to this Cloudflare API or saved in this app. The connection stays in memory and ends when you disconnect or close the page.</p>
+      <label for="mega-email"><strong>MEGA email</strong></label>
+      <input id="mega-email" type="email" autocomplete="username" placeholder="you@example.com">
+      <label for="mega-password"><strong>MEGA password</strong></label>
+      <input id="mega-password" type="password" autocomplete="current-password" placeholder="Enter it here, never in chat">
+      <label for="mega-2fa"><strong>Two-factor code (if enabled)</strong></label>
+      <input id="mega-2fa" inputmode="numeric" autocomplete="one-time-code" placeholder="Optional 2FA code">
+      <div class="row" style="margin-top:10px">
+        <button class="btn primary" id="connect-mega" type="button">Connect to MEGA</button>
+        <button class="btn" id="disconnect-mega" type="button" disabled>Disconnect</button>
+      </div>
+      <p class="small muted" id="mega-connection-status" role="status" aria-live="polite">Not connected. Credentials are not stored by this page.</p>
+      <div id="mega-file-tools" hidden>
+        <div class="row" style="margin-top:12px"><strong>MEGA / Brawl Mods folder</strong><button class="btn" id="refresh-mega-files" type="button">Refresh</button></div>
+        <input id="mega-upload-files" type="file" multiple style="margin-top:8px">
+        <button class="btn primary" id="upload-mega-files" type="button" style="margin-top:8px">Upload selected files to MEGA</button>
+        <p class="small muted" id="mega-upload-status" role="status" aria-live="polite">Choose files to upload into your MEGA account's Brawl Mods folder. This uploads selected files only; it does not crawl web pages or extract archives.</p>
+        <div id="mega-file-list" class="step" style="margin-top:10px"><p class="small muted">Connect to view files.</p></div>
+      </div>
+      <p class="small muted">MEGAJS is an unofficial third-party library. Review its terms and documentation before use. This browser connection is a first working account/file test, not the final automated mod pipeline.</p>
     </article>
     <article class="storage">
       <div class="storage-icon">📥</div><h3>Mod download pipeline</h3>
@@ -414,35 +414,100 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
 
 <script>
 (function(){
-  const button=document.getElementById('check-local-backend');
-  const badge=document.getElementById('local-backend-badge');
-  const status=document.getElementById('local-backend-status');
+  const endpoint='https://brawl-mod-manager-api.brawlmodmanager.workers.dev';
+  const button=document.getElementById('check-cloud-api');
+  const badge=document.getElementById('cloud-api-badge');
+  const status=document.getElementById('cloud-api-status');
   if(!button||!badge||!status)return;
-  const endpoint='http://127.0.0.1:8787/health';
   async function check(){
-    button.disabled=true;
-    badge.innerHTML='<i class="dot blue"></i> Checking…';
-    status.textContent='Checking the local Mac service at '+endpoint;
-    const controller=new AbortController();
-    const timeout=setTimeout(()=>controller.abort(),5000);
+    button.disabled=true;badge.innerHTML='<i class="dot blue"></i> Checking…';
     try{
-      const response=await fetch(endpoint,{method:'GET',mode:'cors',cache:'no-store',credentials:'omit',signal:controller.signal});
+      const response=await fetch(endpoint+'/api/health',{cache:'no-store'});
       if(!response.ok)throw new Error('HTTP '+response.status);
       const data=await response.json();
-      if(!data.ok)throw new Error('Health check did not return ok');
       badge.innerHTML='<i class="dot"></i> Connected';
-      status.textContent='Connected to the local Mac backend. Available now: '+(data.capabilities||[]).join(', ')+'. '+(data.message||'');
+      status.textContent='Cloud API is online. Active: '+(data.capabilities||[]).join(', ')+'.';
     }catch(error){
-      badge.innerHTML='<i class="dot blue"></i> Not connected';
-      status.textContent=(error.name==='AbortError'?'Connection timed out. ':'Could not reach the local service. ')+ 'Start the Mac backend, then retry. Details: '+error.message;
-    }finally{
-      clearTimeout(timeout);
-      button.disabled=false;
-    }
+      badge.innerHTML='<i class="dot blue"></i> Not reachable';
+      status.textContent='The cloud API did not respond: '+error.message;
+    }finally{button.disabled=false;}
   }
-  button.addEventListener('click',check);
-  check();
+  button.addEventListener('click',check);check();
 })();
+</script>
+
+<script type="module">
+let megaStorage=null;
+let megaFolder=null;
+const $=id=>document.getElementById(id);
+const status=$('mega-connection-status');
+const fileList=$('mega-file-list');
+function safeText(tag,text,cls='small muted'){const el=document.createElement(tag);el.className=cls;el.textContent=text;return el;}
+function humanSize(bytes){if(!Number.isFinite(bytes))return '';const units=['B','KB','MB','GB'];let n=bytes,i=0;while(n>=1024&&i<units.length-1){n/=1024;i++;}return n.toFixed(i?1:0)+' '+units[i];}
+async function renderMegaFiles(){
+  if(!megaStorage)return;
+  fileList.replaceChildren();
+  try{
+    await megaStorage.reload();
+    megaFolder=megaStorage.root.find('Brawl Mods');
+    if(!megaFolder)megaFolder=await megaStorage.root.mkdir('Brawl Mods');
+    const children=megaFolder.children||[];
+    if(!children.length){fileList.append(safeText('p','Your Brawl Mods folder is empty. Upload a file above.'));return;}
+    for(const item of children){
+      const line=document.createElement('div');line.className='row';line.style.padding='6px 0';
+      line.append(safeText('span',(item.directory?'📁 ':'📄 ')+item.name,'small'));
+      line.append(safeText('span',item.directory?'Folder':humanSize(item.size),'small muted'));
+      fileList.append(line);
+    }
+  }catch(error){fileList.replaceChildren(safeText('p','Could not read the MEGA folder: '+error.message));}
+}
+$('connect-mega')?.addEventListener('click',async()=>{
+  const email=$('mega-email').value.trim();
+  const password=$('mega-password').value;
+  const secondFactorCode=$('mega-2fa').value.trim();
+  if(!email||!password){status.textContent='Enter your MEGA email and password in these fields.';return;}
+  $('connect-mega').disabled=true;status.textContent='Connecting directly to MEGA…';
+  try{
+    const {Storage}=await import('https://cdn.jsdelivr.net/npm/megajs@1.3.10/dist/main.browser-es.mjs');
+    megaStorage=await new Storage({email,password,secondFactorCode:secondFactorCode||undefined,keepalive:false,autoload:true}).ready;
+    $('mega-password').value='';$('mega-2fa').value='';
+    $('mega-email').disabled=true;$('connect-mega').hidden=true;$('disconnect-mega').disabled=false;
+    $('mega-file-tools').hidden=false;
+    status.textContent='Connected to MEGA. Account: '+(megaStorage.name||'your account')+'. Credentials were cleared from the form.';
+    await renderMegaFiles();
+  }catch(error){
+    megaStorage=null;$('mega-password').value='';$('mega-2fa').value='';
+    status.textContent='MEGA connection failed. Check the email, password, two-factor code, and browser connection. Details: '+error.message;
+  }finally{$('connect-mega').disabled=false;}
+});
+$('refresh-mega-files')?.addEventListener('click',renderMegaFiles);
+$('upload-mega-files')?.addEventListener('click',async()=>{
+  if(!megaStorage){$('mega-upload-status').textContent='Connect to MEGA first.';return;}
+  const files=Array.from($('mega-upload-files').files||[]);
+  if(!files.length){$('mega-upload-status').textContent='Choose at least one file first.';return;}
+  if(files.some(file=>file.size>50*1024*1024)){$('mega-upload-status').textContent='For this browser test, each file must be 50 MB or smaller.';return;}
+  const button=$('upload-mega-files');button.disabled=true;
+  try{
+    if(!megaFolder)megaFolder=megaStorage.root.find('Brawl Mods')||await megaStorage.root.mkdir('Brawl Mods');
+    for(let i=0;i<files.length;i++){
+      const file=files[i];$('mega-upload-status').textContent='Uploading '+(i+1)+' of '+files.length+': '+file.name;
+      const bytes=new Uint8Array(await file.arrayBuffer());
+      await megaFolder.upload(file.name,bytes).complete;
+    }
+    $('mega-upload-files').value='';
+    $('mega-upload-status').textContent='Upload complete. Your selected files are in MEGA / Brawl Mods.';
+    await renderMegaFiles();
+  }catch(error){$('mega-upload-status').textContent='Upload failed: '+error.message;}
+  finally{button.disabled=false;}
+});
+$('disconnect-mega')?.addEventListener('click',()=>{
+  try{megaStorage?.close();}catch(_){}
+  megaStorage=null;megaFolder=null;
+  $('mega-email').disabled=false;$('connect-mega').hidden=false;$('disconnect-mega').disabled=true;
+  $('mega-file-tools').hidden=true;$('mega-password').value='';$('mega-2fa').value='';
+  fileList.replaceChildren(safeText('p','Disconnected.'));
+  status.textContent='Disconnected. No MEGA password or session was saved by this page.';
+});
 </script>
 
 </body></html>
