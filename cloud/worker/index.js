@@ -17,17 +17,17 @@ async function searchWeb(q){
  if(!r.ok)return {error:"Search provider returned HTTP "+r.status};
  const html=await readText(r,2*1024*1024);
  const results=[],seen=new Set();
- const re=/<a[^>]*class=["'][^"']*result__a[^"']*["'][^>]*href=["']([^"']+)["'][^>]*>([\\s\\S]*?)<\\/a>/gi;
+ const re=/<a[^>]*class=["'][^"']*result__a[^"']*["'][^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
  let m;
  while((m=re.exec(html))&&results.length<12){
   let href=m[1].replace(/&amp;/g,"&"),u;
   try{const x=new URL(href,"https://html.duckduckgo.com");u=x.searchParams.get("uddg")?new URL(x.searchParams.get("uddg")):x;}catch{continue}
   if(!["http:","https:"].includes(u.protocol)||seen.has(u.href))continue;
   seen.add(u.href);
-  const title=m[2].replace(/<[^>]*>/g," ").replace(/&amp;/g,"&").replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/\\s+/g," ").trim().slice(0,180);
+  const title=m[2].replace(/<[^>]*>/g," ").replace(/&amp;/g,"&").replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/\s+/g," ").trim().slice(0,180);
   const pos=m.index,frag=html.slice(pos,Math.min(html.length,pos+1800));
-  const sm=frag.match(/class=["'][^"']*result__snippet[^"']*["'][^>]*>([\\s\\S]*?)<\\/[^>]+>/i);
-  const snippet=sm?sm[1].replace(/<[^>]*>/g," ").replace(/&amp;/g,"&").replace(/\\s+/g," ").trim().slice(0,300):"";
+  const sm=frag.match(/class=["'][^"']*result__snippet[^"']*["'][^>]*>([\s\S]*?)<\/[^>]+>/i);
+  const snippet=sm?sm[1].replace(/<[^>]*>/g," ").replace(/&amp;/g,"&").replace(/\s+/g," ").trim().slice(0,300):"";
   if(title)results.push({title,url:u.href,snippet});
  }
  return {query,results};
