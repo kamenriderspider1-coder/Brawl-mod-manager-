@@ -19,7 +19,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
 </style>
 </head>
 <body>
-<header><div class="brand"><div class="logo">🎮</div><div><h1>Brawl Mod Manager <span style="font-size:.55em;color:var(--mint)">V1</span></h1><div class="muted">The Wii app lives on SD. The mod library lives in the cloud.</div></div></div><p>Version 1 provides in-app web search, supported creator-page scanning, and ZIP downloads. Direct MEGA uploads and Wii network loading are not connected yet.</p></header>
+<header><div class="brand"><div class="logo">🎮</div><div><h1>Brawl Mod Manager <span style="font-size:.55em;color:var(--mint)">V1</span></h1><div class="muted">The Wii app lives on SD. The mod library lives in the cloud.</div></div></div><p>Cloud Storage app update: search for Brawl mods, scan supported creator pages, download ZIP archives, and use the guided MEGA handoff below. Automatic MEGA uploads and Wii network loading are not connected yet.</p></header>
 <main>\n
 <section class="panel" id="cloud-backend-panel">
   <div class="row"><h2>☁️ Cloud backend</h2><span class="tag">Hosted service</span></div>
@@ -36,7 +36,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
 
 <section class="panel" id="cloud-storage-workspace">
   <div class="row"><h2>☁️ Cloud Storage workspace</h2><span class="tag">App control center</span></div>
-  <p class="muted">Search and scan inside this app. ZIP files currently download to this device. Direct transfer into MEGA is marked unavailable until a secure, approved account connection is configured.</p>
+  <p class="muted">Search and scan inside this app, download supported ZIP archives, then use the guided handoff to move them into your MEGA folder. The browser cannot upload into MEGA automatically until a secure, approved account connection is configured.</p>
   <div class="storage-grid">
     <article class="storage cloud" id="mega-storage-card">
       <div class="storage-icon">🟣</div><h3>MEGA official storage</h3>
@@ -50,7 +50,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
           <li>Search for a mod and scan a supported creator page.</li>
           <li>Choose a ZIP archive. It downloads to this device.</li>
           <li>Extract it locally and review its contents.</li>
-          <li>Automatic upload to <code>MEGA / Brawl Mods</code> is not available yet.</li>
+          <li>Open the MEGA handoff below, choose the downloaded ZIP, and upload it to <code>MEGA / Brawl Mods</code>. Automatic upload is not enabled.</li>
         </ol>
       </div>
       <p class="small muted">Direct MEGA account linking is not configured. Opening MEGA and signing in there cannot authorize this app. MEGA API use is subject to its developer approval requirements, and this project does not yet have an approved MEGA application connection or secure server-side authorization configured. The app therefore will not collect your MEGA password, session ID, or account keys.</p>
@@ -119,6 +119,17 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
     </div>
     <div id="wii-mod-library" class="steps" aria-live="polite"><p class="small muted">Loading mod catalog…</p></div>
     <div class="notice">The future Play action must ask the Wii service to prepare the selected mod, verify its base-game and loader compatibility, then launch Brawl through the installed loader. A normal browser button cannot launch a Wii game by itself. Remote file access may require a compatible network filesystem or temporary SD/USB cache.</div>
+  </section>
+
+  <section class="panel" id="mega-transfer-handoff">
+    <div class="row"><h2>📤 Move a downloaded mod into MEGA</h2><span class="tag">Guided handoff</span></div>
+    <p class="muted">This makes the manual transfer steps easier. Your MEGA password stays on MEGA's official website; this app does not receive or store it.</p>
+    <div class="steps">
+      <div class="step"><strong>1. Download a mod</strong><p>Use the search/import tools above. The ZIP is saved by your browser to its normal Downloads location.</p></div>
+      <div class="step"><strong>2. Open your MEGA folder</strong><p>Sign in on MEGA's official site and open your Brawl Mods destination folder.</p><a class="btn primary" href="https://mega.nz/folder/T8xykJYa#vLMpYjUrX2Fpsk5iIImy0A" target="_blank" rel="noopener noreferrer">Open Brawl Mods in MEGA ↗</a></div>
+      <div class="step"><strong>3. Upload the ZIP</strong><p>In MEGA, choose Upload files and select the ZIP from Downloads. Extract it in MEGA or on your device if your mod setup requires an extracted folder.</p></div>
+    </div>
+    <p class="small muted" id="mega-handoff-status" role="status" aria-live="polite">Transfer status: guided manual upload. The app cannot verify that MEGA received the file.</p>
   </section>
 
   <div class="notice">The MEGA button opens your exact Brawl Mods folder in a separate tab. This is a direct folder shortcut, not an account authorization: signing in there does not grant this app upload access. A secure MEGA account integration is still required before automatic uploads can be enabled. Never put your MEGA password or session tokens in this public GitHub Pages repository.</div>
