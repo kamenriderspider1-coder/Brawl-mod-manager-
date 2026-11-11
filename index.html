@@ -322,9 +322,10 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
    if(!d.candidates.length){state.textContent='Scan complete: no supported archive links found. Check the source page manually.';return;}
    state.textContent='Found '+d.candidates.length+' archive candidate(s). Choose a download:';
    d.candidates.forEach((c,i)=>{const row=el('div','step');row.append(el('p','small',c.label+' · '+c.host));const b=el('button','btn','Download ZIP to this device');b.type='button';b.addEventListener('click',async()=>{
+    if(window.BrawlModManagerOpenMegaRequest)window.BrawlModManagerOpenMegaRequest();
     b.disabled=true;b.textContent='Downloading…';
     try{const ar=await fetch(api+'/api/archive?url='+encodeURIComponent(c.url));if(!ar.ok){const x=await ar.json().catch(()=>({}));throw Error(x.error||'Download failed');}
-     const blob=await ar.blob(),a=document.createElement('a'),u=URL.createObjectURL(blob);a.href=u;a.download=(item.name||'brawl-mod').replace(/[^a-z0-9._-]+/gi,'_').slice(0,80)+'-'+(i+1)+'.zip';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),30000);b.textContent='Downloaded';state.textContent='ZIP downloaded to this device. Automatic MEGA upload is not connected.';
+     const blob=await ar.blob(),a=document.createElement('a'),u=URL.createObjectURL(blob);a.href=u;a.download=(item.name||'brawl-mod').replace(/[^a-z0-9._-]+/gi,'_').slice(0,80)+'-'+(i+1)+'.zip';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),30000);b.textContent='Downloaded';state.textContent='ZIP downloaded to this device. If configured, the MEGA File Request page has opened; choose this ZIP there to complete the upload.';
     }catch(e){b.disabled=false;b.textContent='Retry download';state.textContent='Download failed: '+e.message;}
    });row.append(b);card.append(row);});
   }catch(e){state.textContent='Processing failed: '+e.message+' Only supported GameBanana and Project+ URLs can be scanned.';}
@@ -436,7 +437,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
  async function download(url,label,b){
   b.disabled=true;b.textContent='Downloading…';
   try{const r=await fetch(api+'/api/archive?url='+encodeURIComponent(url));if(!r.ok){const x=await r.json().catch(()=>({}));throw Error(x.error||'Archive download failed');}
-   const blob=await r.blob();const a=document.createElement('a'),obj=URL.createObjectURL(blob);a.href=obj;a.download=(label||'brawl-mod').replace(/[^a-z0-9._-]+/gi,'_').slice(0,80)+'.zip';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(obj),30000);b.textContent='Downloaded';status.textContent='ZIP downloaded to this device. Opening your saved MEGA File Request page; select the ZIP there to finish uploading.';if(window.BrawlModManagerOpenMegaRequest)window.BrawlModManagerOpenMegaRequest();
+   const blob=await r.blob();const a=document.createElement('a'),obj=URL.createObjectURL(blob);a.href=obj;a.download=(label||'brawl-mod').replace(/[^a-z0-9._-]+/gi,'_').slice(0,80)+'.zip';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(obj),30000);b.textContent='Downloaded';status.textContent='ZIP downloaded to this device. Opening your saved MEGA File Request page; select the ZIP there to finish uploading.';
   }catch(e){b.textContent='Retry download';status.textContent='Download failed: '+e.message;}finally{b.disabled=false;}
  }
  async function scan(url,card){
