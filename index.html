@@ -72,6 +72,24 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
     <button class="btn" id="clear-mod-requests" type="button">Clear request queue</button>
   </section>
 
+
+  <section class="panel" id="wii-library-panel">
+    <div class="row"><h2>🎮 Wii mod library</h2><span class="tag">Wi-Fi play interface</span></div>
+    <p class="muted">This is the library the Wii manager is intended to browse. Once a mod has been processed and stored in your MEGA or Google Drive account, the Wii manager should show it here and let you launch a compatible build.</p>
+    <div class="storage-grid">
+      <article class="storage local">
+        <div class="row"><strong>Wii connection</strong><span class="status"><i class="dot blue"></i> Not connected</span></div>
+        <p class="small muted" id="wii-connection-status">The website cannot detect or connect to the Wii yet. The Wii homebrew network client and secure library service have not been implemented.</p>
+      </article>
+      <article class="storage">
+        <div class="row"><strong>Cloud library</strong><span class="status"><i class="dot blue"></i> Catalog only</span></div>
+        <p class="small muted">The list below is loaded from cloud-mods.json. These are source entries, not proof that their files have been downloaded to MEGA or are ready to play.</p>
+      </article>
+    </div>
+    <div id="wii-mod-library" class="steps" aria-live="polite"><p class="small muted">Loading mod catalog…</p></div>
+    <div class="notice">The future Play action must ask the Wii service to prepare the selected mod, verify its base-game and loader compatibility, then launch Brawl through the installed loader. A normal browser button cannot launch a Wii game by itself. Remote file access may require a compatible network filesystem or temporary SD/USB cache.</div>
+  </section>
+
   <div class="notice">Setup still required for real connections: Google Drive authorization and/or a MEGA SDK-based account connection, plus a secure processing endpoint for cross-site mod downloads and archive extraction. The MEGA button currently opens MEGA's official sign-in page only; it does not connect this app to the account. No Google password, client secret, or access token should be placed in this public GitHub Pages repository.</div>
   <div class="steps">
     <div class="step"><strong>Storage destination</strong><p><code>My Drive/Brawl Mods/</code></p><p class="small muted">Your Google Drive, not GitHub storage and not a separate app-owned cloud.</p></div>
@@ -281,6 +299,35 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
    localStorage.removeItem(KEY);render();status.textContent='Local request queue cleared.';
  });
  render();
+})();
+</script>
+
+
+<script>
+(function(){
+  const root=document.getElementById('wii-mod-library');
+  if(!root) return;
+  function node(tag,cls,text){const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;return el;}
+  fetch('./cloud-mods.json',{cache:'no-store'})
+    .then(response=>{if(!response.ok)throw new Error('Catalog request failed');return response.json();})
+    .then(data=>{
+      root.replaceChildren();
+      (data.mods||[]).forEach(mod=>{
+        const card=node('article','step');
+        card.append(node('strong','',mod.name));
+        card.append(node('p','small muted','Type: '+(mod.type||'Unspecified')));
+        card.append(node('p','small muted','File status: '+(mod.status||'Not processed')));
+        const source=node('a','btn','View source ↗');
+        source.href=mod.url;source.target='_blank';source.rel='noopener noreferrer';
+        const play=node('button','btn','Play on Wii');
+        play.type='button';play.disabled=true;
+        play.title='Wii network service and compatible loader bridge are not connected yet.';
+        const state=node('p','small muted','Not ready: archive is not confirmed in your MEGA/Drive library, and Wii launch service is not connected.');
+        card.append(source,play,state);root.append(card);
+      });
+      if(!(data.mods||[]).length)root.append(node('p','small muted','No mods are listed in the catalog yet.'));
+    })
+    .catch(()=>{root.replaceChildren(node('p','small muted','Could not load cloud-mods.json. Check the catalog file and try refreshing.'));});
 })();
 </script>
 
