@@ -53,10 +53,19 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
       </div>
       <p class="small muted" id="mega-connection-status" role="status" aria-live="polite">Not connected. Credentials are not stored by this page.</p>
       <div id="mega-file-tools" hidden>
-        <div class="row" style="margin-top:12px"><strong>MEGA / Brawl Mods folder</strong><button class="btn" id="refresh-mega-files" type="button">Refresh</button></div>
+        <div class="row" style="margin-top:12px"><strong>Choose where to save your mod</strong><button class="btn" id="refresh-mega-files" type="button">Refresh folders</button></div>
+        <label for="mega-destination-folder"><strong>MEGA destination folder</strong></label>
+        <select id="mega-destination-folder" style="width:100%;margin-top:6px;padding:10px;border-radius:9px;background:#0b1423;color:inherit;border:1px solid var(--line)">
+          <option value="">Loading your MEGA folders…</option>
+        </select>
+        <div class="row" style="margin-top:8px">
+          <input id="mega-new-folder-name" type="text" maxlength="80" placeholder="New folder name" aria-label="New folder name">
+          <button class="btn" id="mega-create-folder" type="button">Create folder here</button>
+        </div>
+        <p class="small muted">Select an existing folder above, or create a folder inside the selected location. The app will ask you to choose the destination before each upload.</p>
         <input id="mega-upload-files" type="file" multiple style="margin-top:8px">
-        <button class="btn primary" id="upload-mega-files" type="button" style="margin-top:8px">Upload selected files to MEGA</button>
-        <p class="small muted" id="mega-upload-status" role="status" aria-live="polite">Choose files to upload into your MEGA account's Brawl Mods folder. This uploads selected files only; it does not crawl web pages or extract archives.</p>
+        <button class="btn primary" id="upload-mega-files" type="button" style="margin-top:8px">Upload selected files to chosen folder</button>
+        <p class="small muted" id="mega-upload-status" role="status" aria-live="polite">Choose the MEGA folder first, then select files. This uploads files you choose; it does not crawl websites or extract archives.</p>
         <div id="mega-file-list" class="step" style="margin-top:10px"><p class="small muted">Connect to view files.</p></div>
       </div>
       <p class="small muted">MEGAJS is an unofficial third-party library. Review its terms and documentation before use. This browser connection is a first working account/file test, not the final automated mod pipeline.</p>
@@ -70,7 +79,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
         <li>Upload the extracted mod folder into your MEGA account.</li>
         <li>Publish its metadata to the Wii library.</li>
       </ol>
-      <p class="small muted">Download and extraction require a secure processing service. MEGA uploads remain disabled until a supported server-side MEGA integration is configured.</p>
+      <p class="small muted">Automatic downloading and archive extraction still need a processing service. Manual browser uploads to a folder you choose in MEGA are available after sign-in.</p>
     </article>
   </div>
 
@@ -120,7 +129,9 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
     <div class="storage-grid">
       <article class="storage local">
         <div class="row"><strong>Wii connection</strong><span class="status"><i class="dot blue"></i> Not connected</span></div>
-        <p class="small muted" id="wii-connection-status">The website cannot detect or connect to the Wii yet. The Wii homebrew network client and secure library service have not been implemented.</p>
+        <p class="small muted" id="wii-connection-status">Not connected. The current Wii homebrew build browses files already on the SD card only. It does not yet join this cloud library or request files from MEGA.</p>
+        <p class="small muted">To enable this, the Wii app needs a network client that contacts a secure library API, plus a compatible file-transfer/cache method. The cloud API currently has no Wii pairing, authentication, or file-delivery routes.</p>
+        <p class="small muted">No Wii files or existing Smash REX installation are changed by this website update.</p>
       </article>
       <article class="storage">
         <div class="row"><strong>Cloud library</strong><span class="status"><i class="dot blue"></i> Catalog only</span></div>
@@ -131,9 +142,9 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
     <div class="notice">The future Play action must ask the Wii service to prepare the selected mod, verify its base-game and loader compatibility, then launch Brawl through the installed loader. A normal browser button cannot launch a Wii game by itself. Remote file access may require a compatible network filesystem or temporary SD/USB cache.</div>
   </section>
 
-  <div class="notice">Setup still required for real connections: Google Drive authorization and/or a MEGA SDK-based account connection, plus a secure processing endpoint for cross-site mod downloads and archive extraction. The MEGA button currently opens MEGA's official sign-in page only; it does not connect this app to the account. No Google password, client secret, or access token should be placed in this public GitHub Pages repository.</div>
+  <div class="notice">MEGA browser sign-in and folder selection are experimental and use an unofficial library. Automatic download/extraction and Wii network delivery are not implemented. Never place your MEGA password or session tokens in this public GitHub Pages repository.</div>
   <div class="steps">
-    <div class="step"><strong>Storage destination</strong><p><code>MEGA / Brawl Mods/</code></p><p class="small muted">Your Google Drive, not GitHub storage and not a separate app-owned cloud.</p></div>
+    <div class="step"><strong>Storage destination</strong><p><code>MEGA / Brawl Mods/</code></p><p class="small muted">Your MEGA account, not GitHub storage and not a separate app-owned cloud.</p></div>
     <div class="step"><strong>Wii connection</strong><p>Wii connects to the Cloud Storage service over Wi-Fi.</p><p class="small muted">The Wii client and compatible remote-loading bridge still need implementation.</p></div>
   </div>
 </section>
@@ -439,27 +450,49 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
 <script type="module">
 let megaStorage=null;
 let megaFolder=null;
+let megaDestinations=[];
 const $=id=>document.getElementById(id);
 const status=$('mega-connection-status');
 const fileList=$('mega-file-list');
 function safeText(tag,text,cls='small muted'){const el=document.createElement(tag);el.className=cls;el.textContent=text;return el;}
 function humanSize(bytes){if(!Number.isFinite(bytes))return '';const units=['B','KB','MB','GB'];let n=bytes,i=0;while(n>=1024&&i<units.length-1){n/=1024;i++;}return n.toFixed(i?1:0)+' '+units[i];}
+function folderChildren(folder){return Array.isArray(folder?.children)?folder.children:[];}
+function selectedDestination(){const index=Number($('mega-destination-folder')?.value);return megaDestinations[index]||null;}
+function addFolderOptions(){
+  const select=$('mega-destination-folder');
+  select.replaceChildren();
+  megaDestinations=[];
+  const add=(folder,path,depth)=>{
+    const index=megaDestinations.push({folder,path})-1;
+    const option=document.createElement('option');
+    option.value=String(index);
+    option.textContent=path;
+    select.append(option);
+    if(depth<12){
+      for(const child of folderChildren(folder).filter(x=>x.directory)){
+        add(child,path+'/'+child.name,depth+1);
+      }
+    }
+  };
+  add(megaStorage.root,'/ (MEGA root)',0);
+}
 async function renderMegaFiles(){
   if(!megaStorage)return;
   fileList.replaceChildren();
   try{
     await megaStorage.reload();
-    megaFolder=megaStorage.root.find('Brawl Mods');
-    if(!megaFolder)megaFolder=await megaStorage.root.mkdir('Brawl Mods');
-    const children=megaFolder.children||[];
-    if(!children.length){fileList.append(safeText('p','Your Brawl Mods folder is empty. Upload a file above.'));return;}
+    addFolderOptions();
+    const destination=selectedDestination();
+    megaFolder=destination?.folder||megaStorage.root;
+    const children=folderChildren(megaFolder);
+    if(!children.length){fileList.append(safeText('p','This folder is empty.'));return;}
     for(const item of children){
       const line=document.createElement('div');line.className='row';line.style.padding='6px 0';
       line.append(safeText('span',(item.directory?'📁 ':'📄 ')+item.name,'small'));
       line.append(safeText('span',item.directory?'Folder':humanSize(item.size),'small muted'));
       fileList.append(line);
     }
-  }catch(error){fileList.replaceChildren(safeText('p','Could not read the MEGA folder: '+error.message));}
+  }catch(error){fileList.replaceChildren(safeText('p','Could not read MEGA folders: '+error.message));}
 }
 $('connect-mega')?.addEventListener('click',async()=>{
   const email=$('mega-email').value.trim();
@@ -473,7 +506,7 @@ $('connect-mega')?.addEventListener('click',async()=>{
     $('mega-password').value='';$('mega-2fa').value='';
     $('mega-email').disabled=true;$('connect-mega').hidden=true;$('disconnect-mega').disabled=false;
     $('mega-file-tools').hidden=false;
-    status.textContent='Connected to MEGA. Account: '+(megaStorage.name||'your account')+'. Credentials were cleared from the form.';
+    status.textContent='Connected to MEGA. Choose any folder in your account as the destination for each upload.';
     await renderMegaFiles();
   }catch(error){
     megaStorage=null;$('mega-password').value='';$('mega-2fa').value='';
@@ -481,28 +514,67 @@ $('connect-mega')?.addEventListener('click',async()=>{
   }finally{$('connect-mega').disabled=false;}
 });
 $('refresh-mega-files')?.addEventListener('click',renderMegaFiles);
+$('mega-destination-folder')?.addEventListener('change',async()=>{
+  const destination=selectedDestination();
+  megaFolder=destination?.folder||null;
+  $('mega-upload-status').textContent='Selected destination: '+(destination?.path||'MEGA root');
+  await renderMegaFilesForSelected();
+});
+async function renderMegaFilesForSelected(){
+  if(!megaStorage)return;
+  fileList.replaceChildren();
+  const destination=selectedDestination();
+  if(!destination)return;
+  megaFolder=destination.folder;
+  const children=folderChildren(megaFolder);
+  if(!children.length){fileList.append(safeText('p','This folder is empty.'));return;}
+  for(const item of children){
+    const line=document.createElement('div');line.className='row';line.style.padding='6px 0';
+    line.append(safeText('span',(item.directory?'📁 ':'📄 ')+item.name,'small'));
+    line.append(safeText('span',item.directory?'Folder':humanSize(item.size),'small muted'));
+    fileList.append(line);
+  }
+}
+$('mega-create-folder')?.addEventListener('click',async()=>{
+  if(!megaStorage){$('mega-upload-status').textContent='Connect to MEGA first.';return;}
+  const name=$('mega-new-folder-name').value.trim();
+  if(!name||name==='.'||name==='..'||/[\\/]/.test(name)){$('mega-upload-status').textContent='Enter a valid single folder name.';return;}
+  const destination=selectedDestination();
+  if(!destination){$('mega-upload-status').textContent='Select the parent folder first.';return;}
+  const button=$('mega-create-folder');button.disabled=true;
+  try{
+    await destination.folder.mkdir(name);
+    $('mega-new-folder-name').value='';
+    $('mega-upload-status').textContent='Created '+destination.path+'/'+name+'.';
+    await renderMegaFiles();
+    const option=Array.from($('mega-destination-folder').options).find(o=>o.textContent===destination.path+'/'+name);
+    if(option){$('mega-destination-folder').value=option.value;await renderMegaFilesForSelected();}
+  }catch(error){$('mega-upload-status').textContent='Could not create folder: '+error.message;}
+  finally{button.disabled=false;}
+});
 $('upload-mega-files')?.addEventListener('click',async()=>{
   if(!megaStorage){$('mega-upload-status').textContent='Connect to MEGA first.';return;}
+  const destination=selectedDestination();
+  if(!destination){$('mega-upload-status').textContent='Choose where in MEGA to put this mod first.';return;}
   const files=Array.from($('mega-upload-files').files||[]);
   if(!files.length){$('mega-upload-status').textContent='Choose at least one file first.';return;}
   if(files.some(file=>file.size>50*1024*1024)){$('mega-upload-status').textContent='For this browser test, each file must be 50 MB or smaller.';return;}
   const button=$('upload-mega-files');button.disabled=true;
   try{
-    if(!megaFolder)megaFolder=megaStorage.root.find('Brawl Mods')||await megaStorage.root.mkdir('Brawl Mods');
     for(let i=0;i<files.length;i++){
-      const file=files[i];$('mega-upload-status').textContent='Uploading '+(i+1)+' of '+files.length+': '+file.name;
+      const file=files[i];$('mega-upload-status').textContent='Uploading '+(i+1)+' of '+files.length+' to '+destination.path+': '+file.name;
       const bytes=new Uint8Array(await file.arrayBuffer());
-      await megaFolder.upload(file.name,bytes).complete;
+      await destination.folder.upload(file.name,bytes).complete;
     }
     $('mega-upload-files').value='';
-    $('mega-upload-status').textContent='Upload complete. Your selected files are in MEGA / Brawl Mods.';
-    await renderMegaFiles();
+    $('mega-upload-status').textContent='Upload complete. Saved to '+destination.path+'.';
+    await renderMegaFilesForSelected();
   }catch(error){$('mega-upload-status').textContent='Upload failed: '+error.message;}
   finally{button.disabled=false;}
 });
 $('disconnect-mega')?.addEventListener('click',()=>{
   try{megaStorage?.close();}catch(_){}
-  megaStorage=null;megaFolder=null;
+  megaStorage=null;megaFolder=null;megaDestinations=[];
   $('mega-email').disabled=false;$('connect-mega').hidden=false;$('disconnect-mega').disabled=true;
   $('mega-file-tools').hidden=true;$('mega-password').value='';$('mega-2fa').value='';
   fileList.replaceChildren(safeText('p','Disconnected.'));
