@@ -62,7 +62,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
           <input id="mega-new-folder-name" type="text" maxlength="80" placeholder="New folder name" aria-label="New folder name">
           <button class="btn" id="mega-create-folder" type="button">Create folder here</button>
         </div>
-        <p class="small muted">Select an existing folder above, or create a folder inside the selected location. The app will ask you to choose the destination before each upload.</p>
+        <p class="small muted">The app automatically creates and selects MEGA / Brawl Mods for mod imports. You can still select another folder for manual file uploads.</p>
         <input id="mega-upload-files" type="file" multiple style="margin-top:8px">
         <button class="btn primary" id="upload-mega-files" type="button" style="margin-top:8px">Upload selected files to chosen folder</button>
         <p class="small muted" id="mega-upload-status" role="status" aria-live="polite">Choose the MEGA folder first, then select files. This uploads files you choose; it does not crawl websites or extract archives.</p>
@@ -91,7 +91,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
     <select id="catalog-import-mod" style="display:block;width:100%;margin:7px 0;padding:10px;border-radius:9px;background:#0b1423;color:inherit;border:1px solid var(--line)"><option value="">Loading catalog…</option></select>
     <div class="row" style="margin:10px 0">
       <a class="btn" id="catalog-import-source" href="#" target="_blank" rel="noopener noreferrer" aria-disabled="true">Open creator download page ↗</a>
-      <span class="small muted" id="catalog-import-destination">Connect MEGA and choose a destination folder above.</span>
+      <span class="small muted" id="catalog-import-destination">Connect MEGA. Imports default to MEGA / Brawl Mods.</span>
     </div>
     <div class="row" style="margin:12px 0">
       <button class="btn" id="catalog-import-discover" type="button">Find download link on creator page</button>
@@ -508,9 +508,16 @@ async function renderMegaFiles(){
   fileList.replaceChildren();
   try{
     await megaStorage.reload();
+    // Create/find the dedicated library folder at the MEGA account root.
+    let brawlModsFolder=folderChildren(megaStorage.root).find(item=>item.directory&&item.name.toLowerCase()==='brawl mods');
+    if(!brawlModsFolder)brawlModsFolder=await megaStorage.root.mkdir('Brawl Mods');
+    await megaStorage.reload();
+    brawlModsFolder=folderChildren(megaStorage.root).find(item=>item.directory&&item.name.toLowerCase()==='brawl mods')||brawlModsFolder;
     addFolderOptions();
+    const defaultIndex=megaDestinations.findIndex(item=>item.folder===brawlModsFolder||item.path.toLowerCase()==='/brawl mods');
+    if(defaultIndex>=0)$('mega-destination-folder').value=String(defaultIndex);
     const destination=selectedDestination();
-    megaFolder=destination?.folder||megaStorage.root;
+    megaFolder=destination?.folder||brawlModsFolder;
     const children=folderChildren(megaFolder);
     if(!children.length){fileList.append(safeText('p','This folder is empty.'));return;}
     for(const item of children){
@@ -533,7 +540,7 @@ $('connect-mega')?.addEventListener('click',async()=>{
     $('mega-password').value='';$('mega-2fa').value='';
     $('mega-email').disabled=true;$('connect-mega').hidden=true;$('disconnect-mega').disabled=false;
     $('mega-file-tools').hidden=false;
-    status.textContent='Connected to MEGA. Choose any folder in your account as the destination for each upload.';
+    status.textContent='Connected to MEGA. Your Brawl Mods folder is ready and selected as the default destination.';
     await renderMegaFiles();
   }catch(error){
     megaStorage=null;$('mega-password').value='';$('mega-2fa').value='';
@@ -660,7 +667,7 @@ $('disconnect-mega')?.addEventListener('click',()=>{
  downloadButton.addEventListener('click',async()=>{
    const selected=discovered[Number(candidateSelect.value)],context=window.brawlMegaContext?.();
    if(!selected){discoveryStatus.textContent='Select a detected archive link first.';return;}
-   if(!context?.storage||!context.destination){discoveryStatus.textContent='Connect MEGA and choose the destination folder first.';return;}
+   if(!context?.storage||!context.destination){discoveryStatus.textContent='Connect MEGA first. The destination defaults to MEGA / Brawl Mods.';return;}
    downloadButton.disabled=true;discoverButton.disabled=true;
    discoveryStatus.textContent='Downloading the selected archive through the cloud service…';
    try{
