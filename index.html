@@ -783,7 +783,9 @@ $('disconnect-mega')?.addEventListener('click',()=>{
      if(total>300*1024*1024)throw Error('Extracted files exceed 300 MB');
      prepared.push({name,bytes});
    }
-   const root=context.modDestination.folder;
+   const brawlRoot=context.modDestination.folder;
+   let root=Array.isArray(brawlRoot.children)?brawlRoot.children.find(x=>x.directory&&x.name==='All Mods'):null;
+   if(!root)root=await brawlRoot.mkdir('All Mods');
    const folderName=mod.name.replace(/[^a-z0-9 _.-]/gi,'').trim().replace(/\s+/g,' ').slice(0,70)||mod.id;
    let folder=Array.isArray(root.children)?root.children.find(x=>x.directory&&x.name===folderName):null;
    if(!folder)folder=await root.mkdir(folderName);
@@ -806,7 +808,7 @@ $('disconnect-mega')?.addEventListener('click',()=>{
      const parts=entry.name.split('/'),filename=parts.pop(),dest=await getFolder(parts.join('/'));
      await dest.upload({name:filename,size:entry.bytes.byteLength},entry.bytes).complete;
    }
-   return {files:prepared.length,bytes:total,folder:context.modDestination.path+'/'+folderName};
+   return {files:prepared.length,bytes:total,folder:context.modDestination.path+'/All Mods/'+folderName};
  }
  button.addEventListener('click',async()=>{
    const context=window.brawlMegaContext?.();
