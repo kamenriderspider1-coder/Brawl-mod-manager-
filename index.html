@@ -19,7 +19,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
 </style>
 </head>
 <body>
-<header><div class="brand"><div class="logo">🎮</div><div><h1>Brawl Mod Manager</h1><div class="muted">The Wii app lives on SD. The mod library lives in the cloud.</div></div></div><p>The SD card holds the Brawl Mod Manager homebrew app. The extracted mod files are intended to live in your MEGA account, with a Wii-compatible network service providing access.</p></header>
+<header><div class="brand"><div class="logo">🎮</div><div><h1>Brawl Mod Manager</h1><div class="muted">The Wii app lives on SD. The mod library lives in the cloud.</div></div></div><p>The SD card holds the Brawl Mod Manager homebrew app. Use MEGA's official website to store mod folders; automatic Wii network delivery is not implemented yet.</p></header>
 <main>\n
 <section class="panel" id="cloud-backend-panel">
   <div class="row"><h2>☁️ Cloud backend</h2><span class="tag">Hosted service</span></div>
@@ -36,39 +36,22 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
 
 <section class="panel" id="cloud-storage-workspace">
   <div class="row"><h2>☁️ Cloud Storage workspace</h2><span class="tag">App control center</span></div>
-  <p class="muted">This is the Brawl Mod Manager's own Cloud Storage app. MEGA is the storage destination connected to it. You manage mod discovery, download jobs, extraction, organization, and Wii availability here; the app puts the finished files into your selected account.</p>
+  <p class="muted">This workspace finds supported creator downloads, checks ZIP contents, and prepares a folder-preserving bundle for you to upload through MEGA's official website.</p>
   <div class="storage-grid">
     <article class="storage cloud" id="mega-storage-card">
-      <div class="storage-icon">🟣</div><h3>MEGA account connection</h3>
-      <p class="muted small">Connect directly to MEGA from this browser using the community-maintained MEGAJS library. Your password is sent to MEGA by that library, not to this Cloudflare API or saved in this app. The connection stays in memory and ends when you disconnect or close the page.</p>
-      <label for="mega-email"><strong>MEGA email</strong></label>
-      <input id="mega-email" type="email" autocomplete="username" placeholder="you@example.com">
-      <label for="mega-password"><strong>MEGA password</strong></label>
-      <input id="mega-password" type="password" autocomplete="current-password" placeholder="Enter it here, never in chat">
-      <label for="mega-2fa"><strong>Two-factor code (if enabled)</strong></label>
-      <input id="mega-2fa" inputmode="numeric" autocomplete="one-time-code" placeholder="Optional 2FA code">
-      <div class="row" style="margin-top:10px">
-        <button class="btn primary" id="connect-mega" type="button">Connect to MEGA</button>
-        <button class="btn" id="disconnect-mega" type="button" disabled>Disconnect</button>
+      <div class="storage-icon">🟣</div><h3>MEGA official storage</h3>
+      <p class="muted small">Use MEGA's own website to sign in and manage your files. This GitHub Pages app does not collect your MEGA password, session, or two-factor code.</p>
+      <a class="btn primary" href="https://mega.nz/" target="_blank" rel="noopener noreferrer">Open official MEGA web app ↗</a>
+      <div class="notice" style="margin-top:12px">
+        <strong>How the transfer works right now</strong>
+        <ol class="small">
+          <li>Use the importer below to download and check a creator ZIP.</li>
+          <li>Download the prepared ZIP bundle to this Mac.</li>
+          <li>Open the bundle with the built-in Archive Utility to extract it.</li>
+          <li>In the official MEGA tab, upload the extracted mod folder to <code>Brawl Mods</code>.</li>
+        </ol>
       </div>
-      <p class="small muted" id="mega-connection-status" role="status" aria-live="polite">Not connected. Credentials are not stored by this page.</p>
-      <div id="mega-file-tools" hidden>
-        <div class="row" style="margin-top:12px"><strong>Choose where to save your mod</strong><button class="btn" id="refresh-mega-files" type="button">Refresh folders</button></div>
-        <label for="mega-destination-folder"><strong>MEGA destination folder</strong></label>
-        <select id="mega-destination-folder" style="width:100%;margin-top:6px;padding:10px;border-radius:9px;background:#0b1423;color:inherit;border:1px solid var(--line)">
-          <option value="">Loading your MEGA folders…</option>
-        </select>
-        <div class="row" style="margin-top:8px">
-          <input id="mega-new-folder-name" type="text" maxlength="80" placeholder="New folder name" aria-label="New folder name">
-          <button class="btn" id="mega-create-folder" type="button">Create folder here</button>
-        </div>
-        <p class="small muted">The app automatically creates and selects MEGA / Brawl Mods for mod imports. You can still select another folder for manual file uploads.</p>
-        <input id="mega-upload-files" type="file" multiple style="margin-top:8px">
-        <div class="row" style="margin-top:8px"><button class="btn primary" id="upload-mega-files" type="button">Upload selected files to chosen folder</button><button class="btn" id="test-mega-upload" type="button">Run MEGA upload test</button></div>
-        <p class="small muted" id="mega-upload-status" role="status" aria-live="polite">Choose the MEGA folder first, then select files. This uploads files you choose; it does not crawl websites or extract archives.</p>
-        <div id="mega-file-list" class="step" style="margin-top:10px"><p class="small muted">Connect to view files.</p></div>
-      </div>
-      <p class="small muted">MEGAJS is an unofficial third-party library. Review its terms and documentation before use. This browser connection is a first working account/file test, not the final automated mod pipeline.</p>
+      <p class="small muted">Automatic account-to-account upload is not available: MEGA does not publish an official drop-in browser JavaScript SDK for third-party pages. The commonly used MEGAJS package is unofficial, so this app intentionally does not ask for your MEGA credentials.</p>
     </article>
     <article class="storage">
       <div class="storage-icon">📥</div><h3>Mod download pipeline</h3>
@@ -79,7 +62,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
         <li>Upload the extracted mod folder into your MEGA account.</li>
         <li>Publish its metadata to the Wii library.</li>
       </ol>
-      <p class="small muted">The assisted import tool below lets you download from the creator page, extract a ZIP in this browser, and upload its contents to your selected MEGA folder. It does not scrape creator sites automatically.</p>
+      <p class="small muted">The assisted import tool below downloads a creator ZIP through the cloud service, validates its paths, extracts it in your browser, and packages the extracted folder for download. You then upload the extracted folder to MEGA using its official website.</p>
     </article>
   </div>
 
@@ -99,14 +82,14 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
     </div>
     <label for="catalog-import-candidate"><strong>Detected download link</strong></label>
     <select id="catalog-import-candidate" style="display:block;width:100%;margin:7px 0;padding:10px;border-radius:9px;background:#0b1423;color:inherit;border:1px solid var(--line)" disabled><option value="">Scan a creator page first…</option></select>
-    <button class="btn primary" id="catalog-import-download" type="button" disabled>Download detected ZIP and upload to MEGA</button>
-    <button class="btn primary" id="catalog-import-all" type="button" style="margin:8px 0">Import all 8 catalog mods to MEGA</button>
-    <p class="small muted" id="catalog-import-all-status" role="status" aria-live="polite">Bulk import checks each source and only auto-imports when it finds one unambiguous ZIP link. Entries needing a choice will be listed for review.</p>
+    <button class="btn primary" id="catalog-import-download" type="button" disabled>Download detected ZIP and prepare folder</button>
+    <button class="btn primary" id="catalog-import-all" type="button" style="margin:8px 0">Bulk import is not available</button>
+    <p class="small muted" id="catalog-import-all-status" role="status" aria-live="polite">Import mods one at a time so each creator download can be checked before you upload it.</p>
     <p class="small muted">Wii compatibility is not guaranteed by a filename. Before importing, confirm the creator page says the mod supports the original Wii version of Super Smash Bros. Brawl, and check its base-game/loader requirements. Dolphin-only, Ultimate, and other-game mods should not be imported. The scanner only follows supported HTTPS creator domains.</p>
     <label for="catalog-import-archive"><strong>Or select a ZIP manually</strong></label>
     <input id="catalog-import-archive" type="file" accept=".zip,application/zip,application/x-zip-compressed" style="display:block;margin:8px 0">
-    <button class="btn primary" id="catalog-import-start" type="button">Extract selected ZIP and upload to MEGA</button>
-    <p class="small muted" id="catalog-import-status" role="status" aria-live="polite">Waiting for a catalog selection and ZIP file. The original ZIP is retained alongside extracted files. Limits: 100 MB compressed, 300 MB extracted, and 1,000 files per import.</p>
+    <button class="btn primary" id="catalog-import-start" type="button">Extract ZIP and prepare folder download</button>
+    <p class="small muted" id="catalog-import-status" role="status" aria-live="polite">Choose a catalog entry and a ZIP. The app validates and prepares a folder-preserving ZIP bundle. Limits: 100 MB compressed, 300 MB extracted, and 1,000 files per import.</p>
     <div id="catalog-import-progress" class="small muted" aria-live="polite"></div>
     <p class="small muted">Only import files you are allowed to download and store. ZIP files are inspected in-browser. Password-protected ZIPs, split archives, RAR/7z files, and very large packs are not supported by this first version.</p>
   </section>
@@ -163,16 +146,16 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
       </article>
       <article class="storage">
         <div class="row"><strong>Cloud library</strong><span class="status"><i class="dot blue"></i> Catalog only</span></div>
-        <p class="small muted">The list below is loaded from cloud-mods.json. These are source entries, not proof that their files have been downloaded to MEGA or are ready to play.</p>
+        <p class="small muted">The list below is loaded from cloud-mods.json. These are source entries, not proof that their files have been stored in MEGA or are ready to play.</p>
       </article>
     </div>
     <div id="wii-mod-library" class="steps" aria-live="polite"><p class="small muted">Loading mod catalog…</p></div>
     <div class="notice">The future Play action must ask the Wii service to prepare the selected mod, verify its base-game and loader compatibility, then launch Brawl through the installed loader. A normal browser button cannot launch a Wii game by itself. Remote file access may require a compatible network filesystem or temporary SD/USB cache.</div>
   </section>
 
-  <div class="notice">MEGA browser sign-in and folder selection are experimental and use an unofficial library. Automatic download/extraction and Wii network delivery are not implemented. Never place your MEGA password or session tokens in this public GitHub Pages repository.</div>
+  <div class="notice">MEGA account access uses the official MEGA website in a separate tab. This app prepares files locally in the browser; it does not automatically upload them to MEGA. Never place your MEGA password or session tokens in this public GitHub Pages repository.</div>
   <div class="steps">
-    <div class="step"><strong>Storage destination</strong><p><code>MEGA / Brawl Mods/</code></p><p class="small muted">Your MEGA account, not GitHub storage and not a separate app-owned cloud.</p></div>
+    <div class="step"><strong>Storage destination</strong><p><code>MEGA / Brawl Mods/</code></p><p class="small muted">Upload the extracted folder through MEGA's official website.</p></div>
     <div class="step"><strong>Wii connection</strong><p>Wii connects to the Cloud Storage service over Wi-Fi.</p><p class="small muted">The Wii client and compatible remote-loading bridge still need implementation.</p></div>
   </div>
 </section>
@@ -475,176 +458,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
 })();
 </script>
 
-<script type="module">
-let megaStorage=null;
-let megaFolder=null;
-let megaDestinations=[];
-const $=id=>document.getElementById(id);
-const status=$('mega-connection-status');
-const fileList=$('mega-file-list');
-function safeText(tag,text,cls='small muted'){const el=document.createElement(tag);el.className=cls;el.textContent=text;return el;}
-function humanSize(bytes){if(!Number.isFinite(bytes))return '';const units=['B','KB','MB','GB'];let n=bytes,i=0;while(n>=1024&&i<units.length-1){n/=1024;i++;}return n.toFixed(i?1:0)+' '+units[i];}
-function folderChildren(folder){return Array.isArray(folder?.children)?folder.children:[];}
-function selectedDestination(){const index=Number($('mega-destination-folder')?.value);return megaDestinations[index]||null;}
-async function uploadToMega(folder,name,bytes){
-  if(!megaStorage)throw new Error('MEGA is disconnected. Reconnect and retry.');
-  if(!folder||typeof folder.upload!=='function')throw new Error('The selected MEGA folder is not writable. Refresh folders and retry.');
-  if(!(bytes instanceof Uint8Array))bytes=new Uint8Array(bytes);
-  if(!bytes.byteLength)throw new Error('Refusing to upload an empty file: '+name);
-  const stream=folder.upload({name,size:bytes.byteLength},bytes);
-  if(!stream||!stream.complete||typeof stream.complete.then!=='function')throw new Error('MEGAJS did not start an upload stream for '+name+'.');
-  const uploaded=await stream.complete;
-  if(!uploaded)throw new Error('MEGA did not confirm the upload of '+name+'.');
-  return uploaded;
-}
-window.brawlMegaUpload=(folder,name,bytes)=>uploadToMega(folder,name,bytes);
-window.brawlMegaContext=()=>({storage:megaStorage,destination:selectedDestination(),modDestination:megaDestinations.find(item=>item.folder?.name?.toLowerCase()==='brawl mods')||null,refresh:renderMegaFilesForSelected});
-function addFolderOptions(){
-  const select=$('mega-destination-folder');
-  select.replaceChildren();
-  megaDestinations=[];
-  const add=(folder,path,depth)=>{
-    const index=megaDestinations.push({folder,path})-1;
-    const option=document.createElement('option');
-    option.value=String(index);
-    option.textContent=path;
-    select.append(option);
-    if(depth<12){
-      for(const child of folderChildren(folder).filter(x=>x.directory)){
-        add(child,path+'/'+child.name,depth+1);
-      }
-    }
-  };
-  add(megaStorage.root,'/ (MEGA root)',0);
-}
-async function renderMegaFiles(){
-  if(!megaStorage)return;
-  fileList.replaceChildren();
-  try{
-    await megaStorage.reload();
-    // Create/find the dedicated library folder at the MEGA account root.
-    let brawlModsFolder=folderChildren(megaStorage.root).find(item=>item.directory&&item.name.toLowerCase()==='brawl mods');
-    if(!brawlModsFolder)brawlModsFolder=await megaStorage.root.mkdir('Brawl Mods');
-    await megaStorage.reload();
-    brawlModsFolder=folderChildren(megaStorage.root).find(item=>item.directory&&item.name.toLowerCase()==='brawl mods')||brawlModsFolder;
-    addFolderOptions();
-    const defaultIndex=megaDestinations.findIndex(item=>item.folder===brawlModsFolder||item.path.toLowerCase()==='/brawl mods');
-    if(defaultIndex>=0)$('mega-destination-folder').value=String(defaultIndex);
-    const destination=selectedDestination();
-    megaFolder=destination?.folder||brawlModsFolder;
-    const children=folderChildren(megaFolder);
-    if(!children.length){fileList.append(safeText('p','This folder is empty.'));return;}
-    for(const item of children){
-      const line=document.createElement('div');line.className='row';line.style.padding='6px 0';
-      line.append(safeText('span',(item.directory?'📁 ':'📄 ')+item.name,'small'));
-      line.append(safeText('span',item.directory?'Folder':humanSize(item.size),'small muted'));
-      fileList.append(line);
-    }
-  }catch(error){fileList.replaceChildren(safeText('p','Could not read MEGA folders: '+error.message));}
-}
-$('connect-mega')?.addEventListener('click',async()=>{
-  const email=$('mega-email').value.trim();
-  const password=$('mega-password').value;
-  const secondFactorCode=$('mega-2fa').value.trim();
-  if(!email||!password){status.textContent='Enter your MEGA email and password in these fields.';return;}
-  $('connect-mega').disabled=true;status.textContent='Connecting directly to MEGA…';
-  try{
-    const {Storage}=await import('https://unpkg.com/megajs@1.3.10/dist/main.browser-es.mjs');
-    megaStorage=await new Storage({email,password,secondFactorCode:secondFactorCode||undefined,keepalive:false,autoload:true}).ready;
-    $('mega-password').value='';$('mega-2fa').value='';
-    $('mega-email').disabled=true;$('connect-mega').hidden=true;$('disconnect-mega').disabled=false;
-    $('mega-file-tools').hidden=false;
-    status.textContent='Connected to MEGA. Your Brawl Mods folder is ready and selected as the default destination.';
-    await renderMegaFiles();
-  }catch(error){
-    megaStorage=null;$('mega-password').value='';$('mega-2fa').value='';
-    status.textContent='MEGA connection failed. Check the email, password, two-factor code, and browser connection. Details: '+error.message;
-  }finally{$('connect-mega').disabled=false;}
-});
-$('refresh-mega-files')?.addEventListener('click',renderMegaFiles);
-$('mega-destination-folder')?.addEventListener('change',async()=>{
-  const destination=selectedDestination();
-  megaFolder=destination?.folder||null;
-  $('mega-upload-status').textContent='Selected destination: '+(destination?.path||'MEGA root');
-  await renderMegaFilesForSelected();
-});
-async function renderMegaFilesForSelected(){
-  if(!megaStorage)return;
-  fileList.replaceChildren();
-  const destination=selectedDestination();
-  if(!destination)return;
-  megaFolder=destination.folder;
-  const children=folderChildren(megaFolder);
-  if(!children.length){fileList.append(safeText('p','This folder is empty.'));return;}
-  for(const item of children){
-    const line=document.createElement('div');line.className='row';line.style.padding='6px 0';
-    line.append(safeText('span',(item.directory?'📁 ':'📄 ')+item.name,'small'));
-    line.append(safeText('span',item.directory?'Folder':humanSize(item.size),'small muted'));
-    fileList.append(line);
-  }
-}
-$('mega-create-folder')?.addEventListener('click',async()=>{
-  if(!megaStorage){$('mega-upload-status').textContent='Connect to MEGA first.';return;}
-  const name=$('mega-new-folder-name').value.trim();
-  if(!name||name==='.'||name==='..'||/[\\/]/.test(name)){$('mega-upload-status').textContent='Enter a valid single folder name.';return;}
-  const destination=selectedDestination();
-  if(!destination){$('mega-upload-status').textContent='Select the parent folder first.';return;}
-  const button=$('mega-create-folder');button.disabled=true;
-  try{
-    await destination.folder.mkdir(name);
-    $('mega-new-folder-name').value='';
-    $('mega-upload-status').textContent='Created '+destination.path+'/'+name+'.';
-    await renderMegaFiles();
-    const option=Array.from($('mega-destination-folder').options).find(o=>o.textContent===destination.path+'/'+name);
-    if(option){$('mega-destination-folder').value=option.value;await renderMegaFilesForSelected();}
-  }catch(error){$('mega-upload-status').textContent='Could not create folder: '+error.message;}
-  finally{button.disabled=false;}
-});
-$('test-mega-upload')?.addEventListener('click',async()=>{
-  if(!megaStorage){$('mega-upload-status').textContent='Connect to MEGA first.';return;}
-  const destination=selectedDestination();
-  if(!destination){$('mega-upload-status').textContent='Choose a MEGA destination folder first.';return;}
-  const button=$('test-mega-upload');button.disabled=true;
-  const filename='brawl-mod-manager-upload-test-'+new Date().toISOString().replace(/[:.]/g,'-')+'.txt';
-  try{
-    const bytes=new TextEncoder().encode('Brawl Mod Manager MEGA upload test. If this file appears in your selected MEGA folder, browser uploads are working.');
-    $('mega-upload-status').textContent='Testing upload to '+destination.path+'…';
-    const uploaded=await uploadToMega(destination.folder,filename,bytes);
-    await megaStorage.reload();
-    $('mega-upload-status').textContent='SUCCESS: MEGA confirmed "'+(uploaded.name||filename)+'" ('+bytes.byteLength+' bytes) in '+destination.path+'. Refresh the folder listing to verify it appears.';
-    await renderMegaFilesForSelected();
-  }catch(error){$('mega-upload-status').textContent='MEGA TEST FAILED: '+(error?.message||String(error));}
-  finally{button.disabled=false;}
-});
-$('upload-mega-files')?.addEventListener('click',async()=>{
-  if(!megaStorage){$('mega-upload-status').textContent='Connect to MEGA first.';return;}
-  const destination=selectedDestination();
-  if(!destination){$('mega-upload-status').textContent='Choose where in MEGA to put this mod first.';return;}
-  const files=Array.from($('mega-upload-files').files||[]);
-  if(!files.length){$('mega-upload-status').textContent='Choose at least one file first.';return;}
-  if(files.some(file=>file.size>50*1024*1024)){$('mega-upload-status').textContent='For this browser test, each file must be 50 MB or smaller.';return;}
-  const button=$('upload-mega-files');button.disabled=true;
-  try{
-    for(let i=0;i<files.length;i++){
-      const file=files[i];$('mega-upload-status').textContent='Uploading '+(i+1)+' of '+files.length+' to '+destination.path+': '+file.name;
-      const bytes=new Uint8Array(await file.arrayBuffer());
-      await uploadToMega(destination.folder,file.name,bytes);
-    }
-    $('mega-upload-files').value='';
-    $('mega-upload-status').textContent='Upload complete. Saved to '+destination.path+'.';
-    await renderMegaFilesForSelected();
-  }catch(error){$('mega-upload-status').textContent='Upload failed: '+error.message;}
-  finally{button.disabled=false;}
-});
-$('disconnect-mega')?.addEventListener('click',()=>{
-  try{megaStorage?.close();}catch(_){}
-  megaStorage=null;megaFolder=null;megaDestinations=[];
-  $('mega-email').disabled=false;$('connect-mega').hidden=false;$('disconnect-mega').disabled=true;
-  $('mega-file-tools').hidden=true;$('mega-password').value='';$('mega-2fa').value='';
-  fileList.replaceChildren(safeText('p','Disconnected.'));
-  status.textContent='Disconnected. No MEGA password or session was saved by this page.';
-});
-</script>
+
 
 
 <script type="module">
@@ -652,14 +466,21 @@ $('disconnect-mega')?.addEventListener('click',()=>{
  const $=id=>document.getElementById(id);
  const select=$('catalog-import-mod'), source=$('catalog-import-source');
  const status=$('catalog-import-status'), progress=$('catalog-import-progress');
- let mods=[];
- function say(message){status.textContent=message;}
- fetch('./cloud-mods.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('Catalog unavailable');return r.json();}).then(data=>{
-   mods=(data.mods||[]).filter(m=>m.id!=='smash-rex'&&m.targetPlatform==='Nintendo Wii'&&m.targetGame==='Super Smash Bros. Brawl'); window.__brawlCatalogMods=mods;
+ const discoveryStatus=$('catalog-import-discovery-status');
+ const candidateSelect=$('catalog-import-candidate');
+ const discoverButton=$('catalog-import-discover');
+ const downloadButton=$('catalog-import-download');
+ const api='https://brawl-mod-manager-api.brawlmodmanager.workers.dev';
+ let mods=[], discovered=[];
+ const say=t=>status.textContent=t;
+ fetch('./cloud-mods.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('Catalog unavailable');return r.json();}).then(data=>{
+   mods=(data.mods||[]).filter(m=>m.id!=='smash-rex'&&m.targetPlatform==='Nintendo Wii'&&m.targetGame==='Super Smash Bros. Brawl');
+   window.__brawlCatalogMods=mods;
    select.replaceChildren(new Option('Choose a mod…',''));
    mods.forEach(mod=>select.add(new Option(mod.name,mod.id)));
-   say(mods.length+' Wii-targeted Brawl entries ready. Compatibility is unverified until checked on the creator page.');
- }).catch(error=>say('Could not load catalog: '+error.message));
+   say(mods.length+' Wii-targeted Brawl entries ready. Compatibility still needs creator-page verification.');
+ }).catch(e=>say('Could not load catalog: '+e.message));
+
  select.addEventListener('change',()=>{
    discovered=[];candidateSelect.replaceChildren(new Option('Scan a creator page first…',''));
    candidateSelect.disabled=true;downloadButton.disabled=true;
@@ -668,203 +489,97 @@ $('disconnect-mega')?.addEventListener('click',()=>{
    source.href=mod.url;source.removeAttribute('aria-disabled');
  });
 
- const discoveryStatus=$('catalog-import-discovery-status');
- const candidateSelect=$('catalog-import-candidate');
- const discoverButton=$('catalog-import-discover');
- const downloadButton=$('catalog-import-download');
- let discovered=[];
  discoverButton.addEventListener('click',async()=>{
    const mod=mods.find(m=>m.id===select.value);
    if(!mod){discoveryStatus.textContent='Choose a catalog mod first.';return;}
-   if(!window.brawlMegaContext?.()?.storage){discoveryStatus.textContent='Connect to MEGA first.';return;}
    discoverButton.disabled=true;downloadButton.disabled=true;candidateSelect.disabled=true;
    candidateSelect.replaceChildren(new Option('Scanning creator page…',''));
-   discoveryStatus.textContent='Scanning the creator page for direct ZIP/download links…';
+   discoveryStatus.textContent='Scanning the supported creator page…';
    try{
-     const api='https://brawl-mod-manager-api.brawlmodmanager.workers.dev/api/discover?url='+encodeURIComponent(mod.url);
-     const response=await fetch(api,{cache:'no-store'}),result=await response.json();
-     if(!response.ok||!result.ok)throw new Error(result.error||'Creator page scan failed.');
+     const response=await fetch(api+'/api/discover?url='+encodeURIComponent(mod.url),{cache:'no-store'});
+     const result=await response.json();
+     if(!response.ok||!result.ok)throw Error(result.error||'Creator-page scan failed.');
      discovered=result.candidates||[];
-     candidateSelect.replaceChildren(new Option(discovered.length?'Choose a detected download…':'No supported archive links found',''));
-     discovered.forEach((item,index)=>candidateSelect.add(new Option(item.label+' ('+item.host+')',String(index))));
+     candidateSelect.replaceChildren(new Option(discovered.length?'Choose a detected archive…':'No supported archive links found',''));
+     discovered.forEach((item,i)=>candidateSelect.add(new Option(item.label+' ('+item.host+')',String(i))));
      candidateSelect.disabled=!discovered.length;downloadButton.disabled=!discovered.length;
-     discoveryStatus.textContent=discovered.length+' candidate link(s) found. Select the correct archive, then download and upload it.';
-   }catch(error){
+     discoveryStatus.textContent=discovered.length+' candidate link(s) found. Choose the correct ZIP.';
+   }catch(e){
      discovered=[];candidateSelect.replaceChildren(new Option('No download link found',''));
-     discoveryStatus.textContent='Scan failed: '+error.message+' You can still select a ZIP manually below.';
+     discoveryStatus.textContent='Scan failed: '+e.message+' You can still choose a ZIP manually below.';
    }finally{discoverButton.disabled=false;}
  });
+
+ async function prepareBundle(file,mod){
+   if(!/\.zip$/i.test(file.name)||file.size>100*1024*1024)throw Error('Choose a ZIP no larger than 100 MB.');
+   progress.textContent='Loading ZIP validator…';
+   const pkg=await import('https://cdn.jsdelivr.net/npm/jszip@3.10.1/+esm');
+   const JSZip=pkg.default||pkg;
+   const input=await JSZip.loadAsync(file,{checkCRC32:true});
+   const entries=Object.values(input.files).filter(x=>!x.dir);
+   if(!entries.length)throw Error('The ZIP contains no files.');
+   if(entries.length>1000)throw Error('The ZIP contains more than 1,000 files.');
+   const output=new JSZip();
+   const folderName=mod.name.replace(/[^a-z0-9 _.-]/gi,'').trim().replace(/\s+/g,' ').slice(0,70)||mod.id;
+   const root=output.folder(folderName);
+   let total=0,done=0;
+   for(const entry of entries){
+     const name=entry.name.replace(/\\/g,'/');
+     if(name.startsWith('/')||name.split('/').some(p=>p==='..'||p==='.'||p==='')||name.includes(':'))throw Error('Unsafe archive path: '+entry.name);
+     if(typeof entry.unixPermissions==='number'&&(entry.unixPermissions&0xF000)===0xA000)throw Error('Archive contains a symbolic link: '+entry.name);
+     const bytes=await entry.async('uint8array');
+     total+=bytes.byteLength;
+     if(total>300*1024*1024)throw Error('Extracted files exceed 300 MB.');
+     root.file(name,bytes,{binary:true});
+     done++;
+     progress.textContent='Checked '+done+' / '+entries.length+' files…';
+   }
+   const blob=await output.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:3}});
+   const url=URL.createObjectURL(blob);
+   const a=document.createElement('a');
+   a.href=url;a.download=folderName.replace(/[^a-z0-9_-]+/gi,'-')+'-MEGA-upload.zip';
+   document.body.append(a);a.click();a.remove();
+   setTimeout(()=>URL.revokeObjectURL(url),60000);
+   return {count:entries.length,bytes:total,name:a.download};
+ }
+
+ async function downloadAndPrepare(url,mod){
+   const response=await fetch(api+'/api/archive?url='+encodeURIComponent(url),{cache:'no-store'});
+   if(!response.ok){let message='Archive download failed.';try{message=(await response.json()).error||message;}catch{}throw Error(message);}
+   const blob=await response.blob();
+   if(!blob.size||blob.size>100*1024*1024)throw Error('Downloaded archive is empty or exceeds 100 MB.');
+   return prepareBundle(new File([blob],mod.id+'-source.zip',{type:'application/zip'}),mod);
+ }
+
  downloadButton.addEventListener('click',async()=>{
-   const selected=discovered[Number(candidateSelect.value)],context=window.brawlMegaContext?.();
-   if(!selected){discoveryStatus.textContent='Select a detected archive link first.';return;}
-   if(!context?.storage||!context.destination){discoveryStatus.textContent='Connect MEGA first. The destination defaults to MEGA / Brawl Mods.';return;}
+   const item=discovered[Number(candidateSelect.value)],mod=mods.find(m=>m.id===select.value);
+   if(!item||!mod){discoveryStatus.textContent='Choose a mod and detected archive first.';return;}
    downloadButton.disabled=true;discoverButton.disabled=true;
-   discoveryStatus.textContent='Downloading the selected archive through the cloud service…';
    try{
-     const response=await fetch('https://brawl-mod-manager-api.brawlmodmanager.workers.dev/api/archive?url='+encodeURIComponent(selected.url),{cache:'no-store'});
-     if(!response.ok){let message='Archive download failed.';try{message=(await response.json()).error||message;}catch{}throw new Error(message);}
-     const blob=await response.blob();
-     if(!blob.size||blob.size>100*1024*1024)throw new Error('Downloaded archive is empty or exceeds 100 MB.');
-     const file=new File([blob],'creator-download.zip',{type:'application/zip'}),transfer=new DataTransfer();
-     transfer.items.add(file);$('catalog-import-archive').files=transfer.files;
-     discoveryStatus.textContent='Downloaded '+(blob.size/1024/1024).toFixed(1)+' MB. Starting ZIP validation and MEGA upload…';
-     $('catalog-import-start').click();
-   }catch(error){discoveryStatus.textContent='Download failed: '+error.message;}
+     discoveryStatus.textContent='Downloading creator archive…';
+     const result=await downloadAndPrepare(item.url,mod);
+     discoveryStatus.textContent='Prepared '+result.count+' files ('+(result.bytes/1048576).toFixed(1)+' MB extracted). Your upload ZIP download should be available.';
+     say('Prepared '+result.name+'. Extract it with Archive Utility, then upload the extracted folder to MEGA.');
+   }catch(e){discoveryStatus.textContent='Could not prepare archive: '+e.message;}
    finally{downloadButton.disabled=false;discoverButton.disabled=false;}
  });
 
  $('catalog-import-start').addEventListener('click',async()=>{
-   const mod=mods.find(m=>m.id===select.value);
-   const file=$('catalog-import-archive').files?.[0];
-   const megaContext=window.brawlMegaContext?.();
-   const destination=megaContext?.modDestination||null;
+   const mod=mods.find(m=>m.id===select.value),file=$('catalog-import-archive').files?.[0];
    if(!mod){say('Choose a catalog mod first.');return;}
-   if(!file){say('Download the creator-provided ZIP, then select it here.');return;}
-   if(!megaContext?.storage||!destination){say('Connect to MEGA and select the destination folder above first.');return;}
-   if(!/\.zip$/i.test(file.name)||file.size>100*1024*1024){say('Choose a ZIP archive no larger than 100 MB.');return;}
+   if(!file){say('Choose a ZIP archive first.');return;}
    const button=$('catalog-import-start');button.disabled=true;progress.textContent='';
    try{
-     say('Loading ZIP extractor…');
-     const modPkg=await import('https://cdn.jsdelivr.net/npm/jszip@3.10.1/+esm');
-     const JSZip=modPkg.default||modPkg;
-     const zip=await JSZip.loadAsync(file,{checkCRC32:true});
-     const entries=Object.values(zip.files).filter(entry=>!entry.dir);
-     if(!entries.length)throw new Error('The ZIP contains no files.');
-     if(entries.length>1000)throw new Error('The ZIP contains more than 1,000 files.');
-     const prepared=[];
-     let total=0;
-     for(const entry of entries){
-       const name=entry.name.replace(/\\/g,'/');
-       if(name.startsWith('/')||name.split('/').some(part=>part==='..'||part==='.'||part===''))throw new Error('Unsafe path found in ZIP: '+entry.name);
-       if(name.includes(':'))throw new Error('Unsafe path found in ZIP: '+entry.name);
-       if(typeof entry.unixPermissions==='number'&&(entry.unixPermissions&0xF000)===0xA000)throw new Error('Symbolic links are not accepted in ZIP archives: '+entry.name);
-       const bytes=await entry.async('uint8array');
-       total+=bytes.byteLength;
-       if(total>300*1024*1024)throw new Error('Extracted content exceeds the 300 MB limit.');
-       prepared.push({name,bytes});
-     }
-     const safeModFolder=mod.name.replace(/[^a-z0-9 _.-]/gi,'').trim().replace(/\s+/g,' ').slice(0,70)||mod.id;
-     let modFolder=Array.isArray(destination.folder.children)?destination.folder.children.find(x=>x.directory&&x.name===safeModFolder):null;
-     if(!modFolder)modFolder=await destination.folder.mkdir(safeModFolder);
-     const modPath=destination.path+'/'+safeModFolder;
-     say('ZIP checked. Saving the complete original archive and '+prepared.length+' extracted files ('+(total/1024/1024).toFixed(1)+' MB extracted) to '+modPath+'…');
-     const archiveBytes=new Uint8Array(await file.arrayBuffer());
-     const archiveName=(mod.id||'mod')+'-complete-source.zip';
-     await window.brawlMegaUpload(modFolder,archiveName,archiveBytes);
-     const folderCache=new Map([['',modFolder]]);
-     async function getFolder(relative){
-       const parts=relative?relative.split('/').filter(Boolean):[];
-       let current=modFolder, path='';
-       for(const part of parts){
-         path=path?path+'/'+part:part;
-         if(!folderCache.has(path)){
-           const existing=Array.isArray(current.children)?current.children.find(x=>x.directory&&x.name===part):null;
-           folderCache.set(path,existing||await current.mkdir(part));
-         }
-         current=folderCache.get(path);
-       }
-       return current;
-     }
-     let done=0;
-     for(const entry of prepared){
-       const parts=entry.name.split('/');
-       const filename=parts.pop();
-       const folder=await getFolder(parts.join('/'));
-       await window.brawlMegaUpload(folder,filename,entry.bytes);
-       done++;
-       progress.textContent='Uploaded '+done+' / '+prepared.length+' extracted files: '+entry.name;
-     }
-     say('Import complete: '+mod.name+' has its complete original ZIP and extracted contents in '+modPath+'.');
-     progress.textContent='Saved original archive plus '+prepared.length+' extracted files. The full ZIP is preserved in MEGA.';
+     say('Checking archive and preparing upload bundle…');
+     const result=await prepareBundle(file,mod);
+     say('Prepared '+result.name+'. Extract it with the Mac built-in Archive Utility, then upload the extracted folder to MEGA / Brawl Mods.');
+     progress.textContent='Validated '+result.count+' files ('+(result.bytes/1048576).toFixed(1)+' MB extracted). No MEGA password was requested or stored.';
      $('catalog-import-archive').value='';
-     if(typeof megaContext.refresh==='function')await megaContext.refresh();
-   }catch(error){say('Import stopped: '+error.message+' Any files already uploaded remain in MEGA.');}
+   }catch(e){say('Import stopped: '+e.message);}
    finally{button.disabled=false;}
  });
-})();
-</script>
-
-
-<script type="module">
-(function(){
- const $=id=>document.getElementById(id);
- const button=$('catalog-import-all'),status=$('catalog-import-all-status');
- if(!button||!status)return;
- const api='https://brawl-mod-manager-api.brawlmodmanager.workers.dev';
- const say=t=>status.textContent=t;
- async function importOne(mod,archiveUrl,context){
-   const response=await fetch(api+'/api/archive?url='+encodeURIComponent(archiveUrl),{cache:'no-store'});
-   if(!response.ok){let msg='Archive download failed';try{msg=(await response.json()).error||msg}catch{}throw Error(msg)}
-   const blob=await response.blob();
-   if(!blob.size||blob.size>100*1024*1024)throw Error('Archive empty or over 100 MB');
-   const file=new File([blob],mod.id+'-complete-source.zip',{type:'application/zip'});
-   const pkg=await import('https://cdn.jsdelivr.net/npm/jszip@3.10.1/+esm');
-   const JSZip=pkg.default||pkg,zip=await JSZip.loadAsync(file,{checkCRC32:true});
-   const entries=Object.values(zip.files).filter(x=>!x.dir);
-   if(!entries.length||entries.length>1000)throw Error('ZIP has no files or exceeds 1,000 files');
-   const prepared=[];let total=0;
-   for(const entry of entries){
-     const name=entry.name.replace(/\\/g,'/');
-     if(name.startsWith('/')||name.split('/').some(p=>p==='..'||p==='.'||p==='')||name.includes(':'))throw Error('Unsafe archive path: '+entry.name);
-     if(typeof entry.unixPermissions==='number'&&(entry.unixPermissions&0xF000)===0xA000)throw Error('Archive contains a symbolic link');
-     const bytes=await entry.async('uint8array');total+=bytes.byteLength;
-     if(total>300*1024*1024)throw Error('Extracted files exceed 300 MB');
-     prepared.push({name,bytes});
-   }
-   const brawlRoot=context.modDestination.folder;
-   let root=Array.isArray(brawlRoot.children)?brawlRoot.children.find(x=>x.directory&&x.name==='All Mods'):null;
-   if(!root)root=await brawlRoot.mkdir('All Mods');
-   const folderName=mod.name.replace(/[^a-z0-9 _.-]/gi,'').trim().replace(/\s+/g,' ').slice(0,70)||mod.id;
-   let folder=Array.isArray(root.children)?root.children.find(x=>x.directory&&x.name===folderName):null;
-   if(!folder)folder=await root.mkdir(folderName);
-   const zipBytes=new Uint8Array(await file.arrayBuffer());
-   await window.brawlMegaUpload(folder,mod.id+'-complete-source.zip',zipBytes);
-   const cache=new Map([['',folder]]);
-   async function getFolder(relative){
-     let current=folder,path='';
-     for(const part of (relative?relative.split('/').filter(Boolean):[])){
-       path=path?path+'/'+part:part;
-       if(!cache.has(path)){
-         const existing=Array.isArray(current.children)?current.children.find(x=>x.directory&&x.name===part):null;
-         cache.set(path,existing||await current.mkdir(part));
-       }
-       current=cache.get(path);
-     }
-     return current;
-   }
-   for(const entry of prepared){
-     const parts=entry.name.split('/'),filename=parts.pop(),dest=await getFolder(parts.join('/'));
-     await window.brawlMegaUpload(dest,filename,entry.bytes);
-   }
-   return {files:prepared.length,bytes:total,folder:context.modDestination.path+'/All Mods/'+folderName};
- }
- button.addEventListener('click',async()=>{
-   const context=window.brawlMegaContext?.();
-   if(!context?.storage||!context?.modDestination){say('Connect to MEGA first. The app will use MEGA / Brawl Mods.');return}
-   button.disabled=true;
-   const select=$('catalog-import-mod'),mods=Array.from(select.options).slice(1).map(o=>window.__brawlCatalogMods?.find(m=>m.id===o.value)).filter(Boolean);
-   if(!mods.length){say('Catalog has not loaded. Refresh the page and try again.');button.disabled=false;return}
-   const results=[];
-   try{
-     for(let i=0;i<mods.length;i++){
-       const mod=mods[i];say('Checking '+(i+1)+' / '+mods.length+': '+mod.name);
-       try{
-         const scan=await fetch(api+'/api/discover?url='+encodeURIComponent(mod.url),{cache:'no-store'});
-         const found=await scan.json();
-         if(!scan.ok||!found.ok)throw Error(found.error||'Creator page scan failed');
-         const candidates=found.candidates||[];
-         const exact=candidates.filter(c=>/\.zip(?:$|[?#])/i.test(c.url));
-         const chosen=exact.length===1?exact[0]:(candidates.length===1?candidates[0]:null);
-         if(!chosen)throw Error(candidates.length?'Multiple possible downloads; needs manual selection':'No supported archive link detected');
-         const result=await importOne(mod,chosen.url,context);
-         results.push('✓ '+mod.name+': '+result.files+' extracted files + original ZIP saved');
-       }catch(e){results.push('• '+mod.name+': review needed ('+e.message+')')}
-       say('Processed '+(i+1)+' / '+mods.length+'\\n'+results.join('\\n'));
-     }
-     say('Bulk import pass finished.\\n'+results.join('\\n')+'\\nOnly successful entries were uploaded. Refresh the MEGA folder list to verify.');
-     await context.refresh?.();
-   }finally{button.disabled=false}
- });
+ const bulk=$('catalog-import-all');
+ if(bulk){bulk.disabled=true;bulk.title='Bulk upload is not supported in this browser-only build.';bulk.textContent='Bulk import unavailable';}
 })();
 </script>
 </body></html>
