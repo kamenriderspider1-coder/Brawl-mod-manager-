@@ -51,6 +51,24 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
     </article>
   </div>
 
+
+  <section class="panel" id="ai-mod-finder">
+    <div class="row"><h2>🤖 AI-style mod finder</h2><span class="tag">Natural-language requests</span></div>
+    <p class="muted">Describe the mod you want in normal language. The finder turns your request into targeted web searches for Brawl mods, costume packs, stages, music, and compatibility information.</p>
+    <div id="mod-chat" style="background:#080f1c;border:1px solid var(--line);border-radius:14px;padding:14px;min-height:120px;max-height:360px;overflow:auto" aria-live="polite">
+      <div class="step"><strong>Cloud Mod Finder</strong><p>Tell me what kind of Brawl mod you're looking for. For example: “Find character costume packs that work with Smash REX” or “Find custom stages for Brawl.”</p></div>
+    </div>
+    <form id="ai-mod-search-form" style="margin-top:12px">
+      <label for="ai-mod-prompt"><strong>What mods should I find?</strong></label>
+      <textarea id="ai-mod-prompt" rows="3" maxlength="700" required placeholder="Find me Brawl character mods compatible with Smash REX. Prefer GameBanana downloads..." style="width:100%;display:block;margin-top:7px;padding:13px;border-radius:10px;border:1px solid var(--line);background:#080d18;color:var(--text);font:inherit;resize:vertical"></textarea>
+      <div class="row" style="margin-top:10px">
+        <span class="small muted">Searches open in new tabs so you can inspect the original creator pages.</span>
+        <button class="btn primary" type="submit">🔎 Find mods on the web</button>
+      </div>
+    </form>
+    <p class="small muted" id="ai-mod-search-status" role="status" aria-live="polite">Search handoff mode: this static website can create live search links, but it cannot automatically read search results. A search API and secure backend are needed for ChatGPT-style results inside this chat.</p>
+  </section>
+
   <section class="panel" id="mod-request-panel">
     <div class="row"><h2>📝 Request a mod</h2><span class="tag">Mod finder queue</span></div>
     <p class="muted">Tell the Cloud Storage app what mod you want and where to find it. The intended pipeline finds the actual file link on the source page, downloads the archive, extracts it, and uploads the extracted folder to your chosen MEGA or Google Drive account.</p>
@@ -328,6 +346,45 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
       if(!(data.mods||[]).length)root.append(node('p','small muted','No mods are listed in the catalog yet.'));
     })
     .catch(()=>{root.replaceChildren(node('p','small muted','Could not load cloud-mods.json. Check the catalog file and try refreshing.'));});
+})();
+</script>
+
+
+<script>
+(function(){
+  const form=document.getElementById('ai-mod-search-form');
+  if(!form)return;
+  const prompt=document.getElementById('ai-mod-prompt');
+  const chat=document.getElementById('mod-chat');
+  const status=document.getElementById('ai-mod-search-status');
+  function bubble(label,message){
+    const box=document.createElement('div');box.className='step';box.style.marginTop='10px';
+    const heading=document.createElement('strong');heading.textContent=label;
+    const body=document.createElement('p');body.textContent=message;
+    box.append(heading,body);chat.append(box);return box;
+  }
+  function addSearchLink(parent,label,url){
+    const a=document.createElement('a');a.className='btn';a.style.margin='5px 6px 0 0';
+    a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=label+' ↗';parent.append(a);
+  }
+  form.addEventListener('submit',function(event){
+    event.preventDefault();
+    const query=prompt.value.trim();
+    if(!query)return;
+    bubble('You',query);
+    const reply=bubble('Cloud Mod Finder','I prepared targeted searches from your request. Open the result pages below, then paste any promising creator or download links into the mod request queue.');
+    const encoded=encodeURIComponent(query+' Super Smash Bros Brawl mod download');
+    const gb=encodeURIComponent(query+' site:gamebanana.com/mods Brawl');
+    const vault=encodeURIComponent(query+' site:brawlvault.com');
+    const github=encodeURIComponent(query+' Brawl mod');
+    addSearchLink(reply,'Search the web','https://www.google.com/search?q='+encoded);
+    addSearchLink(reply,'Search GameBanana','https://www.google.com/search?q='+gb);
+    addSearchLink(reply,'Search Brawl Vault','https://www.google.com/search?q='+vault);
+    addSearchLink(reply,'Search GitHub','https://github.com/search?q='+github+'&type=repositories');
+    const tip=document.createElement('p');tip.className='small muted';tip.textContent='These are live search links, not verified mod results. Check the creator page, platform, version, compatibility, and permission to download before adding a file.';reply.append(tip);
+    status.textContent='Search links created for your request. The app has not automatically read results or downloaded any files.';
+    chat.scrollTop=chat.scrollHeight;prompt.value='';
+  });
 })();
 </script>
 
