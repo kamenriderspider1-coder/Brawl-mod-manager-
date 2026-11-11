@@ -484,7 +484,7 @@ function safeText(tag,text,cls='small muted'){const el=document.createElement(ta
 function humanSize(bytes){if(!Number.isFinite(bytes))return '';const units=['B','KB','MB','GB'];let n=bytes,i=0;while(n>=1024&&i<units.length-1){n/=1024;i++;}return n.toFixed(i?1:0)+' '+units[i];}
 function folderChildren(folder){return Array.isArray(folder?.children)?folder.children:[];}
 function selectedDestination(){const index=Number($('mega-destination-folder')?.value);return megaDestinations[index]||null;}
-window.brawlMegaContext=()=>({storage:megaStorage,destination:selectedDestination(),refresh:renderMegaFilesForSelected});
+window.brawlMegaContext=()=>({storage:megaStorage,destination:selectedDestination(),modDestination:megaDestinations.find(item=>item.path.toLowerCase()==='/brawl mods')||null,refresh:renderMegaFilesForSelected});
 function addFolderOptions(){
   const select=$('mega-destination-folder');
   select.replaceChildren();
@@ -687,7 +687,7 @@ $('disconnect-mega')?.addEventListener('click',()=>{
    const mod=mods.find(m=>m.id===select.value);
    const file=$('catalog-import-archive').files?.[0];
    const megaContext=window.brawlMegaContext?.();
-   const destination=megaContext?.destination||null;
+   const destination=megaContext?.modDestination||null;
    if(!mod){say('Choose a catalog mod first.');return;}
    if(!file){say('Download the creator-provided ZIP, then select it here.');return;}
    if(!megaContext?.storage||!destination){say('Connect to MEGA and select the destination folder above first.');return;}
