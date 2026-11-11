@@ -14,13 +14,15 @@ The Worker is hosted on Cloudflare and does not require the Mac to be awake, ins
 
 ## MEGA connection status
 
-The website now has a browser-side MEGA connection panel based on the community-maintained, unofficial `megajs` package. It can attempt a direct MEGA sign-in, create/find a `Brawl Mods` folder, list that folder, and upload files the user explicitly selects (up to 50 MB per file in this initial browser workflow).
+The website has an experimental browser-side MEGA connection panel based on the community-maintained, unofficial `megajs` package. It can attempt direct sign-in, list folders, let the user select/create a destination, and upload explicitly selected files. A separate assisted catalog importer lets the user open a creator page, manually download a ZIP, extract it in the browser with JSZip, and upload its contents to the selected MEGA folder (100 MB ZIP, 300 MB extracted, 1,000-file limits).
 
 Important boundaries:
 - The MEGA login is performed by the browser library directly against MEGA. The password is not sent to this Cloudflare Worker and is not saved by the page; the input is cleared after the login attempt.
 - The live browser session exists only in page memory and ends when disconnected or when the page is closed.
 - The library is unofficial, so this is an experimental first connection, not an official MEGA integration. The user must test it with their own MEGA account.
-- Automatic source-page crawling, downloading arbitrary mod URLs, archive extraction, background jobs, and Wii/RiiFS file delivery are not implemented.
+- The catalog importer is user-assisted: it does not crawl creator pages or automatically resolve download links. The user must obtain the archive from the creator page and select the ZIP.
+- Automatic background downloading, archive processing on the server, RAR/7z support, background jobs, and Wii/RiiFS file delivery are not implemented.
+- The browser importer is experimental and memory-limited; large archives may fail on some devices. Uploads completed before an error remain in MEGA.
 - No existing Smash REX files on the Wii are changed.
 
 ## Deploying updates
