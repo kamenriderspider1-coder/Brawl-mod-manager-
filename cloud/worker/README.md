@@ -1,30 +1,33 @@
 # Brawl Mod Manager cloud API
 
-This Worker is a small, read-only API deployed by GitHub Actions. It is not hosted by GitHub Pages and it does not run on the Mac.
+This Worker is deployed to Cloudflare by **GitHub Actions**. It runs in the cloud and does not require the Mac to be awake, installed, or running a local server. GitHub Pages itself is static hosting; the Worker is the separate API service.
 
-## Endpoints
+## What is live in this version
 
-- `GET /` or `GET /api/health`: service status and explicit capability list.
-- `GET /api/catalog`: returns the committed `catalog.json`.
-- `OPTIONS`: CORS preflight for the published GitHub Pages origin.
-
-The API deliberately does not accept uploads or execute downloaded files. It does not connect to MEGA, extract mod archives, or serve a RiiFS filesystem. Those features require a separate authenticated storage implementation and a tested Wii-compatible delivery service.
+- `GET /api/health`: reports service status and the actual enabled capabilities.
+- `GET /api/catalog`: returns the committed, read-only mod catalog.
+- CORS is restricted to the project's GitHub Pages origin. Requests without an Origin header are accepted for Wii-side clients.
+- The API rejects writes and unknown routes. It does not accept arbitrary uploads or execute downloaded files.
 
 ## One-time GitHub setup
 
-In the repository, open **Settings → Secrets and variables → Actions → New repository secret** and add:
+Open the repository's **Settings → Secrets and variables → Actions → New repository secret** and add:
 
 - `CLOUDFLARE_API_TOKEN`: a Cloudflare API token with permission to edit Workers Scripts for the intended account.
 - `CLOUDFLARE_ACCOUNT_ID`: the Cloudflare account ID.
 
-Do not put either value in a committed file, GitHub Pages, or a chat message.
+Do not commit either value, put them in GitHub Pages, or send them in chat.
 
-After both secrets exist, the workflow deploys automatically when files under `cloud/worker/` or the deploy workflow change. You can also run **Actions → Deploy Brawl Mod Cloud → Run workflow**.
+After those two secrets are saved, every push to `main` that changes `cloud/worker/**` or the deploy workflow will run tests and deploy the Worker. You can also run **Actions → Deploy Brawl Mod Cloud → Run workflow**. The workflow checks for missing secrets and reports a clear setup error.
 
-## Result
+## Find the deployed API URL
 
-The deployed address is the Worker URL shown in the successful GitHub Actions log, normally:
+Open **Actions → Deploy Brawl Mod Cloud**, select the successful run, and open its deploy log. Wrangler prints the deployed `.workers.dev` URL. The URL normally looks like:
 
 `https://brawl-mod-manager-api.<your-workers-subdomain>.workers.dev`
 
-GitHub cannot create the Cloudflare account token or silently grant itself access to your Cloudflare account. If the two repository secrets are missing, deployment stops safely with a clear error.
+## Not implemented yet
+
+This deployment is a working cloud health/catalog API, not the full MEGA mod pipeline. MEGA account authorization, private session storage, downloading and safely extracting permitted archives, uploading to MEGA, and Wii/RiiFS file delivery still need separate implementations and end-to-end testing. Existing REX files on the Wii are not changed by this API.
+
+GitHub cannot silently create Cloudflare credentials or grant itself account access. The two repository secrets are a one-time authorization step; after that, deployment is driven by GitHub.
