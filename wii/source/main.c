@@ -41,15 +41,16 @@ static void scan_mods(void) {
         ++mod_count;
     }
     closedir(dir);
-    if (mod_count == 0) strcpy(status, "Folder is empty. Copy mod files from Drive onto the SD card.");
+    if (mod_count == 0) strcpy(status, "Local test folder is empty. Google Drive Wi-Fi access is not implemented in v20.");
     else snprintf(status, sizeof(status), "Found %u file(s) in sd:/brawl-mods.", mod_count);
 }
 
 static void draw(void) {
     printf("\x1b[2J");
     printf("\x1b[2;3H BRAWL MOD MANAGER - SD CARD MODE\n");
-    printf("\n  Google Drive is managed separately in your browser.\n");
-    printf("  Copy downloaded files into: sd:/brawl-mods/\n\n");
+    printf("\n  CLOUD LIBRARY: NOT CONNECTED IN THIS VERSION\n");
+    printf("  Google Drive access over Wi-Fi is planned.\n");
+    printf("  This screen is currently a local diagnostic browser.\n\n");
     if (!sd_ready) {
         printf("  SD card: NOT MOUNTED\n");
     } else if (mod_count == 0) {
@@ -64,7 +65,7 @@ static void draw(void) {
     printf("\n  UP/DOWN: select   A: file info   B: rescan\n");
     printf("  HOME / START: exit\n\n");
     printf("  Status: %s\n", status);
-    printf("\n  File browser only. It does not install or patch Brawl.\n");
+    printf("\n  v20 diagnostic mode only. No cloud downloads or remote loading.\n");
 }
 
 int main(int argc, char **argv) {
@@ -112,7 +113,7 @@ int main(int argc, char **argv) {
         }
         if ((down & WPAD_BUTTON_A) || (gc & PAD_BUTTON_A)) {
             if (mod_count) snprintf(status, sizeof(status), "Selected: %.90s", mod_names[selected]);
-            else strcpy(status, "No files to select. Copy mods into the SD folder.");
+            else strcpy(status, "No local test files. Cloud access is not implemented yet.");
             draw();
         }
         VIDEO_WaitVSync();
