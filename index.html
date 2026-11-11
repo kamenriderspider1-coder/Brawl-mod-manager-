@@ -50,6 +50,28 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
       <p class="small muted">Download, extraction, and Drive upload are shown as planned jobs until the secure processing service is configured.</p>
     </article>
   </div>
+
+  <section class="panel" id="mod-request-panel">
+    <div class="row"><h2>📝 Request a mod</h2><span class="tag">Mod finder queue</span></div>
+    <p class="muted">Tell the Cloud Storage app what mod you want and where to find it. Choose which connected storage account should receive the extracted files.</p>
+    <form id="mod-request-form">
+      <label for="requested-mod-name"><strong>What mod do you want?</strong></label>
+      <input id="requested-mod-name" name="modName" type="text" placeholder="e.g. Brawl character costume pack" required>
+      <label for="requested-mod-source"><strong>Where can the app find it?</strong></label>
+      <textarea id="requested-mod-source" name="source" rows="3" placeholder="Paste a mod page URL or direct download link" required></textarea>
+      <label for="requested-mod-storage"><strong>Where should the finished files be stored?</strong></label>
+      <select id="requested-mod-storage" name="storage">
+        <option value="MEGA">MEGA</option>
+        <option value="Google Drive">Google Drive</option>
+      </select>
+      <button class="btn primary" type="submit">Add to mod request queue</button>
+    </form>
+    <p class="small muted" id="mod-request-status" role="status" aria-live="polite">Requests are currently saved in this browser only. Online searching, downloading, extraction, and cloud upload need the processing service, which is not connected yet.</p>
+    <h3>Mod request queue</h3>
+    <div id="mod-request-list"><p class="small muted">No requests yet.</p></div>
+    <button class="btn" id="clear-mod-requests" type="button">Clear request queue</button>
+  </section>
+
   <div class="notice">Setup still required for real connections: Google Drive authorization and/or a MEGA SDK-based account connection, plus a secure processing endpoint for cross-site mod downloads and archive extraction. The MEGA button currently opens MEGA's official sign-in page only; it does not connect this app to the account. No Google password, client secret, or access token should be placed in this public GitHub Pages repository.</div>
   <div class="steps">
     <div class="step"><strong>Storage destination</strong><p><code>My Drive/Brawl Mods/</code></p><p class="small muted">Your Google Drive, not GitHub storage and not a separate app-owned cloud.</p></div>
@@ -215,6 +237,50 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
    const s=document.getElementById('drive-connection-status');
    s.textContent='Google sign-in is not active yet. Configure a Google OAuth client ID and Drive API project, then connect a secure processing service. This button will not collect or request your Google password.';
  });
+})();
+</script>
+
+
+<script>
+(function(){
+ const KEY='brawl-cloud-mod-requests-v1';
+ const form=document.getElementById('mod-request-form');
+ if(!form) return;
+ const name=document.getElementById('requested-mod-name');
+ const source=document.getElementById('requested-mod-source');
+ const storage=document.getElementById('requested-mod-storage');
+ const list=document.getElementById('mod-request-list');
+ const status=document.getElementById('mod-request-status');
+ const read=()=>{try{const x=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(x)?x:[]}catch(e){return []}};
+ const write=x=>localStorage.setItem(KEY,JSON.stringify(x));
+ function render(){
+   const items=read(); list.replaceChildren();
+   if(!items.length){const p=document.createElement('p');p.className='small muted';p.textContent='No requests yet.';list.append(p);return;}
+   items.forEach((item,i)=>{
+     const card=document.createElement('div');card.className='step';
+     const title=document.createElement('strong');title.textContent=item.name;
+     const detail=document.createElement('p');detail.className='small muted';detail.textContent='Source: '+item.source;
+     const destination=document.createElement('p');destination.className='small muted';destination.textContent='Storage destination: '+item.storage;
+     const state=document.createElement('p');state.className='small muted';state.textContent='Queued locally. Cloud processing has not started.';
+     const remove=document.createElement('button');remove.type='button';remove.className='btn';remove.textContent='Remove';
+     remove.addEventListener('click',()=>{const next=read();next.splice(i,1);write(next);render();});
+     card.append(title,detail,destination,state,remove);list.append(card);
+   });
+ }
+ form.addEventListener('submit',e=>{
+   e.preventDefault();
+   const n=name.value.trim(), raw=source.value.trim();
+   let u;try{u=new URL(raw)}catch(e){status.textContent='Please enter a valid http or https mod page or download URL.';return;}
+   if(!n||!['http:','https:'].includes(u.protocol)){status.textContent='Enter a mod name and a valid http or https URL.';return;}
+   const items=read();items.push({name:n,source:u.href,storage:storage.value,createdAt:new Date().toISOString(),status:'queued'});
+   write(items);form.reset();render();
+   status.textContent='Request added to this browser queue. It will not download or upload until the secure processing and storage connections are configured.';
+ });
+ document.getElementById('clear-mod-requests').addEventListener('click',()=>{
+   if(!confirm('Clear all mod requests saved in this browser?')) return;
+   localStorage.removeItem(KEY);render();status.textContent='Local request queue cleared.';
+ });
+ render();
 })();
 </script>
 
