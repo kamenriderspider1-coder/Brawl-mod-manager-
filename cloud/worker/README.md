@@ -21,7 +21,7 @@ The Worker is hosted on Cloudflare and does not require the Mac to be awake, ins
 The website has an experimental browser-side MEGA connection panel based on the community-maintained, unofficial `megajs` package. It can attempt direct sign-in, list folders, let the user select/create a destination, and upload explicitly selected files. A separate assisted catalog importer lets the user open a creator page, manually download a ZIP, extract it in the browser with JSZip, and upload its contents to the selected MEGA folder (100 MB ZIP, 300 MB extracted, 1,000-file limits).
 
 Important boundaries:
-- The MEGA login is performed by the browser library directly against MEGA. The password is not sent to this Cloudflare Worker and is not saved by the page; the input is cleared after the login attempt.
+- The MEGA login is performed by the browser library directly against MEGA. The password is not sent to this Cloudflare Worker and is not saved by the page; the input is cleared after the login attempt. Upload calls now pass each file's exact byte size, as required by MEGAJS v1.
 - The live browser session exists only in page memory and ends when disconnected or when the page is closed.
 - The library is unofficial, so this is an experimental first connection, not an official MEGA integration. The user must test it with their own MEGA account.
 - The catalog importer is user-assisted: it does not crawl creator pages or automatically resolve download links. The user must obtain the archive from the creator page and select the ZIP.
