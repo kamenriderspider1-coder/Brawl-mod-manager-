@@ -591,7 +591,7 @@ $('upload-mega-files')?.addEventListener('click',async()=>{
     for(let i=0;i<files.length;i++){
       const file=files[i];$('mega-upload-status').textContent='Uploading '+(i+1)+' of '+files.length+' to '+destination.path+': '+file.name;
       const bytes=new Uint8Array(await file.arrayBuffer());
-      await destination.folder.upload(file.name,bytes).complete;
+      await destination.folder.upload({name:file.name,size:bytes.byteLength},bytes).complete;
     }
     $('mega-upload-files').value='';
     $('mega-upload-status').textContent='Upload complete. Saved to '+destination.path+'.';
@@ -726,7 +726,7 @@ $('disconnect-mega')?.addEventListener('click',()=>{
        const parts=entry.name.split('/');
        const filename=parts.pop();
        const folder=await getFolder(parts.join('/'));
-       await folder.upload(filename,entry.bytes).complete;
+       await folder.upload({name:filename,size:entry.bytes.byteLength},entry.bytes).complete;
        done++;
        progress.textContent='Uploaded '+done+' / '+prepared.length+': '+entry.name;
      }
