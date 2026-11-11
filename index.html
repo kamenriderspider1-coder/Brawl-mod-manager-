@@ -53,7 +53,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
 
   <section class="panel" id="mod-request-panel">
     <div class="row"><h2>📝 Request a mod</h2><span class="tag">Mod finder queue</span></div>
-    <p class="muted">Tell the Cloud Storage app what mod you want and where to find it. Choose which connected storage account should receive the extracted files.</p>
+    <p class="muted">Tell the Cloud Storage app what mod you want and where to find it. The intended pipeline finds the actual file link on the source page, downloads the archive, extracts it, and uploads the extracted folder to your chosen storage account.</p>
     <form id="mod-request-form">
       <label for="requested-mod-name"><strong>What mod do you want?</strong></label>
       <input id="requested-mod-name" name="modName" type="text" placeholder="e.g. Brawl character costume pack" required>
@@ -66,7 +66,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
       </select>
       <button class="btn primary" type="submit">Add to mod request queue</button>
     </form>
-    <p class="small muted" id="mod-request-status" role="status" aria-live="polite">Requests are currently saved in this browser only. Online searching, downloading, extraction, and cloud upload need the processing service, which is not connected yet.</p>
+    <p class="small muted" id="mod-request-status" role="status" aria-live="polite">Requests are currently queued in this browser only. The automatic source-page scanner, direct-file downloader, archive extractor, and MEGA/Google Drive uploader are not connected yet.</p>
     <h3>Mod request queue</h3>
     <div id="mod-request-list"><p class="small muted">No requests yet.</p></div>
     <button class="btn" id="clear-mod-requests" type="button">Clear request queue</button>
@@ -261,7 +261,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
      const title=document.createElement('strong');title.textContent=item.name;
      const detail=document.createElement('p');detail.className='small muted';detail.textContent='Source: '+item.source;
      const destination=document.createElement('p');destination.className='small muted';destination.textContent='Storage destination: '+item.storage;
-     const state=document.createElement('p');state.className='small muted';state.textContent='Queued locally. Cloud processing has not started.';
+     const state=document.createElement('p');state.className='small muted';state.textContent='Queued locally. The app still needs its secure processing service to find the file on the source page, download it, extract it, and upload the extracted folder.';
      const remove=document.createElement('button');remove.type='button';remove.className='btn';remove.textContent='Remove';
      remove.addEventListener('click',()=>{const next=read();next.splice(i,1);write(next);render();});
      card.append(title,detail,destination,state,remove);list.append(card);
