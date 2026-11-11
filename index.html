@@ -43,17 +43,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
       <p class="muted small">Open your exact Brawl Mods destination folder on MEGA. Your MEGA sign-in stays on MEGA's official website.</p>
       <a class="btn primary" id="mega-sign-in" href="https://mega.nz/folder/T8xykJYa#vLMpYjUrX2Fpsk5iIImy0A" target="_blank" rel="noopener noreferrer">Open my Brawl Mods folder in MEGA ↗</a>
       <p class="small muted" id="mega-sign-in-status" role="status" aria-live="polite"><strong>Connection status: Not connected.</strong> Signing in on MEGA's website does not authorize this app. No files are being uploaded automatically.</p>
-      <div class="step" id="mega-file-request-setup">
-        <strong>MEGA File Request upload handoff</strong>
-        <p class="small muted">MEGA File Requests let you accept uploads into a folder without giving this app your account password. Create a File Request for your Brawl Mods folder in MEGA, then paste its upload link here. When you download a mod, this app can open that MEGA upload page for the file you just downloaded.</p>
-        <label for="mega-file-request-url"><strong>Your MEGA File Request link</strong></label>
-        <input id="mega-file-request-url" type="url" inputmode="url" placeholder="https://mega.nz/..." autocomplete="off" style="display:block;width:100%;margin:8px 0;padding:12px;border-radius:10px;border:1px solid var(--line);background:#080d18;color:var(--text);font:inherit">
-        <div class="row">
-          <button class="btn primary" id="save-mega-file-request" type="button">Save upload link in this browser</button>
-          <button class="btn" id="test-mega-file-request" type="button">Open MEGA upload page</button>
-        </div>
-        <p class="small muted" id="mega-file-request-status" role="status" aria-live="polite">Not configured. This handoff opens MEGA's own upload page; it does not silently upload files or connect your MEGA account.</p>
-      </div>
+      
       <div class="notice" style="margin-top:12px">
         <strong>Current transfer status</strong>
         <ol class="small">
@@ -322,10 +312,9 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
    if(!d.candidates.length){state.textContent='Scan complete: no supported archive links found. Check the source page manually.';return;}
    state.textContent='Found '+d.candidates.length+' archive candidate(s). Choose a download:';
    d.candidates.forEach((c,i)=>{const row=el('div','step');row.append(el('p','small',c.label+' · '+c.host));const b=el('button','btn','Download ZIP to this device');b.type='button';b.addEventListener('click',async()=>{
-    if(window.BrawlModManagerOpenMegaRequest)window.BrawlModManagerOpenMegaRequest();
     b.disabled=true;b.textContent='Downloading…';
     try{const ar=await fetch(api+'/api/archive?url='+encodeURIComponent(c.url));if(!ar.ok){const x=await ar.json().catch(()=>({}));throw Error(x.error||'Download failed');}
-     const blob=await ar.blob(),a=document.createElement('a'),u=URL.createObjectURL(blob);a.href=u;a.download=(item.name||'brawl-mod').replace(/[^a-z0-9._-]+/gi,'_').slice(0,80)+'-'+(i+1)+'.zip';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),30000);b.textContent='Downloaded';state.textContent='ZIP downloaded to this device. If configured, the MEGA File Request page has opened; choose this ZIP there to complete the upload.';
+     const blob=await ar.blob(),a=document.createElement('a'),u=URL.createObjectURL(blob);a.href=u;a.download=(item.name||'brawl-mod').replace(/[^a-z0-9._-]+/gi,'_').slice(0,80)+'-'+(i+1)+'.zip';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),30000);b.textContent='Downloaded';state.textContent='ZIP downloaded to this device. Automatic MEGA upload is not connected.';
     }catch(e){b.disabled=false;b.textContent='Retry download';state.textContent='Download failed: '+e.message;}
    });row.append(b);card.append(row);});
   }catch(e){state.textContent='Processing failed: '+e.message+' Only supported GameBanana and Project+ URLs can be scanned.';}
@@ -435,10 +424,9 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
  const allowed=h=>['gamebanana.com','www.gamebanana.com','files.gamebanana.com','projectplusgame.com','www.projectplusgame.com'].includes(h);
  function button(label,fn){const b=document.createElement('button');b.type='button';b.className='btn';b.textContent=label;b.addEventListener('click',fn);return b;}
  async function download(url,label,b){
-  if(window.BrawlModManagerOpenMegaRequest)window.BrawlModManagerOpenMegaRequest();
   b.disabled=true;b.textContent='Downloading…';
   try{const r=await fetch(api+'/api/archive?url='+encodeURIComponent(url));if(!r.ok){const x=await r.json().catch(()=>({}));throw Error(x.error||'Archive download failed');}
-   const blob=await r.blob();const a=document.createElement('a'),obj=URL.createObjectURL(blob);a.href=obj;a.download=(label||'brawl-mod').replace(/[^a-z0-9._-]+/gi,'_').slice(0,80)+'.zip';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(obj),30000);b.textContent='Downloaded';status.textContent='ZIP downloaded to this device. Opening your saved MEGA File Request page; select the ZIP there to finish uploading.';
+   const blob=await r.blob();const a=document.createElement('a'),obj=URL.createObjectURL(blob);a.href=obj;a.download=(label||'brawl-mod').replace(/[^a-z0-9._-]+/gi,'_').slice(0,80)+'.zip';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(obj),30000);b.textContent='Downloaded';status.textContent='ZIP downloaded to this device. Automatic MEGA upload is not connected.';
   }catch(e){b.textContent='Retry download';status.textContent='Download failed: '+e.message;}finally{b.disabled=false;}
  }
  async function scan(url,card){
@@ -463,34 +451,5 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
 </script>
 
 
-<script>
-(function(){
- const input=document.getElementById('mega-file-request-url');
- const save=document.getElementById('save-mega-file-request');
- const test=document.getElementById('test-mega-file-request');
- const status=document.getElementById('mega-file-request-status');
- if(!input||!save||!test||!status)return;
- const KEY='brawl-mod-manager-mega-file-request-v1';
- function valid(value){try{const u=new URL(value);return u.protocol==='https:'&&(u.hostname==='mega.nz'||u.hostname==='www.mega.nz')&&(/file-request|request/i.test(u.pathname+u.search));}catch{return false;}}
- input.value=localStorage.getItem(KEY)||'';
- if(input.value)status.textContent='Upload handoff link saved in this browser. MEGA will still ask you to choose the downloaded file on its upload page.';
- save.addEventListener('click',()=>{
-  const value=input.value.trim();
-  if(!valid(value)){status.textContent='Paste a valid MEGA File Request link created for your Brawl Mods folder.';return;}
-  localStorage.setItem(KEY,value);
-  status.textContent='Saved. After a mod ZIP downloads, the app will open this MEGA File Request page in a new tab for you.';
- });
- test.addEventListener('click',()=>{
-  const value=input.value.trim();
-  if(!valid(value)){status.textContent='Paste a valid MEGA File Request link first.';return;}
-  window.open(value,'_blank','noopener,noreferrer');
- });
- window.BrawlModManagerOpenMegaRequest=function(){
-  const value=localStorage.getItem(KEY)||'';
-  if(!valid(value))return false;
-  window.open(value,'_blank','noopener,noreferrer');
-  return true;
- };
-})();
-</script>
+
 </body></html>
