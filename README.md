@@ -63,3 +63,14 @@ The intended output is `boot.dol` plus `meta.xml`. Copy those files into `sd:/ap
 - D-pad selects, A shows the selected filename, B rescans, HOME/START exits.
 
 It does not install or activate mods, generate Riivolution XML, or patch Brawl. A file appearing in the list does not mean it is safe or compatible to load.
+
+## Play setup builder
+
+The website includes a two-mode setup builder:
+- **Custom Mix** supports selecting individual assets from multiple catalog entries when verified per-file manifests are published.
+- **Full Mod** lets the user choose one complete game build without mixing its files with other builds.
+- Selections are saved in the current browser only; they are not synced to MEGA or the Wii.
+
+The current `cloud-mods.json` contains source-level mod entries, not verified inventories of files inside each archive. Individual asset choices therefore remain empty until per-file manifests are added. The website does not invent filenames or mark unlisted assets as available.
+
+This is a configuration interface only. It does not yet transfer files to MEGA, connect to the Wii, or launch Brawl. The Wii network client, secure MEGA integration, asset manifests, and compatible loader/remote-file bridge remain unfinished.
