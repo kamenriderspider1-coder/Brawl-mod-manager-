@@ -15,7 +15,8 @@ test("health endpoint reports the cloud API and its honest capability boundary",
   const body = await response.json();
   assert.equal(body.ok, true);
   assert.equal(body.service, "brawl-mod-manager-cloud-api");
-  assert.deepEqual(body.capabilities, ["health-check", "read-only-catalog"]);
+  assert.ok(body.capabilities.includes("creator-page-link-discovery"));
+  assert.ok(body.capabilities.includes("bounded-archive-proxy"));
   assert.ok(body.notEnabled.includes("MEGA-account-access"));
 });
 
@@ -40,6 +41,23 @@ test("unapproved browser origins are rejected", async () => {
 test("unsupported methods are rejected", async () => {
   const response = await call("/api/catalog", { method: "POST", headers: { Origin: ORIGIN } });
   assert.equal(response.status, 405);
+});
+
+test("creator discovery rejects unsupported domains before fetching", async () => {
+  const response = await call("/api/discover?url=" + encodeURIComponent("https://example.com/file.zip"), { headers: { Origin: ORIGIN } });
+  assert.equal(response.status, 400);
+  assert.match((await response.json()).error, /supported creator domains/i);
+});
+
+test("archive proxy rejects unsupported hosts before fetching", async () => {
+  const response = await call("/api/archive?url=" + encodeURIComponent("https://example.com/file.zip"), { headers: { Origin: ORIGIN } });
+  assert.equal(response.status, 400);
+  assert.match((await response.json()).error, /unsupported download host/i);
+});
+
+test("discovery rejects non-HTTPS source URLs", async () => {
+  const response = await call("/api/discover?url=" + encodeURIComponent("http://gamebanana.com/mods/123"), { headers: { Origin: ORIGIN } });
+  assert.equal(response.status, 400);
 });
 
 test("unknown routes return JSON 404", async () => {
