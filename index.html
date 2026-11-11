@@ -512,16 +512,16 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
 
  async function prepareBundle(file,mod){
    if(!/\.zip$/i.test(file.name)||file.size>100*1024*1024)throw Error('Choose a ZIP no larger than 100 MB.');
-   progress.textContent='Loading ZIP validator…';
+   progress.textContent='Opening ZIP and extracting files…';
    const pkg=await import('https://cdn.jsdelivr.net/npm/jszip@3.10.1/+esm');
    const JSZip=pkg.default||pkg;
    const input=await JSZip.loadAsync(file,{checkCRC32:true});
    const entries=Object.values(input.files).filter(x=>!x.dir);
    if(!entries.length)throw Error('The ZIP contains no files.');
    if(entries.length>1000)throw Error('The ZIP contains more than 1,000 files.');
-   const output=new JSZip();
    const folderName=mod.name.replace(/[^a-z0-9 _.-]/gi,'').trim().replace(/\s+/g,' ').slice(0,70)||mod.id;
-   const root=output.folder(folderName);
+   const safePart=s=>s.replace(/[\\/:*?"<>|]/g,'_').replace(/\s+/g,' ').slice(0,120)||'file';
+   const extracted=[];
    let total=0,done=0;
    for(const entry of entries){
      const name=entry.name.replace(/\\/g,'/');
@@ -530,17 +530,57 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
      const bytes=await entry.async('uint8array');
      total+=bytes.byteLength;
      if(total>300*1024*1024)throw Error('Extracted files exceed 300 MB.');
-     root.file(name,bytes,{binary:true});
+     extracted.push({name,bytes});
      done++;
-     progress.textContent='Checked '+done+' / '+entries.length+' files…';
+     progress.textContent='Extracted '+done+' / '+entries.length+' files…';
    }
-   const blob=await output.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:3}});
-   const url=URL.createObjectURL(blob);
-   const a=document.createElement('a');
-   a.href=url;a.download=folderName.replace(/[^a-z0-9_-]+/gi,'-')+'-MEGA-upload.zip';
-   document.body.append(a);a.click();a.remove();
-   setTimeout(()=>URL.revokeObjectURL(url),60000);
-   return {count:entries.length,bytes:total,name:a.download};
+
+   // Chrome/Edge can save the real directory tree directly. Safari falls back
+   // to individual extracted-file downloads because it does not expose a
+   // supported directory-writing picker.
+   if(window.isSecureContext&&typeof window.showDirectoryPicker==='function'){
+     try{
+       const root=await window.showDirectoryPicker({id:'brawl-mod-extract',mode:'readwrite'});
+       const modDir=await root.getDirectoryHandle(folderName,{create:true});
+       async function writeEntry(entry){
+         const parts=entry.name.split('/');
+         const filename=parts.pop();
+         let dir=modDir;
+         for(const part of parts)dir=await dir.getDirectoryHandle(safePart(part),{create:true});
+         const handle=await dir.getFileHandle(safePart(filename),{create:true});
+         const writable=await handle.createWritable();
+         await writable.write(entry.bytes);
+         await writable.close();
+       }
+       for(let i=0;i<extracted.length;i++){
+         await writeEntry(extracted[i]);
+         progress.textContent='Saved extracted file '+(i+1)+' / '+extracted.length+' to '+folderName+'/…';
+       }
+       return {count:extracted.length,bytes:total,name:folderName+' folder',method:'folder'};
+     }catch(e){
+       if(e&&e.name==='AbortError')throw Error('Folder selection was cancelled.');
+       if(e&&e.name!=='NotAllowedError'&&e.name!=='SecurityError')throw e;
+       progress.textContent='Folder saving is not available here. Preparing individual extracted-file downloads…';
+     }
+   }
+
+   let downloaded=0;
+   for(const entry of extracted){
+     const parts=entry.name.split('/');
+     const leaf=safePart(parts.pop());
+     const relative=parts.map(safePart).join('__');
+     const filename=safePart(folderName)+'__'+(relative?relative+'__':'')+leaf;
+     const blob=new Blob([entry.bytes],{type:'application/octet-stream'});
+     const url=URL.createObjectURL(blob);
+     const a=document.createElement('a');
+     a.href=url;a.download=filename;
+     document.body.append(a);a.click();a.remove();
+     setTimeout(()=>URL.revokeObjectURL(url),120000);
+     downloaded++;
+     progress.textContent='Sending extracted file '+downloaded+' / '+extracted.length+' to browser downloads…';
+     await new Promise(resolve=>setTimeout(resolve,180));
+   }
+   return {count:extracted.length,bytes:total,name:folderName+' extracted files',method:'files'};
  }
 
  async function downloadAndPrepare(url,mod){
@@ -558,8 +598,8 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
    try{
      discoveryStatus.textContent='Downloading creator archive…';
      const result=await downloadAndPrepare(item.url,mod);
-     discoveryStatus.textContent='Prepared '+result.count+' files ('+(result.bytes/1048576).toFixed(1)+' MB extracted). Your upload ZIP download should be available.';
-     say('Prepared '+result.name+'. Extract it with Archive Utility, then upload the extracted folder to MEGA.');
+     discoveryStatus.textContent='Prepared '+result.count+' files ('+(result.bytes/1048576).toFixed(1)+' MB extracted). The extracted files are being saved by your browser.';
+     say('Extracted '+result.count+' files. '+(result.method==='folder'?'The folder was saved directly to your selected location.':'Safari is downloading the extracted files individually. Open your Downloads folder, then upload the files to MEGA.')');
    }catch(e){discoveryStatus.textContent='Could not prepare archive: '+e.message;}
    finally{downloadButton.disabled=false;discoverButton.disabled=false;}
  });
@@ -572,8 +612,8 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
    try{
      say('Checking archive and preparing upload bundle…');
      const result=await prepareBundle(file,mod);
-     say('Prepared '+result.name+'. Extract it with the Mac built-in Archive Utility, then upload the extracted folder to MEGA / Brawl Mods.');
-     progress.textContent='Validated '+result.count+' files ('+(result.bytes/1048576).toFixed(1)+' MB extracted). No MEGA password was requested or stored.';
+     say('Extracted '+result.count+' files. '+(result.method==='folder'?'The folder was saved directly to your selected location.':'Safari is downloading the extracted files individually. Open your Downloads folder, then upload them to MEGA / Brawl Mods.')');
+     progress.textContent='Extracted '+result.count+' files ('+(result.bytes/1048576).toFixed(1)+' MB). No MEGA password was requested or stored.';
      $('catalog-import-archive').value='';
    }catch(e){say('Import stopped: '+e.message);}
    finally{button.disabled=false;}
