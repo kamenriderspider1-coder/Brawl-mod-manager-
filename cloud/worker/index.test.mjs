@@ -17,7 +17,7 @@ test("health endpoint reports the cloud API and its honest capability boundary",
   assert.equal(body.service, "brawl-mod-manager-cloud-api");
   assert.ok(body.capabilities.includes("creator-page-link-discovery"));
   assert.ok(body.capabilities.includes("bounded-archive-proxy"));
-  assert.ok(body.notEnabled.includes("MEGA-account-access"));
+  assert.ok(body.notEnabled.includes("server-side-MEGA-account-access"));
 });
 
 test("catalog endpoint returns the committed catalog", async () => {
@@ -46,7 +46,7 @@ test("unsupported methods are rejected", async () => {
 test("creator discovery rejects unsupported domains before fetching", async () => {
   const response = await call("/api/discover?url=" + encodeURIComponent("https://example.com/file.zip"), { headers: { Origin: ORIGIN } });
   assert.equal(response.status, 400);
-  assert.match((await response.json()).error, /supported creator domains/i);
+  assert.match((await response.json()).error, /creator pages are supported/i);
 });
 
 test("archive proxy rejects unsupported hosts before fetching", async () => {
