@@ -24,13 +24,19 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
 
 <section class="panel" id="cloud-storage-workspace">
   <div class="row"><h2>☁️ Cloud Storage workspace</h2><span class="tag">App control center</span></div>
-  <p class="muted">This is the Brawl Mod Manager's own Cloud Storage app. Google Drive is connected inside it as the file-storage provider. You manage mod discovery, download jobs, extraction, organization, and Wii availability here; you do not use the Google Drive website as the app.</p>
+  <p class="muted">This is the Brawl Mod Manager's own Cloud Storage app. Google Drive and MEGA can be offered as storage providers connected inside it. You manage mod discovery, download jobs, extraction, organization, and Wii availability here; you do not use the Google Drive website as the app.</p>
   <div class="storage-grid">
     <article class="storage cloud">
       <div class="storage-icon">🔐</div><h3>Connect your Google Drive</h3>
       <p class="muted small">Sign-in will use Google's official authorization screen. Your Google password is never entered into this app.</p>
       <button class="btn primary" id="connect-google-drive" type="button">Connect Google Drive</button>
       <p class="small muted" id="drive-connection-status" role="status" aria-live="polite">Not connected. Google OAuth client configuration is not installed yet.</p>
+    </article>
+    <article class="storage cloud">
+      <div class="storage-icon">🟣</div><h3>Connect your MEGA account</h3>
+      <p class="muted small">Open MEGA's official sign-in page. This external sign-in does not yet authorize the Cloud Storage app to browse or upload files.</p>
+      <a class="btn primary" href="https://mega.nz/login" target="_blank" rel="noopener noreferrer">Sign in to MEGA ↗</a>
+      <p class="small muted" id="mega-connection-status" role="status" aria-live="polite">MEGA file access is not connected yet. Do not enter your MEGA password into this GitHub Pages app.</p>
     </article>
     <article class="storage">
       <div class="storage-icon">📥</div><h3>Mod download pipeline</h3>
@@ -44,7 +50,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
       <p class="small muted">Download, extraction, and Drive upload are shown as planned jobs until the secure processing service is configured.</p>
     </article>
   </div>
-  <div class="notice">Setup still required for real connections: a Google OAuth client ID, the Google Drive API enabled for that project, and a secure processing endpoint for cross-site mod downloads and archive extraction. No Google password, client secret, or access token should be placed in this public GitHub Pages repository.</div>
+  <div class="notice">Setup still required for real connections: Google Drive authorization and/or a MEGA SDK-based account connection, plus a secure processing endpoint for cross-site mod downloads and archive extraction. The MEGA button currently opens MEGA's official sign-in page only; it does not connect this app to the account. No Google password, client secret, or access token should be placed in this public GitHub Pages repository.</div>
   <div class="steps">
     <div class="step"><strong>Storage destination</strong><p><code>My Drive/Brawl Mods/</code></p><p class="small muted">Your Google Drive, not GitHub storage and not a separate app-owned cloud.</p></div>
     <div class="step"><strong>Wii connection</strong><p>Wii connects to the Cloud Storage service over Wi-Fi.</p><p class="small muted">The Wii client and compatible remote-loading bridge still need implementation.</p></div>
