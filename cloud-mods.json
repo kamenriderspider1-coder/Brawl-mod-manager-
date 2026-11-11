@@ -1,21 +1,23 @@
 {
   "schemaVersion": 1,
   "title": "Brawl Mod Manager Cloud Library",
-  "description": "Mod source catalog for the separate Brawl Mod Manager Cloud Storage app. Google Drive is the intended file store connected inside the app; it is not the app itself.",
+  "description": "Mod source catalog for the separate Brawl Mod Manager Cloud Storage app. MEGA and Google Drive are user-selected file stores connected inside the app.",
   "downloadBehavior": {
     "trigger": "user-selected",
-    "target": "Google Drive",
-    "directory": "My Drive/Brawl Mods/",
+    "target": "User-selected MEGA or Google Drive account",
+    "directory": "Brawl Mods/",
     "statusLabels": [
       "Available",
       "Queued",
+      "Finding download",
       "Downloading",
       "Extracting",
-      "Uploading to Drive",
-      "Ready",
+      "Validating",
+      "Uploading to selected cloud account",
+      "Ready for Wii network access",
       "Failed"
     ],
-    "note": "This is the intended Cloud Storage workflow. It is not implemented yet. The Wii manager currently remains a local SD file-browser prototype and cannot yet access Drive-backed files over Wi-Fi."
+    "note": "Intended workflow: locate the actual archive on the supplied source page, download it, extract and validate it, upload the extracted mod files to the user's selected MEGA or Google Drive account, then publish metadata for the Wii client. Not implemented yet; the Wii still requires a compatible network-loading bridge or temporary local cache."
   },
   "mods": [
     {
@@ -112,18 +114,25 @@
     "driveFolder": "My Drive/Brawl Mods/",
     "pipeline": [
       "discover-or-add-source-link",
+      "find-actual-download-file-on-source-page",
       "fetch-permitted-archive",
       "extract-and-validate",
-      "upload-extracted-files-to-google-drive",
+      "upload-extracted-files-to-selected-mega-or-google-drive-account",
       "publish-library-metadata-for-wii"
     ],
     "implementationStatus": "planned",
     "requirements": [
-      "Google OAuth client configuration",
-      "Google Drive API authorization",
+      "MEGA account integration using a supported secure authentication flow",
+      "Google OAuth client configuration and Google Drive API authorization when Google Drive is selected",
       "secure server-side source downloader and archive processor",
-      "Wii-compatible network client and remote-loading bridge"
+      "Wii-compatible network client and remote-loading bridge or temporary local cache"
     ],
-    "security": "Never collect Google passwords in the app or commit OAuth client secrets or access tokens to the public repository."
+    "security": "Never collect provider passwords in the public app or commit OAuth client secrets, access tokens, or session credentials to the public repository.",
+    "providers": [
+      "mega",
+      "google-drive"
+    ],
+    "defaultProvider": "mega",
+    "providerSelection": "The user selects MEGA or Google Drive for each mod request."
   }
 }
