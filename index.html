@@ -435,6 +435,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
  const allowed=h=>['gamebanana.com','www.gamebanana.com','files.gamebanana.com','projectplusgame.com','www.projectplusgame.com'].includes(h);
  function button(label,fn){const b=document.createElement('button');b.type='button';b.className='btn';b.textContent=label;b.addEventListener('click',fn);return b;}
  async function download(url,label,b){
+  if(window.BrawlModManagerOpenMegaRequest)window.BrawlModManagerOpenMegaRequest();
   b.disabled=true;b.textContent='Downloading…';
   try{const r=await fetch(api+'/api/archive?url='+encodeURIComponent(url));if(!r.ok){const x=await r.json().catch(()=>({}));throw Error(x.error||'Archive download failed');}
    const blob=await r.blob();const a=document.createElement('a'),obj=URL.createObjectURL(blob);a.href=obj;a.download=(label||'brawl-mod').replace(/[^a-z0-9._-]+/gi,'_').slice(0,80)+'.zip';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(obj),30000);b.textContent='Downloaded';status.textContent='ZIP downloaded to this device. Opening your saved MEGA File Request page; select the ZIP there to finish uploading.';
