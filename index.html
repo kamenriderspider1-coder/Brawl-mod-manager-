@@ -121,6 +121,22 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
     <div class="notice">The future Play action must ask the Wii service to prepare the selected mod, verify its base-game and loader compatibility, then launch Brawl through the installed loader. A normal browser button cannot launch a Wii game by itself. Remote file access may require a compatible network filesystem or temporary SD/USB cache.</div>
   </section>
 
+  <section class="panel" id="play-setup-builder">
+    <div class="row"><h2>🧩 Build your Brawl play setup</h2><span class="tag">Two play modes</span></div>
+    <p class="muted">Choose a complete game mod, or build a mix from individual files across different packs. Choices are saved in this browser only.</p>
+    <div class="storage-grid">
+      <article class="storage"><label for="setup-mode"><strong>Play mode</strong></label>
+        <select id="setup-mode" style="display:block;width:100%;margin:8px 0;padding:11px;border-radius:10px;border:1px solid var(--line);background:#080d18;color:var(--text);font:inherit">
+          <option value="custom">Custom Mix: choose individual files</option><option value="full">Full Mod: use one complete game mod</option>
+        </select><p class="small muted" id="setup-mode-description">Combine individual assets from different packs when file manifests are available.</p>
+      </article>
+      <article class="storage cloud"><strong>Setup status</strong><p class="small muted" id="setup-save-status" role="status" aria-live="polite">No setup has been saved yet.</p><button class="btn primary" id="save-play-setup" type="button">Save setup in this browser</button></article>
+    </div>
+    <div id="custom-mix-controls"><h3>Choose individual mod files</h3><p class="small muted">Files from different packs can be selected together. Individual assets appear here after verified file manifests are added to the catalog.</p><div id="custom-asset-list" class="steps" aria-live="polite"><p class="small muted">Loading individual file manifests…</p></div></div>
+    <div id="full-mod-controls" hidden><h3>Choose one complete game mod</h3><label for="full-mod-choice"><strong>Complete mod pack</strong></label><select id="full-mod-choice" style="display:block;width:100%;margin:8px 0;padding:11px;border-radius:10px;border:1px solid var(--line);background:#080d18;color:var(--text);font:inherit"><option value="">Loading complete mods…</option></select><p class="small muted">Full-mod mode keeps a complete build together instead of mixing its files with other builds.</p></div>
+    <div class="notice">Saved selections are configuration only. They do not download files, upload to MEGA, connect to the Wii, or launch Brawl. The Wii network client, secure MEGA file service, per-file manifests, and compatible remote-loading bridge are still unfinished.</div>
+  </section>
+
   <section class="panel" id="mega-transfer-handoff">
     <div class="row"><h2>📤 Move a downloaded mod into MEGA</h2><span class="tag">Guided handoff</span></div>
     <p class="muted">This makes the manual transfer steps easier. Your MEGA password stays on MEGA's official website; this app does not receive or store it.</p>
@@ -462,5 +478,33 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
 </script>
 
 
+
+<script>
+(function(){
+ const mode=document.getElementById('setup-mode'),custom=document.getElementById('custom-mix-controls'),full=document.getElementById('full-mod-controls'),assets=document.getElementById('custom-asset-list'),fullChoice=document.getElementById('full-mod-choice'),status=document.getElementById('setup-save-status'),save=document.getElementById('save-play-setup');
+ if(!mode||!custom||!full||!assets||!fullChoice||!status||!save)return;
+ const KEY='brawl-play-setup-v1';let selected=new Set(),saved={};
+ try{saved=JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(_){}
+ function renderMode(){const f=mode.value==='full';custom.hidden=f;full.hidden=!f;document.getElementById('setup-mode-description').textContent=f?'Select one complete game mod and keep its intended files together.':'Combine individual files from different packs when verified file manifests are available.';}
+ mode.value=saved.mode==='full'?'full':'custom';if(Array.isArray(saved.assetIds))selected=new Set(saved.assetIds);renderMode();mode.addEventListener('change',renderMode);
+ fetch('./cloud-mods.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('Catalog unavailable');return r.json();}).then(data=>{
+  const mods=data.mods||[];fullChoice.replaceChildren();
+  const builds=mods.filter(m=>['standalone-build','full-mod','mod-pack'].includes(m.type));
+  if(!builds.length){const o=document.createElement('option');o.value='';o.textContent='No complete mods are cataloged yet';fullChoice.append(o);}
+  builds.forEach(m=>{const o=document.createElement('option');o.value=m.id;o.textContent=m.name;fullChoice.append(o);});
+  if(saved.fullModId)fullChoice.value=saved.fullModId;
+  assets.replaceChildren();let count=0;
+  mods.forEach(mod=>(Array.isArray(mod.files)?mod.files:(Array.isArray(mod.assets)?mod.assets:[])).forEach(file=>{
+   if(!file||!file.id||!file.name)return;count++;
+   const label=document.createElement('label');label.className='step';label.style.display='flex';label.style.alignItems='center';label.style.gap='9px';
+   const input=document.createElement('input');input.type='checkbox';input.value=mod.id+':'+file.id;input.checked=selected.has(input.value);
+   input.addEventListener('change',()=>input.checked?selected.add(input.value):selected.delete(input.value));
+   const span=document.createElement('span');span.textContent=file.name+' · '+mod.name+(file.category?' · '+file.category:'');label.append(input,span);assets.append(label);
+  }));
+  if(!count){const p=document.createElement('p');p.className='small muted';p.textContent='No individual file manifests are published in cloud-mods.json yet. The catalog currently lists whole mod sources, not the files inside those archives.';assets.append(p);}
+ }).catch(()=>{assets.textContent='Could not load the cloud catalog. Refresh the page and try again.';});
+ save.addEventListener('click',()=>{const config={mode:mode.value,fullModId:mode.value==='full'?fullChoice.value:'',assetIds:mode.value==='custom'?Array.from(selected):[],savedAt:new Date().toISOString()};try{localStorage.setItem(KEY,JSON.stringify(config));status.textContent=mode.value==='full'?'Full-mod selection saved in this browser.':'Custom file selection saved in this browser.';}catch(_){status.textContent='Could not save this setup in browser storage.';}});
+})();
+</script>
 
 </body></html>
