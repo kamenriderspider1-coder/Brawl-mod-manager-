@@ -1,27 +1,28 @@
 # Brawl Mod Manager for Wii
 
-A standalone Wii Homebrew Channel app that browses mod files copied to the SD card.
+## Test build
 
-## Google Drive workflow
+GitHub Actions builds the Homebrew Channel app without requiring devkitPro on your Mac.
 
-Google Drive is used manually through its normal website. The project does not connect to Drive programmatically.
+1. Open the repository's **Actions** tab.
+2. Open **Build Wii Mod Manager and Publish Release** and wait for the run to finish successfully.
+3. Open the generated GitHub Release and download `brawl-mod-manager-wii.zip`.
+4. Extract the ZIP. Copy the included `brawl-mod-manager` folder into the root of your Wii SD card so the app is at:
+   `sd:/apps/brawl-mod-manager/boot.dol`
+5. Put test folders and files inside `sd:/brawl-mods/`.
+6. Launch **Brawl Mod Manager** from the Homebrew Channel.
 
-1. Store mod files in your own Google Drive folder named `Brawl Cloud`.
-2. Download the files you want to use.
-3. Copy them to `sd:/brawl-mods/` on the Wii SD card.
-4. Launch Brawl Mod Manager from the Homebrew Channel and browse the files.
+## Controls
 
-No API, OAuth, Client ID, API key, cloud bucket, or Google account credentials are used by the Wii app.
+- D-pad: move selection
+- A: enter a folder, or show selected file information
+- B: go up one folder; at the root, rescan the SD card
+- HOME (Wii Remote) or START (GameCube controller): return to the Wii menu
 
-## Current native app
+The app creates `sd:/brawl-mods/` if it does not already exist. It can browse nested folders and show file sizes.
 
-- `source/main.c`: initializes Wii video/controllers, mounts the SD card, and lists files in `sd:/brawl-mods/`.
-- `Makefile`: devkitPPC/libogc build configuration, including libfat.
-- `meta.xml`: Homebrew Channel metadata.
-- `BUILD.md`: build instructions.
+## What this test build does not do
 
-Controls: D-pad to select, A to show the selected filename, B to rescan, HOME/START to exit.
+This is a real Wii homebrew test build, but it is not yet the complete cloud mod manager. It does **not** connect to MEGA or Google Drive, download files over Wi-Fi, install or activate mods, generate Riivolution patches, or launch Brawl with a selected mod. The current purpose is to test the Wii app's SD-card browser and controller navigation.
 
-## Important limitation
-
-This version only displays files found on the SD card. It does not install, activate, or apply mods to Super Smash Bros. Brawl. Riivolution patch generation and supported loader integration remain separate work and must be tested before claiming compatibility.
+Your existing REX installation is not modified. Keep it in place and test this app separately.
