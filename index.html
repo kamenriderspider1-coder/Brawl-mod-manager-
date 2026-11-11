@@ -40,8 +40,8 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
   <div class="storage-grid">
     <article class="storage cloud" id="mega-storage-card">
       <div class="storage-icon">🟣</div><h3>MEGA official storage</h3>
-      <p class="muted small">Sign in on MEGA's official website in a separate tab. Your password and two-factor code stay on MEGA, not in this app.</p>
-      <a class="btn primary" id="mega-sign-in" href="https://mega.nz/" target="_blank" rel="noopener noreferrer">Sign in to MEGA ↗</a>
+      <p class="muted small">Open your exact Brawl Mods destination folder on MEGA. Your MEGA sign-in stays on MEGA's official website.</p>
+      <a class="btn primary" id="mega-sign-in" href="https://mega.nz/folder/T8xykJYa#vLMpYjUrX2Fpsk5iIImy0A" target="_blank" rel="noopener noreferrer">Open my Brawl Mods folder in MEGA ↗</a>
       <p class="small muted" id="mega-sign-in-status" role="status" aria-live="polite"><strong>Connection status: Not connected.</strong> Signing in on MEGA's website does not authorize this app. No files are being uploaded automatically.</p>
       <div class="notice" style="margin-top:12px">
         <strong>Current transfer status</strong>
@@ -120,7 +120,7 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
     <div class="notice">The future Play action must ask the Wii service to prepare the selected mod, verify its base-game and loader compatibility, then launch Brawl through the installed loader. A normal browser button cannot launch a Wii game by itself. Remote file access may require a compatible network filesystem or temporary SD/USB cache.</div>
   </section>
 
-  <div class="notice">The Sign in to MEGA button opens MEGA in a separate tab. Browsers keep that tab's private account session isolated, so signing in there does not link the account or folder to this app. Automatic folder access and uploads require an approved MEGA integration. Never put your MEGA password or session tokens in this public GitHub Pages repository.</div>
+  <div class="notice">The MEGA button opens your exact Brawl Mods folder in a separate tab. This is a direct folder shortcut, not an account authorization: signing in there does not grant this app upload access. A secure MEGA account integration is still required before automatic uploads can be enabled. Never put your MEGA password or session tokens in this public GitHub Pages repository.</div>
   <div class="steps">
     <div class="step"><strong>Storage destination</strong><p><code>MEGA / Brawl Mods/</code></p><p class="small muted">Upload the extracted folder through MEGA's official website.</p></div>
     <div class="step"><strong>Wii connection</strong><p>Wii connects to the Cloud Storage service over Wi-Fi.</p><p class="small muted">The Wii client and compatible remote-loading bridge still need implementation.</p></div>
