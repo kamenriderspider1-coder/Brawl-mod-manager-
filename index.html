@@ -93,9 +93,17 @@ code{background:#0b1423;border:1px solid var(--line);border-radius:5px;padding:2
       <a class="btn" id="catalog-import-source" href="#" target="_blank" rel="noopener noreferrer" aria-disabled="true">Open creator download page ↗</a>
       <span class="small muted" id="catalog-import-destination">Connect MEGA and choose a destination folder above.</span>
     </div>
-    <label for="catalog-import-archive"><strong>Downloaded ZIP archive</strong></label>
+    <div class="row" style="margin:12px 0">
+      <button class="btn" id="catalog-import-discover" type="button">Find download link on creator page</button>
+      <span class="small muted" id="catalog-import-discovery-status" role="status" aria-live="polite">Scans supported GameBanana and Project+ pages for archive links.</span>
+    </div>
+    <label for="catalog-import-candidate"><strong>Detected download link</strong></label>
+    <select id="catalog-import-candidate" style="display:block;width:100%;margin:7px 0;padding:10px;border-radius:9px;background:#0b1423;color:inherit;border:1px solid var(--line)" disabled><option value="">Scan a creator page first…</option></select>
+    <button class="btn primary" id="catalog-import-download" type="button" disabled>Download detected ZIP and upload to MEGA</button>
+    <p class="small muted">The scanner only follows supported HTTPS creator domains. It will not crawl unrelated websites or bypass login/paywalls. Review the detected link before starting the transfer.</p>
+    <label for="catalog-import-archive"><strong>Or select a ZIP manually</strong></label>
     <input id="catalog-import-archive" type="file" accept=".zip,application/zip,application/x-zip-compressed" style="display:block;margin:8px 0">
-    <button class="btn primary" id="catalog-import-start" type="button">Extract and upload to selected MEGA folder</button>
+    <button class="btn primary" id="catalog-import-start" type="button">Extract selected ZIP and upload to MEGA</button>
     <p class="small muted" id="catalog-import-status" role="status" aria-live="polite">Waiting for a catalog selection and ZIP file. Limits: 100 MB compressed, 300 MB extracted, and 1,000 files per import.</p>
     <div id="catalog-import-progress" class="small muted" aria-live="polite"></div>
     <p class="small muted">Only import files you are allowed to download and store. ZIP files are inspected in-browser. Password-protected ZIPs, split archives, RAR/7z files, and very large packs are not supported by this first version.</p>
@@ -616,10 +624,58 @@ $('disconnect-mega')?.addEventListener('click',()=>{
    say(mods.length+' catalog entries ready. Choose one, then open its creator page.');
  }).catch(error=>say('Could not load catalog: '+error.message));
  select.addEventListener('change',()=>{
+   discovered=[];candidateSelect.replaceChildren(new Option('Scan a creator page first…',''));
+   candidateSelect.disabled=true;downloadButton.disabled=true;
    const mod=mods.find(m=>m.id===select.value);
    if(!mod){source.href='#';source.setAttribute('aria-disabled','true');return;}
    source.href=mod.url;source.removeAttribute('aria-disabled');
  });
+
+ const discoveryStatus=$('catalog-import-discovery-status');
+ const candidateSelect=$('catalog-import-candidate');
+ const discoverButton=$('catalog-import-discover');
+ const downloadButton=$('catalog-import-download');
+ let discovered=[];
+ discoverButton.addEventListener('click',async()=>{
+   const mod=mods.find(m=>m.id===select.value);
+   if(!mod){discoveryStatus.textContent='Choose a catalog mod first.';return;}
+   if(!window.brawlMegaContext?.()?.storage){discoveryStatus.textContent='Connect to MEGA first.';return;}
+   discoverButton.disabled=true;downloadButton.disabled=true;candidateSelect.disabled=true;
+   candidateSelect.replaceChildren(new Option('Scanning creator page…',''));
+   discoveryStatus.textContent='Scanning the creator page for direct ZIP/download links…';
+   try{
+     const api='https://brawl-mod-manager-api.brawlmodmanager.workers.dev/api/discover?url='+encodeURIComponent(mod.url);
+     const response=await fetch(api,{cache:'no-store'}),result=await response.json();
+     if(!response.ok||!result.ok)throw new Error(result.error||'Creator page scan failed.');
+     discovered=result.candidates||[];
+     candidateSelect.replaceChildren(new Option(discovered.length?'Choose a detected download…':'No supported archive links found',''));
+     discovered.forEach((item,index)=>candidateSelect.add(new Option(item.label+' ('+item.host+')',String(index))));
+     candidateSelect.disabled=!discovered.length;downloadButton.disabled=!discovered.length;
+     discoveryStatus.textContent=discovered.length+' candidate link(s) found. Select the correct archive, then download and upload it.';
+   }catch(error){
+     discovered=[];candidateSelect.replaceChildren(new Option('No download link found',''));
+     discoveryStatus.textContent='Scan failed: '+error.message+' You can still select a ZIP manually below.';
+   }finally{discoverButton.disabled=false;}
+ });
+ downloadButton.addEventListener('click',async()=>{
+   const selected=discovered[Number(candidateSelect.value)],context=window.brawlMegaContext?.();
+   if(!selected){discoveryStatus.textContent='Select a detected archive link first.';return;}
+   if(!context?.storage||!context.destination){discoveryStatus.textContent='Connect MEGA and choose the destination folder first.';return;}
+   downloadButton.disabled=true;discoverButton.disabled=true;
+   discoveryStatus.textContent='Downloading the selected archive through the cloud service…';
+   try{
+     const response=await fetch('https://brawl-mod-manager-api.brawlmodmanager.workers.dev/api/archive?url='+encodeURIComponent(selected.url),{cache:'no-store'});
+     if(!response.ok){let message='Archive download failed.';try{message=(await response.json()).error||message;}catch{}throw new Error(message);}
+     const blob=await response.blob();
+     if(!blob.size||blob.size>100*1024*1024)throw new Error('Downloaded archive is empty or exceeds 100 MB.');
+     const file=new File([blob],'creator-download.zip',{type:'application/zip'}),transfer=new DataTransfer();
+     transfer.items.add(file);$('catalog-import-archive').files=transfer.files;
+     discoveryStatus.textContent='Downloaded '+(blob.size/1024/1024).toFixed(1)+' MB. Starting ZIP validation and MEGA upload…';
+     $('catalog-import-start').click();
+   }catch(error){discoveryStatus.textContent='Download failed: '+error.message;}
+   finally{downloadButton.disabled=false;discoverButton.disabled=false;}
+ });
+
  $('catalog-import-start').addEventListener('click',async()=>{
    const mod=mods.find(m=>m.id===select.value);
    const file=$('catalog-import-archive').files?.[0];
