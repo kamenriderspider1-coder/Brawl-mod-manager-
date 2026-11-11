@@ -6,6 +6,19 @@ This repository contains Brawl Cloud, a free public mod-file library, and a nati
 - **[Mod library / GitHub Releases](https://github.com/kamenriderspider1-coder/Brawl-mod-manager-/releases)** stores downloadable release assets.
 - **Brawl Mod Manager** scans files already copied to the Wii SD card.
 
+## MEGA connection status
+
+The website currently provides a shortcut to the configured **MEGA / Brawl Mods** folder. That shortcut opens MEGA's official website; it is **not** an account connection, and signing in on mega.nz does not authorize this GitHub Pages app to upload files.
+
+A genuine in-app MEGA connection is **not implemented yet**. MEGA's terms require developers who directly use its API to register and obtain approval before publishing an application that uses it. A normal MEGA account login does not remove that requirement. There is no paid API subscription configured in this repository, and no MEGA credentials, session IDs, or encryption keys should be placed in GitHub files or sent to the Cloudflare Worker.
+
+Until an approved integration is available, the working route is:
+1. Use the app to find and download a supported mod archive to your device.
+2. Open the MEGA folder using the button in the app and sign in on MEGA's official site.
+3. Upload the downloaded archive or reviewed extracted files using MEGA's own interface.
+
+The app must not display a success state or claim that files were uploaded unless a real authenticated upload has completed.
+
 ## Free cloud storage
 
 Brawl Cloud uses GitHub Releases in this repository as its public file library. Mod archives are attached to releases and downloaded through their public release links.
